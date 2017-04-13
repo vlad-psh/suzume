@@ -1,0 +1,19 @@
+development:
+  adapter: sqlite3
+  database: db/app.sqlite3
+
+#adapter: mysql2
+#encoding: utf8
+#host: localhost
+#username: user
+#password: password
+#database: dbname
+#socket: /tmp/mysql.sock
+
+#adapter: postgresql
+#encoding: unicode
+#database: dbname
+#pool: 5
+#username: username
+#password: pwd**
+
