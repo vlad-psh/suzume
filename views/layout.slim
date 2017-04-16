@@ -8,6 +8,9 @@ html
     script src="/js/jquery-rails.js"
     / link rel="stylesheet" type="text/css" href="/main.css"
   body
+    a href=path_to(:index) Index
+    '  | 
+    a href=path_to(:new_artists) New artists
     div#container
       == yield
 

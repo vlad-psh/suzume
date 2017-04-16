@@ -12,7 +12,9 @@ require_relative './models.rb'
 also_reload './models.rb'
 
 paths index: '/',
-    new_artists: '/artists/new'
+    new_artists: '/artists/new',
+    artist: '/artist/:id',
+    set_discogs_id: '/artist/set-discogs-id'
 
 configure do
   puts '---> init <---'
@@ -32,6 +34,7 @@ configure do
 end
 
 get :index do
+  @artists = Artist.all
   slim :index
 end
 
@@ -46,4 +49,18 @@ get :new_artists do
   end
 
   slim :new_artists
+end
+
+get :artist do
+  @artist = Artist.find(params[:id])
+  slim :artist
+end
+
+post :set_discogs_id do
+  a = Artist.find_or_create_by(filename: params[:artist_name])
+  a.discogs_id = params[:discogs_id].gsub(/[^0-9]/, '').to_i
+  a.title = params[:artist_name]
+  a.save
+
+  redirect path_to(:artist).with(a.id)
 end

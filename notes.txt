@@ -1,0 +1,49 @@
+require './app.rb'
+
+$library_path = "/mnt/pool/MUSICLIB"
+newest_artist = Artist.order(updated_at: :desc).first
+$last_update = newest_artist ? newest_artist.updated_at : Time.new(2000, 1, 1, 0, 0)
+
+Dir.entries($library_path).each do |dir|
+  next if [".", ".."].include?(dir)
+  artist_dir = File.expand_path(dir, $library_path)
+  if File.stat(artist_dir).mtime > $last_update
+    puts "#{dir} #{File.stat(artist_dir).mtime}"
+
+    discogs_files = Dir.glob(File.expand_path("*.discogs", artist_dir))
+    discogs_match = discogs_files.count > 0 ? discogs_files[0].match(/.*\/(?<discogs_id>[0-9]*)\.discogs/) : nil
+    discogs_id = discogs_match ? discogs_match[:discogs_id] : nil
+
+    if discogs_id
+      artist = Artist.where(discogs_id: discogs_id).take
+    end
+
+    unless artist
+      puts "Creating new artist record for #{dir} #{
+      artist = Artist.create(filename: dir, brainz_id: brainz_id)
+    end
+  end
+end; nil
+
+===============
+артисты, которых нет на discogs (позже!)
+песни (россыпью) которые понадерганы из разных мест и не принадлежат к конкретному релизо discogs (позже!)
+
+
+пробегаемся по артистам
+задача:
+* найти артистов, которых нет в базе (на данный момент будем считать, что это артисты без .discogs-файла)
+цель:
+* вывести список таковых артистов для последующего их заполнения
+ps:
+* мы (пока; да и нужно ли это вообще?) не можем добавить альбомы тех артистов, которых не завели в базе
+
+
+пробегаемся по папкам артистов, добавленных в базу и смотрим не добавились ли новые папки/альбомы
+цель:
+* вывести список альбомов, не привязанных к discogs (т.е. по которым не собрана информация)
+
+
+require 'discogs-wrapper'
+
+
