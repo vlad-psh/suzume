@@ -1,1 +1,20 @@
 = @artist.inspect
+a href="https://www.discogs.com/artist/#{@artist.discogs_id}" Discogs
+
+h2. New folders
+
+ul
+  - @new_albums.each do |a|
+    li
+      = a
+      form method="POST" action=path_to(:album_set_discogs_id)
+        input type="text" name="discogs_id"
+        input type="hidden" name="artist_id" value=@artist.id
+        input type="hidden" name="filename" value=a
+        input type="submit"
+
+h2. Albums
+
+ul
+  - @albums.each do |a|
+    li = "#{a.filename} #{a.discogs_id}"

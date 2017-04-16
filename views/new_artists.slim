@@ -3,7 +3,7 @@ ul
     li
       = "#{a} : "
       a href="https://www.discogs.com/search/?q=#{a}&type=artist" discogs search
-      form method="POST" action=path_to(:set_discogs_id).with(a)
+      form method="POST" action=path_to(:artist_set_discogs_id)
         input type="text" name="discogs_id"
-        input type="hidden" name="artist_name" value=a
+        input type="hidden" name="filename" value=a
         input type="submit"
