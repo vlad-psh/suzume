@@ -6,6 +6,7 @@ require 'slim'
 
 require 'rack-flash'
 require 'yaml'
+require 'discogs-wrapper'
 
 require_relative './models.rb'
 
@@ -30,6 +31,8 @@ configure do
         secret: $config['secret']
 
   $library_path = $config['library_path']
+  $discogs = Discogs::Wrapper.new($config['useragent'],
+                    user_token: $config['discogs_token'])
 
   use Rack::Flash
 end
