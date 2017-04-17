@@ -1,3 +1,11 @@
+.flash-notice {
+  background: #80c921;
+  color: #062700;
+}
+.flash-error {
+  background: #c92d21;
+  color: #270300;
+}
 table td {
   vertical-align: top;
 }

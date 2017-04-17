@@ -44,6 +44,37 @@ def get_tulip_id(dir)
   return tulip_id
 end
 
+def update_artist_albums(artist)
+  page = 0
+  artist_albums = artist.albums
+  begin 
+    page += 1
+    artist_releases = $discogs.get_artist_releases(artist.discogs_id, page: page)
+    artist_releases.releases.each do |r|
+      if r.role == "Main"
+        if r.type == "master"
+          album = Album.find_or_initialize_by(discogs_id: r.main_release)
+          album.update_attributes(
+                year: r.year,
+                title: r.title,
+                discogs_master_id: r.id)
+          album.save
+          artist.albums << album unless artist_albums.include?(album)
+        elsif r.type == "release"
+          album = Album.find_or_initialize_by(discogs_id: r.id)
+          album.update_attributes(
+                year: r.year,
+                title: r.title)
+          album.save
+          artist.albums << album unless artist_albums.include?(album)
+        else
+          puts "!!! Unknown album type: #{r.type}"
+        end
+      end
+    end
+  end while page < artist_releases.pagination.pages
+end
+
 get :index do
   @artists = Artist.all
   slim :index
@@ -90,13 +121,16 @@ post :artist_set_discogs_id do
 end
 
 post :album_set_discogs_id do
-  a = Album.find_or_create_by(filename: params[:filename])
-  a.discogs_id = params[:discogs_id].gsub(/[^0-9]/, '').to_i
-  a.title = params[:filename]
-  a.save
+  d_id = params[:discogs_id].gsub(/[^0-9]/, '').to_i
+  a = Album.where(discogs_id: d_id).take
 
-  artist = Artist.find(params[:artist_id].to_i)
-  artist.albums << a
+  if a != nil
+    a.filename = params[:filename]
+    a.save
+    flash[:notice] = "Successfully assigned discogs_id = #{d_id} to \"#{params[:filename]}\""
+  else
+    flash[:error] = "Unable to find Album with discogs_id = #{d_id}"
+  end
 
-  redirect path_to(:artist).with(artist.id)
+  redirect path_to(:artist).with(params[:artist_id].to_i)
 end
