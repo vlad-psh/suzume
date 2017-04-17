@@ -9,3 +9,14 @@
 table td {
   vertical-align: top;
 }
+tr.album-have {
+  background: #add79d;
+  color: #19350e;
+}
+td .details {
+  font-size: 0.6em;
+  color: #999
+}
+tr.album-have td .details {
+  color: #647c5b;
+}

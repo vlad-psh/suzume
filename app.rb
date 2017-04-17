@@ -98,7 +98,7 @@ end
 
 get :artist do
   @artist = Artist.find(params[:id])
-  @albums = @artist.albums
+  @albums = @artist.albums.order(year: :desc) # is_mock: :asc
 
   @new_albums = []
   artist_dir = File.expand_path(@artist.filename, $library_path)
@@ -117,6 +117,8 @@ post :artist_set_discogs_id do
   a.title = params[:filename]
   a.save
 
+  update_artist_albums(a)
+
   redirect path_to(:artist).with(a.id)
 end
 
@@ -126,6 +128,7 @@ post :album_set_discogs_id do
 
   if a != nil
     a.filename = params[:filename]
+    a.is_mock = false
     a.save
     flash[:notice] = "Successfully assigned discogs_id = #{d_id} to \"#{params[:filename]}\""
   else

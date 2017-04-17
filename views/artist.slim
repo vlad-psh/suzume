@@ -17,9 +17,9 @@ h2. Albums
 
 table
   - @albums.each do |a|
-    tr
+    tr class=(a.is_mock ? '' : 'album-have')
       td = a.year
       td
         = a.title
-        div style="font-size: 0.6em; color: #999" = a.filename
+        div.details = a.filename
       td = "r#{a.discogs_id}"
