@@ -15,6 +15,11 @@ ul
 
 h2. Albums
 
-ul
+table
   - @albums.each do |a|
-    li = "#{a.filename} #{a.discogs_id}"
+    tr
+      td = a.year
+      td
+        = a.title
+        div style="font-size: 0.6em; color: #999" = a.filename
+      td = "r#{a.discogs_id}"
