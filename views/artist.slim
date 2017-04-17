@@ -1,25 +1,31 @@
 = @artist.inspect
 a href="https://www.discogs.com/artist/#{@artist.discogs_id}" Discogs
 
-h2. New folders
+- if @new_albums.count > 0
+  h2. New folders
 
-ul
-  - @new_albums.each do |a|
-    li
-      = a
-      form method="POST" action=path_to(:album_set_discogs_id)
-        input type="text" name="discogs_id"
-        input type="hidden" name="artist_id" value=@artist.id
-        input type="hidden" name="filename" value=a
-        input type="submit"
+  ul
+    - @new_albums.each do |a|
+      li
+        = a
+        form method="POST" action=path_to(:album_set_discogs_id)
+          input type="text" name="discogs_id"
+          input type="hidden" name="artist_id" value=@artist.id
+          input type="hidden" name="filename" value=a
+          input type="submit"
 
-h2. Albums
+- @albums.each do |type,albums|
+  - next if albums.count == 0
+  h2 = type.capitalize
 
-table
-  - @albums.each do |a|
-    tr class=(a.is_mock ? '' : 'album-have')
-      td = a.year
-      td
-        = a.title
-        div.details = a.filename
-      td = "r#{a.discogs_id}"
+  table
+    - albums.each do |a|
+      tr class=(a.is_mock ? '' : 'album-have')
+        td = a.year
+        td
+          = a.title
+          div.details = a.filename
+        td = a.formats
+        td
+          a href="https://www.discogs.com/release/#{a.discogs_id}" = a.discogs_id
+

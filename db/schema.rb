@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170417093639) do
+ActiveRecord::Schema.define(version: 20170417141634) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20170417093639) do
     t.integer  "year"
     t.boolean  "is_mock",           default: true
     t.integer  "discogs_master_id"
+    t.string   "formats"
   end
 
   create_table "albums_artists", force: :cascade do |t|

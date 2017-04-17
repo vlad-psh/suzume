@@ -98,13 +98,31 @@ end
 
 get :artist do
   @artist = Artist.find(params[:id])
-  @albums = @artist.albums.order(year: :desc) # is_mock: :asc
+  all_albums = @artist.albums.order(year: :desc) # is_mock: :asc
+
+  @albums = {albums: [], eps: [], singles: [], compillations: [], other: []}
+
+  all_albums.each do |a|
+    if a.formats == nil
+      @albums[:other] << a
+    elsif a.formats.include?("Album")
+      @albums[:albums] << a
+    elsif a.formats.include?("EP")
+      @albums[:eps] << a
+    elsif a.formats.include?("Single")
+      @albums[:singles] << a
+    elsif a.formats.include?("Comp")
+      @albums[:compillations] << a
+    else
+      @albums[:other] << a
+    end
+  end
 
   @new_albums = []
   artist_dir = File.expand_path(@artist.filename, $library_path)
   Dir.entries(artist_dir).each do |dir|
     next if [".", ".."].include?(dir)
-    next if @albums.any? { |a| a.filename == dir }
+    next if all_albums.any? { |a| a.filename == dir }
     @new_albums << dir
   end
 
@@ -127,6 +145,9 @@ post :album_set_discogs_id do
   a = Album.where(discogs_id: d_id).take
 
   if a != nil
+    release = $discogs.get_release(d_id)
+    a.formats = [release.formats[0].name, release.formats[0].descriptions].flatten.join('|')
+
     a.filename = params[:filename]
     a.is_mock = false
     a.save
