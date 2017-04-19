@@ -1,5 +1,8 @@
-= @artist.inspect
-a href="https://www.discogs.com/artist/#{@artist.discogs_id}" Discogs
+h1
+  = "#{@artist.title} "
+  span.details style="font-size: 0.4em"
+    = "#{@artist.filename} @"
+    a href="https://www.discogs.com/artist/#{@artist.discogs_id}" discogs
 
 - if @new_albums.count > 0
   h2. New folders
@@ -23,9 +26,10 @@ a href="https://www.discogs.com/artist/#{@artist.discogs_id}" Discogs
       tr class=(a.is_mock ? '' : 'album-have')
         td = a.year
         td
+          = "#{a.discogs_id} "
+          a href="https://www.discogs.com/release/#{a.discogs_id}" url
+        td
           = a.title
           div.details = a.filename
         td = a.formats
-        td
-          a href="https://www.discogs.com/release/#{a.discogs_id}" = a.discogs_id
 

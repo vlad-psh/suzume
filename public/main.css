@@ -8,6 +8,7 @@
 }
 table td {
   vertical-align: top;
+  padding: 0 8px 0 8px;
 }
 tr.album-have {
   background: #add79d;

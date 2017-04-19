@@ -64,12 +64,18 @@ def update_artist_albums(artist)
           album = Album.find_or_initialize_by(discogs_id: r.id)
           album.update_attributes(
                 year: r.year,
-                title: r.title)
+                title: r.title,
+                formats: r.format.split(", ").join("|"))
           album.save
           artist.albums << album unless artist_albums.include?(album)
         else
           puts "!!! Unknown album type: #{r.type}"
         end
+      else
+        # if role != "Main" we do not need these records
+        # as of Apr.2017, "Main" records are always first
+        # that's why we can simply end process of further reading
+        page = artist_releases.pagination.pages
       end
     end
   end while page < artist_releases.pagination.pages
@@ -103,16 +109,16 @@ get :artist do
   @albums = {albums: [], eps: [], singles: [], compillations: [], other: []}
 
   all_albums.each do |a|
-    if a.formats == nil
+    if a.formats == nil || a.formats.include?("Reissue") || a.formats.include?("RE")
       @albums[:other] << a
+    elsif a.formats.include?("Comp")
+      @albums[:compillations] << a
     elsif a.formats.include?("Album")
       @albums[:albums] << a
     elsif a.formats.include?("EP")
       @albums[:eps] << a
-    elsif a.formats.include?("Single")
+    elsif a.formats.include?("Single") || a.formats.include?("Maxi")
       @albums[:singles] << a
-    elsif a.formats.include?("Comp")
-      @albums[:compillations] << a
     else
       @albums[:other] << a
     end
@@ -123,7 +129,7 @@ get :artist do
   Dir.entries(artist_dir).each do |dir|
     next if [".", ".."].include?(dir)
     next if all_albums.any? { |a| a.filename == dir }
-    @new_albums << dir
+    @new_albums << dir if File.directory?(File.expand_path(dir, artist_dir))
   end
 
   slim :artist
