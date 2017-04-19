@@ -21,3 +21,6 @@ td .details {
 tr.album-have td .details {
   color: #647c5b;
 }
+table.album-suggestions {
+  font-size: 0.7em;
+}

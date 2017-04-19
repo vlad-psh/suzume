@@ -1,16 +1,20 @@
-class CreateArtistsAlbumsTagsTables < ActiveRecord::Migration[5.0]
+class CreateArtistAlbumsTagsTables < ActiveRecord::Migration[5.0]
   def change
     create_table :artists do |t|
-      t.string :discogs_id
+      t.string :mbid
       t.string :filename
       t.string :title
       t.timestamps null: false
     end
 
     create_table :albums do |t|
-      t.string :discogs_id
+      t.string :mbid
       t.string :filename
       t.string :title
+      t.date :date
+      t.boolean :is_mock, default: true
+      t.string :primary_type
+      t.string :secondary_type
       t.timestamps null: false
     end
 
