@@ -51,8 +51,8 @@ end
 def update_artist_albums(artist)
   artist_albums = artist.albums
   mb_artist = MusicBrainz::Artist.find(artist.mbid)
+  offset = 0
   loop do
-    offset = 0
     artist_releases = mb_artist.release_groups(offset: offset)
     break unless artist_releases
     break if artist_releases.count == 0
@@ -70,6 +70,7 @@ def update_artist_albums(artist)
     end
 
     offset += 25
+    sleep 0.5
   end
 end
 

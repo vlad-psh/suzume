@@ -38,9 +38,9 @@ h1
       tr class=(a.is_mock ? '' : 'album-have')
         td = a.date
         td
-          = "#{a.mbid} "
-          a href="https://musicbrainz.org/release-group/#{a.mbid}" url
-        td
           = a.title
           div.details = a.filename
         td = a.both_types
+        td = a.mbid
+        td
+          a href="https://musicbrainz.org/release-group/#{a.mbid}" url
