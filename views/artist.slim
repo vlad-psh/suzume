@@ -1,8 +1,8 @@
 h1
   = "#{@artist.title} "
   span.details style="font-size: 0.4em"
-    = "#{@artist.filename == @artist.title ? '' : @artist.filename} @"
-    a href="https://www.discogs.com/artist/#{@artist.discogs_id}" discogs
+    = "#{@artist.filename == @artist.title ? '' : @artist.filename} @ "
+    a href="https://musicbrainz.org/artist/#{@artist.mbid}" brainz
 
 - if @new_albums.count > 0
   h2. New folders
@@ -11,8 +11,8 @@ h1
     - @new_albums.each do |a|
       li
         = a
-        form method="POST" action=path_to(:album_set_discogs_id)
-          input type="text" name="discogs_id"
+        form method="POST" action=path_to(:album_set_mbid)
+          input type="text" name="mbid"
           input type="hidden" name="artist_id" value=@artist.id
           input type="hidden" name="filename" value=a
           input type="submit"
@@ -22,26 +22,25 @@ h1
             - @suggestions[a].each do |k,v|
               tr
                 td = v
-                td = k.discogs_id
+                td = k.mbid
                 td
-                  a href="https://www.discogs.com/release/#{k.discogs_id}" url
-                td = k.year
+                  a href="https://musicbrainz.org/release-group/#{k.mbid}" url
+                td = k.date
                 td = k.title
-                td = k.formats
+                td = k.both_types
 
 - @albums.each do |type,albums|
   - next if albums.count == 0
-  h2 = type.capitalize
+  h2 = type
 
   table
     - albums.each do |a|
       tr class=(a.is_mock ? '' : 'album-have')
-        td = a.year
+        td = a.date
         td
-          = "#{a.discogs_id} "
-          a href="https://www.discogs.com/release/#{a.discogs_id}" url
+          = "#{a.mbid} "
+          a href="https://musicbrainz.org/release-group/#{a.mbid}" url
         td
           = a.title
           div.details = a.filename
-        td = a.formats
-        td = a.discogs_master_id
+        td = a.both_types

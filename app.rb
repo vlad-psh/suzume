@@ -6,7 +6,7 @@ require 'slim'
 
 require 'rack-flash'
 require 'yaml'
-require 'discogs-wrapper'
+require 'musicbrainz'
 
 require_relative './models.rb'
 
@@ -15,8 +15,8 @@ also_reload './models.rb'
 paths index: '/',
     new_artists: '/artists/new',
     artist: '/artist/:id',
-    artist_set_discogs_id: '/artist/set-discogs-id',
-    album_set_discogs_id: '/album/set-discogs-id'
+    artist_set_mbid: '/artist/set-mbid',
+    album_set_mbid: '/album/set-mbid'
 
 configure do
   puts '---> init <---'
@@ -31,8 +31,12 @@ configure do
         secret: $config['secret']
 
   $library_path = $config['library_path']
-  $discogs = Discogs::Wrapper.new($config['useragent'],
-                    user_token: $config['discogs_token'])
+  MusicBrainz.configure do |c|
+    c.app_name = $config['app_name']
+    c.app_version = $config['app_version']
+    c.contact = $config['app_contact']
+    c.query_interval = 0.2
+  end
 
   use Rack::Flash
 end
@@ -45,40 +49,28 @@ def get_tulip_id(dir)
 end
 
 def update_artist_albums(artist)
-  page = 0
   artist_albums = artist.albums
-  begin 
-    page += 1
-    artist_releases = $discogs.get_artist_releases(artist.discogs_id, page: page)
-    artist_releases.releases.each do |r|
-      if r.role == "Main"
-        if r.type == "master"
-          album = Album.find_or_initialize_by(discogs_id: r.main_release)
-          album.update_attributes(
-                year: r.year,
-                title: r.title,
-                discogs_master_id: r.id)
-          album.save
-          artist.albums << album unless artist_albums.include?(album)
-        elsif r.type == "release"
-          album = Album.find_or_initialize_by(discogs_id: r.id)
-          album.update_attributes(
-                year: r.year,
-                title: r.title,
-                formats: r.format.split(", ").join("|"))
-          album.save
-          artist.albums << album unless artist_albums.include?(album)
-        else
-          puts "!!! Unknown album type: #{r.type}"
-        end
-      else
-        # if role != "Main" we do not need these records
-        # as of Apr.2017, "Main" records are always first
-        # that's why we can simply end process of further reading
-        page = artist_releases.pagination.pages
-      end
+  mb_artist = MusicBrainz::Artist.find(artist.mbid)
+  loop do
+    offset = 0
+    artist_releases = mb_artist.release_groups(offset: offset)
+    break unless artist_releases
+    break if artist_releases.count == 0
+
+    artist_releases.each do |r|
+      album = Album.find_or_initialize_by(mbid: r.id)
+      album.update_attributes(
+        date: r.first_release_date,
+        title: r.title,
+        primary_type: r.type,
+        secondary_type: r.subtypes
+      )
+      album.save
+      artist.albums << album unless artist_albums.include?(album)
     end
-  end while page < artist_releases.pagination.pages
+
+    offset += 25
+  end
 end
 
 get :index do
@@ -104,24 +96,13 @@ end
 
 get :artist do
   @artist = Artist.find(params[:id])
-  all_albums = @artist.albums.order(year: :desc) # is_mock: :asc
+  all_albums = @artist.albums.order(date: :desc) # is_mock: :asc
 
-  @albums = {albums: [], eps: [], singles: [], compillations: [], other: []}
+  @albums = {}
 
   all_albums.each do |a|
-    if a.formats == nil || a.formats.include?("Reissue") || a.formats.include?("RE")
-      @albums[:other] << a
-    elsif a.formats.include?("Comp")
-      @albums[:compillations] << a
-    elsif a.formats.include?("Album")
-      @albums[:albums] << a
-    elsif a.formats.include?("EP")
-      @albums[:eps] << a
-    elsif a.formats.include?("Single") || a.formats.include?("Maxi")
-      @albums[:singles] << a
-    else
-      @albums[:other] << a
-    end
+    @albums[a.both_types] ||= []
+    @albums[a.both_types] << a
   end
 
   @new_albums = []
@@ -152,9 +133,9 @@ get :artist do
   slim :artist
 end
 
-post :artist_set_discogs_id do
+post :artist_set_mbid do
   a = Artist.find_or_create_by(filename: params[:filename])
-  a.discogs_id = params[:discogs_id].gsub(/[^0-9]/, '').to_i
+  a.mbid = params[:mbid]
   a.title = params[:filename]
   a.save
 
@@ -163,20 +144,17 @@ post :artist_set_discogs_id do
   redirect path_to(:artist).with(a.id)
 end
 
-post :album_set_discogs_id do
-  d_id = params[:discogs_id].gsub(/[^0-9]/, '').to_i
-  a = Album.where(discogs_id: d_id).take
+post :album_set_mbid do
+  a = Album.where(mbid: params[:mbid]).take
 
   if a != nil
-    release = $discogs.get_release(d_id)
-    a.formats = [release.formats[0].name, release.formats[0].descriptions].flatten.join('|')
-
     a.filename = params[:filename]
     a.is_mock = false
     a.save
-    flash[:notice] = "Successfully assigned discogs_id = #{d_id} to \"#{params[:filename]}\""
+
+    flash[:notice] = "Successfully assigned mbid = #{params[:mbid]} to \"#{params[:filename]}\""
   else
-    flash[:error] = "Unable to find Album with discogs_id = #{d_id}"
+    flash[:error] = "Unable to find Album with mbid = #{params[:mbid]}"
   end
 
   redirect path_to(:artist).with(params[:artist_id].to_i)

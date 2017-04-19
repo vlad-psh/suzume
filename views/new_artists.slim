@@ -2,8 +2,8 @@ ul
   - @artists.each do |a|
     li
       = "#{a} : "
-      a href="https://www.discogs.com/search/?q=#{a}&type=artist" discogs search
-      form method="POST" action=path_to(:artist_set_discogs_id)
-        input type="text" name="discogs_id"
+      a href="https://musicbrainz.org/search?query=#{a.gsub(/[&?=]/, '')}&type=artist&method=indexed" brainz search
+      form method="POST" action=path_to(:artist_set_mbid)
+        input type="text" name="mbid"
         input type="hidden" name="filename" value=a
         input type="submit"

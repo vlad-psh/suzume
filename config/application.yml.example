@@ -1,5 +1,6 @@
 ---
 secret: xxx
-useragent: Tulip/0.1 +https://fruitcode.net
-discogs_token: xxx
+app_name: Tulip
+app_version: 0.1
+app_contact: user@example.com
 library_path: /mnt/pool/MUSICLIB

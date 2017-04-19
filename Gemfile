@@ -14,4 +14,4 @@ gem 'pg'
 gem 'rack-flash3'
 gem 'puma'
 
-gem 'discogs-wrapper'
+gem 'musicbrainz'
