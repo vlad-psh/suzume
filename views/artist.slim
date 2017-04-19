@@ -23,7 +23,7 @@ h1
             - @suggestions[a].each do |k,v|
               tr
                 td = v
-                td = k.date
+                td = k.fix_date
                 td
                   a href="#" onclick="$('#album-id-#{iter}').val('#{k.mbid}');" = k.title
                 td
@@ -38,7 +38,7 @@ h1
   table
     - albums.each do |a|
       tr class=(a.is_mock ? '' : 'album-have')
-        td = a.date
+        td = a.fix_date
         td
           = a.title
           div.details = a.filename
