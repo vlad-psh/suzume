@@ -132,6 +132,23 @@ get :artist do
     @new_albums << dir if File.directory?(File.expand_path(dir, artist_dir))
   end
 
+  @suggestions = {}
+  @new_albums.each do |na|
+    matches = {}
+    na.downcase.gsub(/[^a-z0-9]/, ' ').split.each do |w|
+      all_albums.each do |a|
+        if a.title.downcase.include?(w)
+          matches[a] ||= 0
+          matches[a] += 1
+        end
+      end
+    end
+    matches.sort_by{|k,v|v}.reverse.each do |match|
+      @suggestions[na] ||= {}
+      @suggestions[na][match[0]] = match[1]
+    end
+  end
+
   slim :artist
 end
 

@@ -1,7 +1,7 @@
 h1
   = "#{@artist.title} "
   span.details style="font-size: 0.4em"
-    = "#{@artist.filename} @"
+    = "#{@artist.filename == @artist.title ? '' : @artist.filename} @"
     a href="https://www.discogs.com/artist/#{@artist.discogs_id}" discogs
 
 - if @new_albums.count > 0
@@ -16,6 +16,18 @@ h1
           input type="hidden" name="artist_id" value=@artist.id
           input type="hidden" name="filename" value=a
           input type="submit"
+        ' Suggestions:
+        - if @suggestions[a].count > 0
+          table
+            - @suggestions[a].each do |k,v|
+              tr
+                td = v
+                td = k.discogs_id
+                td
+                  a href="https://www.discogs.com/release/#{k.discogs_id}" url
+                td = k.year
+                td = k.title
+                td = k.formats
 
 - @albums.each do |type,albums|
   - next if albums.count == 0
