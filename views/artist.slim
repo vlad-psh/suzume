@@ -18,7 +18,7 @@ h1
           input type="hidden" name="filename" value=a
           input type="submit"
         ' Suggestions:
-        - if @suggestions[a].count > 0
+        - if @suggestions[a] && @suggestions[a].count > 0
           table.album-suggestions
             - @suggestions[a].each do |k,v|
               tr
@@ -31,7 +31,8 @@ h1
                 td = k.both_types
       - iter += 1
 
-- @albums.each do |type,albums|
+- @release_types.each do |type|
+  - albums = @albums[type]
   - next if albums.count == 0
   h2 = type
 

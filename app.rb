@@ -95,6 +95,21 @@ get :new_artists do
   slim :new_artists
 end
 
+def sort_types(a, b)
+  priority = ["Album", "EP", "Single"]
+  if priority.include?(a)
+    if priority.include?(b)
+      return priority.index(a) < priority.index(b) ? -1 : 1
+    else
+      return -1
+    end
+  elsif priority.include?(b)
+    return 1
+  else
+    return 0
+  end
+end
+
 get :artist do
   @artist = Artist.find(params[:id])
   all_albums = @artist.albums.order(date: :desc) # is_mock: :asc
@@ -105,6 +120,8 @@ get :artist do
     @albums[a.both_types] ||= []
     @albums[a.both_types] << a
   end
+
+  @release_types = @albums.keys.sort{|a,b|sort_types(a, b)}
 
   @new_albums = []
   artist_dir = File.expand_path(@artist.filename, $library_path)
