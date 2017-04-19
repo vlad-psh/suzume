@@ -8,11 +8,12 @@ h1
   h2. New folders
 
   ul
+    - iter = 0
     - @new_albums.each do |a|
       li
         = a
         form method="POST" action=path_to(:album_set_mbid)
-          input type="text" name="mbid"
+          input id="album-id-#{iter}" type="text" name="mbid"
           input type="hidden" name="artist_id" value=@artist.id
           input type="hidden" name="filename" value=a
           input type="submit"
@@ -22,12 +23,13 @@ h1
             - @suggestions[a].each do |k,v|
               tr
                 td = v
-                td = k.mbid
+                td = k.date
+                td
+                  a href="#" onclick="$('#album-id-#{iter}').val('#{k.mbid}');" = k.title
                 td
                   a href="https://musicbrainz.org/release-group/#{k.mbid}" url
-                td = k.date
-                td = k.title
                 td = k.both_types
+      - iter += 1
 
 - @albums.each do |type,albums|
   - next if albums.count == 0
@@ -41,6 +43,5 @@ h1
           = a.title
           div.details = a.filename
         td = a.both_types
-        td = a.mbid
         td
           a href="https://musicbrainz.org/release-group/#{a.mbid}" url
