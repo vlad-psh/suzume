@@ -54,8 +54,14 @@ def update_artist_albums(artist)
   offset = 0
   loop do
     artist_releases = mb_artist.release_groups(offset: offset)
-    break unless artist_releases
-    break if artist_releases.count == 0
+
+    3.times do |i|
+      if artist_releases == nil || artist_releases.count == 0
+        sleep 2
+        artist_releases = mb_artist.release_groups(offset: offset)
+      end
+    end
+    break if artist_releases == nil || artist_releases.count == 0
 
     artist_releases.each do |r|
       album = Album.find_or_initialize_by(mbid: r.id)
@@ -69,8 +75,9 @@ def update_artist_albums(artist)
       artist.albums << album unless artist_albums.include?(album)
     end
 
+    break if artist_releases.count < 25 # latest page
     offset += 25
-    sleep 0.5
+    sleep 1
   end
 end
 
