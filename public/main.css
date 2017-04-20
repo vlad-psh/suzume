@@ -24,3 +24,9 @@ tr.album-have td .details {
 table.album-suggestions {
   font-size: 0.7em;
 }
+.release-save-buttons {
+  display: none;
+}
+.ib {
+  display: inline-block;
+}

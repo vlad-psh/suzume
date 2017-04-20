@@ -47,15 +47,49 @@ form method="POST" action=path_to(:artist).with(@artist.id)
     - albums.each do |a|
       tr class=(a.is_mock ? '' : 'album-have')
         td = a.fix_date
-        td
-          = a.title
-          div.details = a.filename
+        td id="release-edit-cell-#{a.id}"
+          div.ib
+            input.release-edit-button type="button" value="Edit" data-release-id=a.id data-url=path_to(:album_form).with(a.id)
+          div.ib
+            = a.title
+            div.details = a.romaji
+            div.details = a.filename
         td
           a href="https://musicbrainz.org/release-group/#{a.mbid}" mbz
-        td
-          form method="POST" action=path_to(:album).with(a.id)
-            ' Title:
-            input type="text" name="title" value=a.title
-            ' Romaji:
-            input type="text" name="romaji" value=a.romaji
-            input type="submit"
+
+javascript:
+  $(document).on('click', '.release-edit-button', function(){
+    var id = $(this).attr("data-release-id");
+    $.ajax({
+      url: $(this).attr("data-url"),
+      method: "GET"
+    }).done(function(data){
+      $("#release-edit-cell-" + id).html(data);
+    });
+  });
+
+  $(document).on('click', '.release-cancel-button', function(){
+    var id = $(this).attr("data-release-id");
+    $.ajax({
+      url: $(this).attr("data-url"),
+      method: "GET"
+    }).done(function(data){
+      $("#release-edit-cell-" + id).html(data);
+    });
+  });
+
+  $(document).on('click', '.release-save-button', function(){
+    var id = $(this).attr("data-release-id");
+    var title = $("#release-edit-cell-" + id + " .release-input-title").val();
+    var romaji = $("#release-edit-cell-" + id + " .release-input-romaji").val();
+
+    $("#release-edit-cell-" + id + " input").prop("disabled", true);
+
+    $.ajax({
+      url: $(this).attr("data-url"),
+      method: "POST",
+      data: {"id": id, "title": title, "romaji": romaji}
+    }).done(function(data){
+      $("#release-edit-cell-" + id).html(data);
+    });
+  });

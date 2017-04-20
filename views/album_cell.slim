@@ -1,0 +1,5 @@
+div.ib
+  input.release-edit-button type="button" value="Edit" data-release-id=@album.id data-url=path_to(:album_form).with(@album.id)
+div.ib
+  = @album.title
+  div.details = @album.filename

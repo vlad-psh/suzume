@@ -17,6 +17,8 @@ paths index: '/',
     artist: '/artist/:id',
     artist_set_mbid: '/artist/set-mbid',
     album: '/album/:id',
+    album_form: '/album_form/:id',
+    album_cell: '/album_cell/:id',
     album_set_mbid: '/album/set-mbid'
 
 configure do
@@ -166,6 +168,27 @@ post :artist do
   a.save
 
   redirect path_to(:artist).with(a.id)
+end
+
+get :album_form do
+  @album = Album.find(params[:id].to_i)
+
+  slim :album_form, layout: false
+end
+
+post :album_form do
+  @album = Album.find(params[:id].to_i)
+  @album.title = params[:title]
+  @album.romaji = params[:romaji] && !params[:romaji].empty? ? params[:romaji] : nil
+  @album.save
+
+  slim :album_cell, layout: false
+end
+
+get :album_cell do
+  @album = Album.find(params[:id].to_i)
+
+  slim :album_cell, layout: false
 end
 
 post :artist_set_mbid do

@@ -1,0 +1,8 @@
+div.ib
+  input.release-save-button type="button" value="Save" data-release-id=@album.id data-url=path_to(:album_form).with(@album.id)
+  br
+  input.release-cancel-button type="button" value="Cancel" data-release-id=@album.id data-url=path_to(:album_cell).with(@album.id)
+div.ib
+  input.release-input-title type="text" value=@album.title
+  br
+  input.release-input-romaji type="text" value=@album.romaji
