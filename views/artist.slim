@@ -32,7 +32,7 @@ form method="POST" action=path_to(:artist).with(@artist.id)
                 td = v
                 td = k.fix_date
                 td
-                  a href="#" onclick="$('#album-id-#{iter}').val('#{k.mbid}');" = k.title
+                  a.sugg-link onclick="$('#album-id-#{iter}').val('#{k.mbid}');" = k.title
                 td
                   a href="https://musicbrainz.org/release-group/#{k.mbid}" url
                 td = k.both_types

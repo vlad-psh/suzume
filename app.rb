@@ -15,11 +15,11 @@ also_reload './models.rb'
 paths index: '/',
     new_artists: '/artists/new',
     artist: '/artist/:id',
-    artist_set_mbid: '/artist/set-mbid',
+    artist_set_mbid: '/artists/set-mbid',
     album: '/album/:id',
     album_form: '/album_form/:id',
     album_cell: '/album_cell/:id',
-    album_set_mbid: '/album/set-mbid'
+    album_set_mbid: '/albums/set-mbid'
 
 configure do
   puts '---> init <---'

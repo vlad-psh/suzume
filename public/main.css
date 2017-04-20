@@ -30,3 +30,6 @@ table.album-suggestions {
 .ib {
   display: inline-block;
 }
+.sugg-link {
+  cursor: pointer;
+}
