@@ -16,6 +16,7 @@ paths index: '/',
     new_artists: '/artists/new',
     artist: '/artist/:id',
     artist_set_mbid: '/artist/set-mbid',
+    album: '/album/:id',
     album_set_mbid: '/album/set-mbid'
 
 configure do
@@ -176,6 +177,15 @@ post :artist_set_mbid do
   update_artist_albums(a)
 
   redirect path_to(:artist).with(a.id)
+end
+
+post :album do
+  album = Album.find(params[:id].to_i)
+  album.title = params[:title]
+  album.romaji = params[:romaji]
+  album.save
+
+  redirect path_to(:artist).with(album.artists.first.id)
 end
 
 post :album_set_mbid do

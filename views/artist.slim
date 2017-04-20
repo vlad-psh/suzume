@@ -52,3 +52,10 @@ form method="POST" action=path_to(:artist).with(@artist.id)
           div.details = a.filename
         td
           a href="https://musicbrainz.org/release-group/#{a.mbid}" mbz
+        td
+          form method="POST" action=path_to(:album).with(a.id)
+            ' Title:
+            input type="text" name="title" value=a.title
+            ' Romaji:
+            input type="text" name="romaji" value=a.romaji
+            input type="submit"
