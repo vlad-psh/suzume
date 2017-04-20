@@ -141,7 +141,7 @@ get :artist do
   @suggestions = {}
   @new_albums.each do |na|
     matches = {}
-    na.downcase.gsub(/[^a-z0-9]/, ' ').split.each do |w|
+    na.downcase.gsub(/[[:punct:]]/, ' ').split.each do |w|
       all_albums.each do |a|
         if a.title.downcase.include?(w)
           matches[a] ||= 0
@@ -156,6 +156,15 @@ get :artist do
   end
 
   slim :artist
+end
+
+post :artist do
+  a = Artist.find(params[:id].to_i)
+  a.title = params[:title]
+  a.romaji = params[:romaji]
+  a.save
+
+  redirect path_to(:artist).with(a.id)
 end
 
 post :artist_set_mbid do

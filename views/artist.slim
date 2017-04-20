@@ -4,6 +4,13 @@ h1
     = "#{@artist.filename == @artist.title ? '' : @artist.filename} @ "
     a href="https://musicbrainz.org/artist/#{@artist.mbid}" brainz
 
+form method="POST" action=path_to(:artist).with(@artist.id)
+  ' Name:
+  input type="text" name="title" value=@artist.title
+  ' Romaji:
+  input type="text" name="romaji" value=@artist.romaji
+  input type="submit"
+
 - if @new_albums.count > 0
   h2. New folders
 
@@ -43,6 +50,5 @@ h1
         td
           = a.title
           div.details = a.filename
-        td = a.both_types
         td
-          a href="https://musicbrainz.org/release-group/#{a.mbid}" url
+          a href="https://musicbrainz.org/release-group/#{a.mbid}" mbz
