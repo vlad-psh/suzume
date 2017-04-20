@@ -47,12 +47,11 @@ form method="POST" action=path_to(:artist).with(@artist.id)
     - albums.each do |a|
       tr class=(a.is_mock ? '' : 'album-have')
         td = a.fix_date
-        td id="release-edit-cell-#{a.id}"
+        td.release-edit-cell id="release-edit-cell-#{a.id}"
           div.ib
             input.release-edit-button type="button" value="Edit" data-release-id=a.id data-url=path_to(:album_form).with(a.id)
           div.ib
-            = a.title
-            div.details = a.romaji
+            div.title-romaji data-title=a.title data-romaji=a.romaji = a.title
             div.details = a.filename
         td
           a href="https://musicbrainz.org/release-group/#{a.mbid}" mbz
@@ -92,4 +91,14 @@ javascript:
     }).done(function(data){
       $("#release-edit-cell-" + id).html(data);
     });
+  });
+
+  $(document).on('mouseenter', '.release-edit-cell', function(){
+    var textArea = $(this).find('.title-romaji');
+    textArea.text(textArea.attr("data-romaji"));
+  });
+
+  $(document).on('mouseleave', '.release-edit-cell', function(){
+    var textArea = $(this).find('.title-romaji');
+    textArea.text(textArea.attr("data-title"));
   });
