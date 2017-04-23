@@ -14,4 +14,4 @@ gem 'pg'
 gem 'rack-flash3'
 gem 'puma'
 
-gem 'musicbrainz'
+gem 'musicbrainz', '~> 0.8.0'

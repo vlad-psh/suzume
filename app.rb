@@ -38,7 +38,6 @@ configure do
     c.app_name = $config['app_name']
     c.app_version = $config['app_version']
     c.contact = $config['app_contact']
-    c.query_interval = 0.2
   end
 
   use Rack::Flash
@@ -53,15 +52,16 @@ end
 
 def update_artist_albums(artist)
   artist_albums = artist.albums
-  mb_artist = MusicBrainz::Artist.find(artist.mbid)
+  mb_artist = MusicBrainz::Artist.find(artist.mbid, inc: nil)
   offset = 0
+  step = 100
   loop do
-    artist_releases = mb_artist.release_groups(offset: offset)
+    artist_releases = mb_artist.release_groups(offset: offset, limit: step, inc: nil)
 
     3.times do |i|
       if artist_releases == nil || artist_releases.count == 0
         sleep 2
-        artist_releases = mb_artist.release_groups(offset: offset)
+        artist_releases = mb_artist.release_groups(offset: offset, limit: step, inc: nil)
       end
     end
     break if artist_releases == nil || artist_releases.count == 0
@@ -71,16 +71,15 @@ def update_artist_albums(artist)
       album.update_attributes(
         date: r.first_release_date,
         title: r.title,
-        primary_type: r.type,
-        secondary_type: r.subtypes
+        primary_type: r.primary_type,
+        secondary_type: r.secondary_types.join(" + ")
       )
       album.save
       artist.albums << album unless artist_albums.include?(album)
     end
 
-    break if artist_releases.count < 25 # latest page
-    offset += 25
-    sleep 1
+    break if artist_releases.total_count < artist_releases.offset + step # latest page
+    offset += limit
   end
 end
 
