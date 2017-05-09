@@ -79,12 +79,19 @@ def update_artist_albums(artist)
     end
 
     break if artist_releases.total_count < artist_releases.offset + step # latest page
-    offset += limit
+    offset += step
   end
 end
 
 get :index do
   @artists = Artist.all
+
+  request.accept.each do |type|
+    if type.to_s == 'text/json'
+      halt @artists.to_json(only: [:id, :title, :romaji])
+    end
+  end
+
   slim :index
 end
 
@@ -119,18 +126,34 @@ def sort_types(a, b)
   end
 end
 
-get :artist do
-  @artist = Artist.find(params[:id])
-  all_albums = @artist.albums.order(date: :desc) # is_mock: :asc
-
-  @albums = {}
+def albums_by_type(all_albums)
+  albums = {}
 
   all_albums.each do |a|
-    @albums[a.both_types] ||= []
-    @albums[a.both_types] << a
+    albums[a.both_types] ||= []
+    albums[a.both_types] << a
   end
 
-  @release_types = @albums.keys.sort{|a,b|sort_types(a, b)}
+  keys = albums.keys.sort{|a,b|sort_types(a, b)}
+
+  result = []
+  keys.each {|k| result << {type: k, content: albums[k]} }
+  return result
+end
+
+get :artist do
+  @artist = Artist.find(params[:id])
+
+  request.accept.each do |type|
+    if type.to_s == 'text/json'
+      all_albums = @artist.albums.order(date: :desc).where(is_mock: false)
+      sorted_albums = albums_by_type(all_albums)
+      halt sorted_albums.to_json #(only: [:type, content: {only: :id]])
+    end
+  end
+
+  all_albums = @artist.albums.order(date: :desc) # is_mock: :asc
+  @sorted_albums = albums_by_type(all_albums)
 
   @new_albums = []
   artist_dir = File.expand_path(@artist.filename, $library_path)

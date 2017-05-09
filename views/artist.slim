@@ -38,9 +38,10 @@ form method="POST" action=path_to(:artist).with(@artist.id)
                 td = k.both_types
       - iter += 1
 
-- @release_types.each do |type|
-  - albums = @albums[type]
-  - next if albums.count == 0
+- @sorted_albums.each do |albums_group|
+  - type = albums_group[:type]
+  - albums = albums_group[:content]
+  - next if !albums || albums.count == 0
   h2 = type
 
   table

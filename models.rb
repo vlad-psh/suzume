@@ -24,7 +24,9 @@ class Album < ActiveRecord::Base
   end
 
   def fix_date
-    if date.year >= 2030
+    if date.nil?
+      return ''
+    elsif date.year >= 2030
       return ''
     elsif date.month == 12 && date.day == 31
       return date.year.to_s
