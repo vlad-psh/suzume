@@ -15,11 +15,13 @@ also_reload './models.rb'
 paths index: '/',
     new_artists: '/artists/new',
     artist: '/artist/:id',
-    artist_set_mbid: '/artists/set-mbid',
     album: '/album/:id',
     album_form: '/album_form/:id',
     album_cell: '/album_cell/:id',
-    album_set_mbid: '/albums/set-mbid'
+    artist_set_mbid: '/mbid/artists',
+    album_set_mbid: '/mbid/albums',
+    artist_tags: '/tag/artist/:id',
+    album_tags: '/tag/album/:id'
 
 configure do
   puts '---> init <---'
@@ -142,7 +144,7 @@ def albums_by_type(all_albums)
 end
 
 get :artist do
-  @artist = Artist.find(params[:id])
+  @artist = Artist.includes(:tags).find(params[:id])
 
   request.accept.each do |type|
     if type.to_s == 'text/json'
@@ -247,4 +249,18 @@ post :album_set_mbid do
   end
 
   redirect path_to(:artist).with(params[:artist_id].to_i)
+end
+
+post :artist_tags do
+  artist = Artist.find(params[:id].to_i)
+
+  tags = params[:tags].split(",")
+  tags.each do |t|
+    tag_category, tag_name = t.downcase.split(":")
+    next if tag_category.length > 1
+    tag = Tag.find_or_create_by(category: tag_category.strip, title: tag_name.strip)
+    artist.tags << tag
+  end
+
+  redirect path_to(:artist).with(artist.id)
 end

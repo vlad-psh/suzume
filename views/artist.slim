@@ -3,12 +3,21 @@ h1
   span.details style="font-size: 0.4em"
     = "#{@artist.filename == @artist.title ? '' : @artist.filename} @ "
     a href="https://musicbrainz.org/artist/#{@artist.mbid}" brainz
+    '  |
+    a href="https://last.fm/music/#{@artist.title}" lfm
 
 form method="POST" action=path_to(:artist).with(@artist.id)
   ' Name:
   input type="text" name="title" value=@artist.title
   ' Romaji:
   input type="text" name="romaji" value=@artist.romaji
+  input type="submit"
+
+form method="POST" action=path_to(:artist_tags).with(@artist.id)
+  ' Tags:
+  - @artist.tags.each do |t|
+    ' #{t.category}:#{t.title}
+  input type="text" name="tags"
   input type="submit"
 
 - if @new_albums.count > 0

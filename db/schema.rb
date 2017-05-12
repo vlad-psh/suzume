@@ -10,64 +10,65 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170420123019) do
+ActiveRecord::Schema.define(version: 20170509093932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "albums", force: :cascade do |t|
-    t.string   "mbid"
-    t.string   "filename"
-    t.string   "title"
-    t.date     "date"
-    t.boolean  "is_mock",        default: true
-    t.string   "primary_type"
-    t.string   "secondary_type"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
-    t.string   "romaji"
-  end
-
-  create_table "albums_artists", force: :cascade do |t|
-    t.integer  "artist_id"
-    t.integer  "album_id"
+  create_table "albums", id: :serial, force: :cascade do |t|
+    t.string "mbid"
+    t.string "filename"
+    t.string "title"
+    t.date "date"
+    t.boolean "is_mock", default: true
+    t.string "primary_type"
+    t.string "secondary_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["album_id"], name: "index_albums_artists_on_album_id", using: :btree
-    t.index ["artist_id"], name: "index_albums_artists_on_artist_id", using: :btree
+    t.string "romaji"
   end
 
-  create_table "albums_tags", force: :cascade do |t|
-    t.integer  "album_id"
-    t.integer  "tag_id"
+  create_table "albums_artists", id: :serial, force: :cascade do |t|
+    t.integer "artist_id"
+    t.integer "album_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["album_id"], name: "index_albums_tags_on_album_id", using: :btree
-    t.index ["tag_id"], name: "index_albums_tags_on_tag_id", using: :btree
+    t.index ["album_id"], name: "index_albums_artists_on_album_id"
+    t.index ["artist_id"], name: "index_albums_artists_on_artist_id"
   end
 
-  create_table "artists", force: :cascade do |t|
-    t.string   "mbid"
-    t.string   "filename"
-    t.string   "title"
+  create_table "albums_tags", id: :serial, force: :cascade do |t|
+    t.integer "album_id"
+    t.integer "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string   "romaji"
+    t.index ["album_id"], name: "index_albums_tags_on_album_id"
+    t.index ["tag_id"], name: "index_albums_tags_on_tag_id"
   end
 
-  create_table "artists_tags", force: :cascade do |t|
-    t.integer  "artist_id"
-    t.integer  "tag_id"
+  create_table "artists", id: :serial, force: :cascade do |t|
+    t.string "mbid"
+    t.string "filename"
+    t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["artist_id"], name: "index_artists_tags_on_artist_id", using: :btree
-    t.index ["tag_id"], name: "index_artists_tags_on_tag_id", using: :btree
+    t.string "romaji"
   end
 
-  create_table "tags", force: :cascade do |t|
-    t.string   "title"
+  create_table "artists_tags", id: :serial, force: :cascade do |t|
+    t.integer "artist_id"
+    t.integer "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["artist_id"], name: "index_artists_tags_on_artist_id"
+    t.index ["tag_id"], name: "index_artists_tags_on_tag_id"
+  end
+
+  create_table "tags", id: :serial, force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "category"
   end
 
 end
