@@ -90,15 +90,13 @@ javascript:
 
   $(document).on('click', '.release-save-button', function(){
     var id = $(this).attr("data-release-id");
-    var title = $("#release-line-" + id + " .release-input-title").val();
-    var romaji = $("#release-line-" + id + " .release-input-romaji").val();
-
+    var serialized_form = $("#release-form-" + id).serialize();
     $("#release-line-" + id + " input").prop("disabled", true);
 
     $.ajax({
       url: $(this).attr("data-url"),
       method: "POST",
-      data: {"id": id, "title": title, "romaji": romaji}
+      data: serialized_form
     }).done(function(data){
       $("#release-line-" + id).html(data);
     });

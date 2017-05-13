@@ -1,8 +1,15 @@
 td
-  input.release-input-title type="text" value=@album.title
-  br
-  input.release-input-romaji type="text" value=@album.romaji
+  form id="release-form-#{@album.id}" method="POST" action=path_to(:album).with(@album.id)
+    ' Year:
+    input type="text" name="year" value=@album.year
+    ' Type:
+    input type="text" name="type" value=@album.primary_type
+    br
+    ' Title:
+    input type="text" name="title" value=@album.title
+    ' Romaji:
+    input type="text" name="romaji" value=@album.romaji
 td
-  input.release-save-button type="button" value="Save" data-release-id=@album.id data-url=path_to(:album_form).with(@album.id)
-  br                                                                                                                   
+  input.release-save-button type="button" value="Save" data-release-id=@album.id data-url=path_to(:album).with(@album.id)
+  br
   input.release-cancel-button type="button" value="Cancel" data-release-id=@album.id data-url=path_to(:album_line).with(@album.id)

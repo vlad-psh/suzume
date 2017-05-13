@@ -174,15 +174,6 @@ get :album_form do
   slim :album_form, layout: false
 end
 
-post :album_form do
-  album = Album.find(params[:id].to_i)
-  album.title = params[:title]
-  album.romaji = params[:romaji] && !params[:romaji].empty? ? params[:romaji] : nil
-  album.save
-
-  slim :album_line, layout: false, locals: {album: album}
-end
-
 get :album_line do
   album = Album.find(params[:id].to_i)
   slim :album_line, layout: false, locals: {album: album}
@@ -190,11 +181,14 @@ end
 
 post :album do
   album = Album.find(params[:id].to_i)
+  album.year = params[:year].to_i
+  album.primary_type = params[:type]
   album.title = params[:title]
-  album.romaji = params[:romaji]
+  album.romaji = params[:romaji].empty? ? nil : params[:romaji]
   album.save
 
-  redirect path_to(:artist).with(album.artists.first.id)
+#  redirect path_to(:artist).with(album.artists.first.id)
+  slim :album_line, layout: false, locals: {album: album}
 end
 
 post :albums do
