@@ -7,6 +7,7 @@ require 'slim'
 require 'rack-flash'
 require 'yaml'
 require 'musicbrainz'
+require 'lastfm'
 
 require_relative './models.rb'
 
@@ -22,7 +23,8 @@ paths index: '/',
     album_set_mbid: '/mbid/albums',
     artist_tags: '/tag/artist/:id',
     album_tags: '/tag/album/:id',
-    artists_by_tag: '/artists/tag/:id'
+    artists_by_tag: '/artists/tag/:id',
+    lastfm_tags: '/lastfm/artist/:id'
 
 configure do
   puts '---> init <---'
@@ -42,6 +44,7 @@ configure do
     c.app_version = $config['app_version']
     c.contact = $config['app_contact']
   end
+  $lastfm = Lastfm.new($config["lastfm_api_key"], $config["lastfm_secret"])
 
   use Rack::Flash
 end
@@ -278,4 +281,10 @@ post :artist_tags do
   end
 
   redirect path_to(:artist).with(artist.id)
+end
+
+get :lastfm_tags do
+  artist = Artist.find(params[:id].to_i)
+  @tags = $lastfm.artist.get_top_tags(artist: artist.title)
+  slim :tags, layout: false
 end

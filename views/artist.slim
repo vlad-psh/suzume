@@ -20,6 +20,21 @@ form method="POST" action=path_to(:artist_tags).with(@artist.id)
   input type="text" name="tags"
   input type="submit"
 
+a#lastfm-tags-link Show last.fm tags
+div#lastfm-tags
+           
+javascript:       
+  $(document).ready(function(){
+    $('#lastfm-tags-link').click(function(){
+      $.ajax({
+        url: "#{path_to(:lastfm_tags).with(@artist.id)}"
+      }).done(function(data){
+        $('#lastfm-tags').html(data);
+      });
+    });
+  });
+
+
 - if @new_albums.count > 0
   h2. New folders
 
