@@ -43,24 +43,18 @@ javascript:
     - @new_albums.each do |a|
       li
         = a
-        form method="POST" action=path_to(:album_set_mbid)
-          input id="album-id-#{iter}" type="text" name="mbid"
+        form method="POST" action=path_to(:albums)
           input type="hidden" name="artist_id" value=@artist.id
           input type="hidden" name="filename" value=a
-          input type="submit"
-        ' Suggestions:
-        - if @suggestions[a] && @suggestions[a].count > 0
-          table.album-suggestions
-            - @suggestions[a].each do |k,v|
-              tr
-                td = v
-                td = k.fix_date
-                td
-                  a.sugg-link onclick="$('#album-id-#{iter}').val('#{k.mbid}');" = k.title
-                td
-                  a href="https://musicbrainz.org/release-group/#{k.mbid}" url
-                td = k.both_types
-      - iter += 1
+          ' Year:
+          input> type="text" name="year"
+          ' Title:
+          input> type="text" name="title"
+          ' Romaji:
+          input> type="text" name="romaji"
+          ' Type:
+          input> type="text" name="type"
+          input type="submit" value="Save"
 
 - @sorted_albums.each do |albums_group|
   - type = albums_group[:type]
@@ -70,16 +64,8 @@ javascript:
 
   table
     - albums.each do |a|
-      tr class=(a.is_mock ? '' : 'album-have')
-        td = a.fix_date
-        td.release-edit-cell id="release-edit-cell-#{a.id}"
-          div.ib
-            input.release-edit-button type="button" value="Edit" data-release-id=a.id data-url=path_to(:album_form).with(a.id)
-          div.ib
-            div.title-romaji data-title=a.title data-romaji=a.romaji = a.title
-            div.details = a.filename
-        td
-          a href="https://musicbrainz.org/release-group/#{a.mbid}" mbz
+     tr.release-line id="release-line-#{a.id}"
+       == slim :album_line, locals: {album: a}
 
 javascript:
   $(document).on('click', '.release-edit-button', function(){
@@ -88,7 +74,7 @@ javascript:
       url: $(this).attr("data-url"),
       method: "GET"
     }).done(function(data){
-      $("#release-edit-cell-" + id).html(data);
+      $("#release-line-" + id).html(data);
     });
   });
 
@@ -98,32 +84,32 @@ javascript:
       url: $(this).attr("data-url"),
       method: "GET"
     }).done(function(data){
-      $("#release-edit-cell-" + id).html(data);
+      $("#release-line-" + id).html(data);
     });
   });
 
   $(document).on('click', '.release-save-button', function(){
     var id = $(this).attr("data-release-id");
-    var title = $("#release-edit-cell-" + id + " .release-input-title").val();
-    var romaji = $("#release-edit-cell-" + id + " .release-input-romaji").val();
+    var title = $("#release-line-" + id + " .release-input-title").val();
+    var romaji = $("#release-line-" + id + " .release-input-romaji").val();
 
-    $("#release-edit-cell-" + id + " input").prop("disabled", true);
+    $("#release-line-" + id + " input").prop("disabled", true);
 
     $.ajax({
       url: $(this).attr("data-url"),
       method: "POST",
       data: {"id": id, "title": title, "romaji": romaji}
     }).done(function(data){
-      $("#release-edit-cell-" + id).html(data);
+      $("#release-line-" + id).html(data);
     });
   });
 
-  $(document).on('mouseenter', '.release-edit-cell', function(){
+  $(document).on('mouseenter', '.release-line', function(){
     var textArea = $(this).find('.title-romaji');
     textArea.text(textArea.attr("data-romaji"));
   });
 
-  $(document).on('mouseleave', '.release-edit-cell', function(){
+  $(document).on('mouseleave', '.release-line', function(){
     var textArea = $(this).find('.title-romaji');
     textArea.text(textArea.attr("data-title"));
   });

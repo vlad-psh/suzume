@@ -18,10 +18,10 @@ also_reload './helpers.rb'
 paths index: '/',
     artists: '/artists',
     artist: '/artist/:id',
+    albums: '/albums',
     album: '/album/:id',
     album_form: '/album_form/:id',
-    album_cell: '/album_cell/:id',
-    album_set_mbid: '/mbid/albums',
+    album_line: '/album_line/:id',
     artist_tags: '/tag/artist/:id',
     album_tags: '/tag/album/:id',
     artists_by_tag: '/artists/tag/:id',
@@ -123,8 +123,8 @@ def albums_by_type(all_albums)
   albums = {}
 
   all_albums.each do |a|
-    albums[a.both_types] ||= []
-    albums[a.both_types] << a
+    albums[a.primary_type] ||= []
+    albums[a.primary_type] << a
   end
 
   keys = albums.keys.sort{|a,b|sort_types(a, b)}
@@ -145,7 +145,7 @@ get :artist do
     end
   end
 
-  all_albums = @artist.albums.order(date: :desc) # is_mock: :asc
+  all_albums = @artist.albums.order(year: :desc) # is_mock: :asc
   @sorted_albums = albums_by_type(all_albums)
 
   @new_albums = []
@@ -154,23 +154,6 @@ get :artist do
     next if [".", ".."].include?(dir)
     next if all_albums.any? { |a| a.filename == dir }
     @new_albums << dir if File.directory?(File.expand_path(dir, artist_dir))
-  end
-
-  @suggestions = {}
-  @new_albums.each do |na|
-    matches = {}
-    na.downcase.gsub(/[[:punct:]]/, ' ').split.each do |w|
-      all_albums.each do |a|
-        if a.title.downcase.include?(w)
-          matches[a] ||= 0
-          matches[a] += 1
-        end
-      end
-    end
-    matches.sort_by{|k,v|v}.reverse.each do |match|
-      @suggestions[na] ||= {}
-      @suggestions[na][match[0]] = match[1]
-    end
   end
 
   slim :artist
@@ -192,18 +175,17 @@ get :album_form do
 end
 
 post :album_form do
-  @album = Album.find(params[:id].to_i)
-  @album.title = params[:title]
-  @album.romaji = params[:romaji] && !params[:romaji].empty? ? params[:romaji] : nil
-  @album.save
+  album = Album.find(params[:id].to_i)
+  album.title = params[:title]
+  album.romaji = params[:romaji] && !params[:romaji].empty? ? params[:romaji] : nil
+  album.save
 
-  slim :album_cell, layout: false
+  slim :album_line, layout: false, locals: {album: album}
 end
 
-get :album_cell do
-  @album = Album.find(params[:id].to_i)
-
-  slim :album_cell, layout: false
+get :album_line do
+  album = Album.find(params[:id].to_i)
+  slim :album_line, layout: false, locals: {album: album}
 end
 
 post :album do
@@ -215,20 +197,18 @@ post :album do
   redirect path_to(:artist).with(album.artists.first.id)
 end
 
-post :album_set_mbid do
-  a = Album.where(mbid: params[:mbid]).take
+post :albums do
+  artist = Artist.find(params[:artist_id].to_i)
+  album = Album.find_or_initialize_by(filename: params[:filename])
+  album.year = params[:year].to_i || nil
+  album.title = params[:title]
+  album.romaji = params[:romaji].empty? ? nil : params[:romaji]
+  album.primary_type = params[:type]
+  album.save
 
-  if a != nil
-    a.filename = params[:filename]
-    a.is_mock = false
-    a.save
+  artist.albums << album
 
-    flash[:notice] = "Successfully assigned mbid = #{params[:mbid]} to \"#{params[:filename]}\""
-  else
-    flash[:error] = "Unable to find Album with mbid = #{params[:mbid]}"
-  end
-
-  redirect path_to(:artist).with(params[:artist_id].to_i)
+  redirect path_to(:artist).with(artist.id)
 end
 
 post :artist_tags do

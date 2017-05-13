@@ -18,9 +18,6 @@ td .details {
   font-size: 0.6em;
   color: #999
 }
-tr.album-have td .details {
-  color: #647c5b;
-}
 table.album-suggestions {
   font-size: 0.7em;
 }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170509093932) do
+ActiveRecord::Schema.define(version: 20170513165436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,13 +19,11 @@ ActiveRecord::Schema.define(version: 20170509093932) do
     t.string "mbid"
     t.string "filename"
     t.string "title"
-    t.date "date"
-    t.boolean "is_mock", default: true
     t.string "primary_type"
-    t.string "secondary_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "romaji"
+    t.integer "year"
   end
 
   create_table "albums_artists", id: :serial, force: :cascade do |t|
