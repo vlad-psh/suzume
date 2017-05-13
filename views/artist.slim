@@ -2,7 +2,7 @@ h1
   = "#{@artist.title} "
   span.details style="font-size: 0.4em"
     = "#{@artist.filename == @artist.title ? '' : @artist.filename} @ "
-    a href="https://musicbrainz.org/artist/#{@artist.mbid}" brainz
+    a href=mb_artist_search_path(@artist.title) brainz
     '  |
     a href="https://last.fm/music/#{@artist.title}" lfm
 

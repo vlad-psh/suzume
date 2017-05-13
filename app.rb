@@ -10,8 +10,10 @@ require 'musicbrainz'
 require 'lastfm'
 
 require_relative './models.rb'
+require_relative './helpers.rb'
 
 also_reload './models.rb'
+also_reload './helpers.rb'
 
 paths index: '/',
     artists: '/artists',
@@ -24,6 +26,8 @@ paths index: '/',
     album_tags: '/tag/album/:id',
     artists_by_tag: '/artists/tag/:id',
     lastfm_tags: '/lastfm/artist/:id'
+
+helpers TulipHelpers
 
 configure do
   puts '---> init <---'

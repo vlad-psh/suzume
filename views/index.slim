@@ -7,7 +7,7 @@ ul
         = a
         input type="hidden" name="filename" value=a
         input< type="submit" value="Create"
-        a< href="https://musicbrainz.org/search?query=#{a.gsub(/[&?=]/, '')}&type=artist&method=indexed" brainz search
+        a< href=mb_artist_search_path(a) brainz search
 
 h2. Tags
 
