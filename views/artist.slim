@@ -16,7 +16,7 @@ form method="POST" action=path_to(:artist).with(@artist.id)
 form method="POST" action=path_to(:artist_tags).with(@artist.id)
   ' Tags:
   - @artist.tags.each do |t|
-    ' #{t.category}:#{t.title}
+    div class="tag tag-#{t.category}" = t.title
   input type="text" name="tags"
   input type="submit"
 

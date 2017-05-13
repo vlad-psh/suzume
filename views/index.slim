@@ -1,3 +1,7 @@
+- @tags.each do |t|
+  div class="tag tag-#{t.category}"
+    a href=path_to(:artists_by_tag).with(t.id) = t.title
+
 ul
   - @artists.each do |a|
     li

@@ -21,7 +21,8 @@ paths index: '/',
     artist_set_mbid: '/mbid/artists',
     album_set_mbid: '/mbid/albums',
     artist_tags: '/tag/artist/:id',
-    album_tags: '/tag/album/:id'
+    album_tags: '/tag/album/:id',
+    artists_by_tag: '/artists/tag/:id'
 
 configure do
   puts '---> init <---'
@@ -87,6 +88,7 @@ end
 
 get :index do
   @artists = Artist.all
+  @tags = Tag.all.order(category: :asc, title: :asc)
 
   request.accept.each do |type|
     if type.to_s == 'text/json'
@@ -94,6 +96,19 @@ get :index do
     end
   end
 
+  slim :index
+end
+
+get :artists_by_tag do
+  tag = Tag.find(params[:id].to_i)
+
+  unless tag
+    flash[:error] = "Tag with ID=#{params[:id]} was not found"
+    redirect_to :index
+  end
+
+  @artists = tag.artists
+  @tags = Tag.all.order(category: :asc, title: :asc)
   slim :index
 end
 
