@@ -1,6 +1,21 @@
+h2. New artists
+
+ul
+  - @new_artists.each do |a|
+    li
+      form method="POST" action=path_to(:artists)
+        = a
+        input type="hidden" name="filename" value=a
+        input< type="submit" value="Create"
+        a< href="https://musicbrainz.org/search?query=#{a.gsub(/[&?=]/, '')}&type=artist&method=indexed" brainz search
+
+h2. Tags
+
 - @tags.each do |t|
   div class="tag tag-#{t.category}"
     a href=path_to(:artists_by_tag).with(t.id) = t.title
+
+h2. All artists
 
 ul
   - @artists.each do |a|

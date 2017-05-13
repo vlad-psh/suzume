@@ -14,12 +14,11 @@ require_relative './models.rb'
 also_reload './models.rb'
 
 paths index: '/',
-    new_artists: '/artists/new',
+    artists: '/artists',
     artist: '/artist/:id',
     album: '/album/:id',
     album_form: '/album_form/:id',
     album_cell: '/album_cell/:id',
-    artist_set_mbid: '/mbid/artists',
     album_set_mbid: '/mbid/albums',
     artist_tags: '/tag/artist/:id',
     album_tags: '/tag/album/:id',
@@ -56,39 +55,6 @@ def get_tulip_id(dir)
   return tulip_id
 end
 
-def update_artist_albums(artist)
-  artist_albums = artist.albums
-  mb_artist = MusicBrainz::Artist.find(artist.mbid, inc: nil)
-  offset = 0
-  step = 100
-  loop do
-    artist_releases = mb_artist.release_groups(offset: offset, limit: step, inc: nil)
-
-    3.times do |i|
-      if artist_releases == nil || artist_releases.count == 0
-        sleep 2
-        artist_releases = mb_artist.release_groups(offset: offset, limit: step, inc: nil)
-      end
-    end
-    break if artist_releases == nil || artist_releases.count == 0
-
-    artist_releases.each do |r|
-      album = Album.find_or_initialize_by(mbid: r.id)
-      album.update_attributes(
-        date: r.first_release_date,
-        title: r.title,
-        primary_type: r.primary_type,
-        secondary_type: r.secondary_types.join(" + ")
-      )
-      album.save
-      artist.albums << album unless artist_albums.include?(album)
-    end
-
-    break if artist_releases.total_count < artist_releases.offset + step # latest page
-    offset += step
-  end
-end
-
 get :index do
   @artists = Artist.all
   @tags = Tag.all.order(category: :asc, title: :asc)
@@ -99,7 +65,26 @@ get :index do
     end
   end
 
+  db_artists = Artist.all.pluck(:filename)
+  db_artists << "." << ".."
+
+  @new_artists = []
+  Dir.entries($library_path).each do |dir|
+    next if db_artists.include?(dir)
+
+## TODO: do I really need this?
+#    artist_dir = File.expand_path(dir, $library_path)
+#    tulip_id = get_tulip_id(artist_dir)
+    @new_artists << dir # unless tulip_id
+  end
+
   slim :index
+end
+
+post :artists do
+  a = Artist.create(filename: params[:filename],
+                       title: params[:filename])
+  redirect path_to(:artist).with(a.id)
 end
 
 get :artists_by_tag do
@@ -113,22 +98,6 @@ get :artists_by_tag do
   @artists = tag.artists
   @tags = Tag.all.order(category: :asc, title: :asc)
   slim :index
-end
-
-get :new_artists do
-  db_artists = Artist.all.pluck(:filename)
-  db_artists << "." << ".."
-
-  @artists = []
-  Dir.entries($library_path).each do |dir|
-    next if db_artists.include?(dir)
-
-    artist_dir = File.expand_path(dir, $library_path)
-    tulip_id = get_tulip_id(artist_dir)
-    @artists << dir unless tulip_id
-  end
-
-  slim :new_artists
 end
 
 def sort_types(a, b)
@@ -231,17 +200,6 @@ get :album_cell do
   @album = Album.find(params[:id].to_i)
 
   slim :album_cell, layout: false
-end
-
-post :artist_set_mbid do
-  a = Artist.find_or_create_by(filename: params[:filename])
-  a.mbid = params[:mbid]
-  a.title = params[:filename]
-  a.save
-
-  update_artist_albums(a)
-
-  redirect path_to(:artist).with(a.id)
 end
 
 post :album do
