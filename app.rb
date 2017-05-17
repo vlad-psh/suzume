@@ -22,7 +22,8 @@ paths index: '/',
     album: '/album/:id',
     album_form: '/album_form/:id',
     album_line: '/album_line/:id',
-    artist_tags: '/tag/artist/:id',
+    artist_add_tag: '/artist/tag/add',
+    artist_remove_tag: '/artist/tag/remove',
     album_tags: '/tag/album/:id',
     artists_by_tag: '/artists/tag/:id',
     lastfm_tags: '/lastfm/artist/:id'
@@ -205,18 +206,25 @@ post :albums do
   redirect path_to(:artist).with(artist.id)
 end
 
-post :artist_tags do
-  artist = Artist.find(params[:id].to_i)
+post :artist_add_tag do
+  artist = Artist.find(params[:artist_id].to_i)
 
-  tags = params[:tags].split(",")
-  tags.each do |t|
-    tag_category, tag_name = t.downcase.split(":")
-    next if tag_category.length > 1
+  t = params[:tag]
+  tag_category, tag_name = t.downcase.split(":")
+  unless tag_category.length != 1
     tag = Tag.find_or_create_by(category: tag_category.strip, title: tag_name.strip)
     artist.tags << tag
   end
 
   redirect path_to(:artist).with(artist.id)
+end
+
+post :artist_remove_tag do
+  artist = Artist.find(params[:artist_id].to_i)
+  tag = Tag.find(params[:tag_id].to_i)
+  artist.tags.delete(tag)
+
+  return "OK"
 end
 
 get :lastfm_tags do

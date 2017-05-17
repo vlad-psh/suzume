@@ -13,11 +13,15 @@ form method="POST" action=path_to(:artist).with(@artist.id)
   input type="text" name="romaji" value=@artist.romaji
   input type="submit"
 
-form method="POST" action=path_to(:artist_tags).with(@artist.id)
+form method="POST" action=path_to(:artist_add_tag)
   ' Tags:
   - @artist.tags.each do |t|
-    div class="tag tag-#{t.category}" = t.title
-  input type="text" name="tags"
+    div class="tag tag-#{t.category}" id="tag-id-#{t.id}"
+      = t.title
+      a.artist-remove-tag-link style="cursor: pointer" data-artist-id=@artist.id data-tag-id=t.id
+        img src="/del.png"
+  input type="hidden" name="artist_id" value=@artist.id
+  input type="text" name="tag"
   input type="submit"
 
 a#lastfm-tags-link Show last.fm tags
@@ -68,6 +72,19 @@ javascript:
        == slim :album_line, locals: {album: a}
 
 javascript:
+  $(document).on('click', '.artist-remove-tag-link', function(){
+    var tag_id = $(this).attr("data-tag-id");
+    var artist_id = $(this).attr("data-artist-id");
+
+    $.ajax({
+      url: "#{path_to(:artist_remove_tag)}",
+      method: "POST",
+      data: {artist_id: artist_id, tag_id: tag_id}
+    }).done(function(data){
+      $("#tag-id-" + tag_id).remove();
+    });
+  });
+
   $(document).on('click', '.release-edit-button', function(){
     var id = $(this).attr("data-release-id");
     $.ajax({
