@@ -18,14 +18,15 @@ also_reload './helpers.rb'
 paths index: '/',
     artists: '/artists',
     artist: '/artist/:id',
+    artist_add_tag: '/artist/tag/add',
+    artist_remove_tag: '/artist/tag/remove',
+    artists_by_tag: '/artists/tag/:id',
     albums: '/albums',
     album: '/album/:id',
     album_form: '/album_form/:id',
     album_line: '/album_line/:id',
-    artist_add_tag: '/artist/tag/add',
-    artist_remove_tag: '/artist/tag/remove',
-    album_tags: '/tag/album/:id',
-    artists_by_tag: '/artists/tag/:id',
+    album_add_tag: '/album/tag/add',
+    album_remove_tag: '/album/tag/remove',
     lastfm_tags: '/lastfm/artist/:id'
 
 helpers TulipHelpers
@@ -61,7 +62,7 @@ def get_tulip_id(dir)
 end
 
 get :index do
-  @artists = Artist.all
+  @artists = Artist.includes(:tags).all
   @tags = Tag.all.order(category: :asc, title: :asc)
 
   request.accept.each do |type|
@@ -223,6 +224,27 @@ post :artist_remove_tag do
   artist = Artist.find(params[:artist_id].to_i)
   tag = Tag.find(params[:tag_id].to_i)
   artist.tags.delete(tag)
+
+  return "OK"
+end
+
+post :album_add_tag do
+  album = Album.find(params[:album_id].to_i)
+
+  t = params[:tag]
+  tag_category, tag_name = t.downcase.split(":")
+  unless tag_category.length != 1
+    tag = Tag.find_or_create_by(category: tag_category.strip, title: tag_name.strip)
+    album.tags << tag
+  end
+
+  redirect path_to(:artist).with(artist.id)
+end
+
+post :album_remove_tag do
+  album = Album.find(params[:album_id].to_i)
+  tag = Tag.find(params[:tag_id].to_i)
+  album.tags.delete(tag)
 
   return "OK"
 end
