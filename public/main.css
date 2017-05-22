@@ -30,6 +30,17 @@ table.album-suggestions {
 .sugg-link {
   cursor: pointer;
 }
+.tags-block {
+  border: 1px solid #ccc;
+  display: inline-block;
+  margin: 4px 2px;
+  padding: 1px 4px 2px 4px;
+  cursor: text;
+}
+.new-tag-input {
+  border: none;
+  margin-top: 3px;
+}
 .tag {
   display: inline-block;
   padding: 2px 4px;

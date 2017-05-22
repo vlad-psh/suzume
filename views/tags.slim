@@ -4,14 +4,14 @@ ruby:
   artist ||= nil
   album ||= nil
 
-form method="POST" action=submit_path
-  - if artist
-    - artist.tags.each do |t|
-      == slim :tag, locals: {tag: t, artist: artist}
-    input type="hidden" name="artist_id" value=artist.id
-  - elsif album
-    - album.tags.each do |t|
-      == slim :tag, locals: {tag: t, album: album}
-    input type="hidden" name="album_id" value=album.id
-  input type="text" name="tag"
-  input type="submit" value="Save"
+div class="tags-block"
+  form method="POST" action=submit_path
+    - if artist
+      - artist.tags.each do |t|
+        == slim :tag, locals: {tag: t, artist: artist}
+      input type="hidden" name="artist_id" value=artist.id
+    - elsif album
+      - album.tags.each do |t|
+        == slim :tag, locals: {tag: t, album: album}
+      input type="hidden" name="album_id" value=album.id
+    input class="new-tag-input" type="text" name="tag" autocomplete="off"

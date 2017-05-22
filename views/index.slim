@@ -23,6 +23,5 @@ ul
     li
       a href=path_to(:artist).with(a.id) = a.title
       '  : 
-      a href="https://musicbrainz.org/artist/#{a.mbid}" brainz
-      - a.tags.each do |t|
-        == slim :tag, locals: {tag: t, artist: a}
+      a href="https://musicbrainz.org/artist/#{a.mbid}"
+      == slim :tags, locals: {submit_path: path_to(:artist_add_tag), artist: a}

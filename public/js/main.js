@@ -25,3 +25,7 @@ $(document).on('click', '.album-remove-tag-link', function(){
     this_parent.remove();
   });
 });
+
+$(document).on('click', '.tags-block', function(){
+  $(this).find('.new-tag-input').focus();
+});
