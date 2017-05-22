@@ -8,3 +8,5 @@ td
   a href="https://musicbrainz.org/release-group/#{album.mbid}" mbz
 td
   input.release-edit-button type="button" value="Edit" data-release-id=album.id data-url=path_to(:album_form).with(album.id)
+td
+  == slim :tags, locals: {submit_path: path_to(:album_add_tag), album: album}

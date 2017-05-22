@@ -14,7 +14,7 @@ $(document).on('click', '.artist-remove-tag-link', function(){
 
 $(document).on('click', '.album-remove-tag-link', function(){
   var tag_id = $(this).attr("data-tag-id");
-  var artist_id = $(this).attr("data-album-id");
+  var album_id = $(this).attr("data-album-id");
   var this_parent = $(this).parent();
  
   $.ajax({

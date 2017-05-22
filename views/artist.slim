@@ -13,13 +13,8 @@ form method="POST" action=path_to(:artist).with(@artist.id)
   input type="text" name="romaji" value=@artist.romaji
   input type="submit"
 
-form method="POST" action=path_to(:artist_add_tag)
-  ' Tags:
-  - @artist.tags.each do |t|
-    == slim :tag, locals: {tag: t, artist: @artist}
-  input type="hidden" name="artist_id" value=@artist.id
-  input type="text" name="tag"
-  input type="submit"
+' Tags:
+== slim :tags, locals: {submit_path: path_to(:artist_add_tag), artist: @artist}
 
 a#lastfm-tags-link Show last.fm tags
 div#lastfm-tags

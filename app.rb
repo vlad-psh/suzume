@@ -238,7 +238,7 @@ post :album_add_tag do
     album.tags << tag
   end
 
-  redirect path_to(:artist).with(artist.id)
+  redirect path_to(:artist).with(album.artists.first.id)
 end
 
 post :album_remove_tag do
