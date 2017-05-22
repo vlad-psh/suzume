@@ -27,7 +27,8 @@ paths index: '/',
     album_line: '/album_line/:id',
     album_add_tag: '/album/tag/add',
     album_remove_tag: '/album/tag/remove',
-    lastfm_tags: '/lastfm/artist/:id'
+    lastfm_tags: '/lastfm/artist/:id',
+    search: '/search'
 
 helpers TulipHelpers
 
@@ -253,4 +254,13 @@ get :lastfm_tags do
   artist = Artist.find(params[:id].to_i)
   tags = $lastfm.artist.get_top_tags(artist: artist.title)
   slim :tags, layout: false, locals: {tags_array: tags, submit_path: ''}
+end
+
+get :search do
+  q = params[:query]
+  @artists = Artist.where('title ILIKE ?', "%#{q}%")
+  @albums = Album.where('title ILIKE ?', "%#{q}%")
+  @tags = Tag.all.order(category: :asc, title: :asc)
+
+  slim :index
 end

@@ -25,3 +25,9 @@ ul
       '  : 
       a href="https://musicbrainz.org/artist/#{a.mbid}"
       == slim :tags, locals: {submit_path: path_to(:artist_add_tag), artist: a}
+
+- if @albums
+  h2. Albums
+  ul
+    - @albums.each do |a|
+      li = "#{a.title} (#{a.year})"

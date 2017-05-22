@@ -10,6 +10,9 @@ html
     link rel="stylesheet" type="text/css" href="/main.css"
   body
     a href=path_to(:index) Index
+    '  | 
+    form style="display: inline-block" action=path_to(:search) method="GET"
+      input type="text" name="query" placeholder="Search..."
     div#container
       == slim :flashes
       == yield
