@@ -10,23 +10,20 @@
           input< type="submit" value="Create"
           a< href=mb_artist_search_path(a) brainz search
 
-h2. Tags
+- if @tags
+  == slim :tags_index, locals: {tags: @tags}
 
-- @tags.each do |t|
-  div class="tag tag-#{t.category}"
-    a href=path_to(:artists_by_tag).with(t.id) = t.title
+- if @artists && @artists.length > 0
+  h2. Artists
+  ul
+    - @artists.each do |a|
+      li
+        a href=path_to(:artist).with(a.id) = a.title
+        '  : 
+        a href="https://musicbrainz.org/artist/#{a.mbid}"
+        == slim :tags, locals: {submit_path: path_to(:artist_add_tag), artist: a}
 
-h2. All artists
-
-ul
-  - @artists.each do |a|
-    li
-      a href=path_to(:artist).with(a.id) = a.title
-      '  : 
-      a href="https://musicbrainz.org/artist/#{a.mbid}"
-      == slim :tags, locals: {submit_path: path_to(:artist_add_tag), artist: a}
-
-- if @albums
+- if @albums && @albums.length > 0
   h2. Albums
   ul
     - @albums.each do |a|

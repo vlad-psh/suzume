@@ -28,7 +28,8 @@ paths index: '/',
     album_add_tag: '/album/tag/add',
     album_remove_tag: '/album/tag/remove',
     lastfm_tags: '/lastfm/artist/:id',
-    search: '/search'
+    search: '/search',
+    tags_index: '/tags'
 
 helpers TulipHelpers
 
@@ -64,7 +65,6 @@ end
 
 get :index do
   @artists = Artist.includes(:tags).all
-  @tags = Tag.all.order(category: :asc, title: :asc)
 
   request.accept.each do |type|
     if type.to_s == 'text/json'
@@ -103,7 +103,6 @@ get :artists_by_tag do
   end
 
   @artists = tag.artists
-  @tags = Tag.all.order(category: :asc, title: :asc)
   slim :index
 end
 
@@ -260,7 +259,12 @@ get :search do
   q = params[:query]
   @artists = Artist.where('title ILIKE ?', "%#{q}%")
   @albums = Album.where('title ILIKE ?', "%#{q}%")
-  @tags = Tag.all.order(category: :asc, title: :asc)
 
   slim :index
+end
+
+get :tags_index do
+  @tags = Tag.all.order(category: :asc, title: :asc)
+
+  slim :tags_index, locals: {tags: @tags}
 end
