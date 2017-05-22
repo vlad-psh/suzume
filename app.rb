@@ -251,6 +251,6 @@ end
 
 get :lastfm_tags do
   artist = Artist.find(params[:id].to_i)
-  @tags = $lastfm.artist.get_top_tags(artist: artist.title)
-  slim :tags, layout: false
+  tags = $lastfm.artist.get_top_tags(artist: artist.title)
+  slim :tags, layout: false, locals: {tags_array: tags, submit_path: ''}
 end

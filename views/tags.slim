@@ -1,8 +1,9 @@
-// locals: submit_path, artist||album
+// locals: submit_path, artist||album||tags_array
 
 ruby:
   artist ||= nil
   album ||= nil
+  tags_array ||= nil
 
 div class="tags-block"
   form method="POST" action=submit_path
@@ -14,4 +15,9 @@ div class="tags-block"
       - album.tags.each do |t|
         == slim :tag, locals: {tag: t, album: album}
       input type="hidden" name="album_id" value=album.id
-    input class="new-tag-input" type="text" name="tag" autocomplete="off"
+    - elsif tags_array
+      - tags_array.each do |t|
+        div class="tag tag-g"
+          = "#{t['name']} (#{t['count']})"
+    - if artist || album
+      input class="new-tag-input" type="text" name="tag" autocomplete="off"
