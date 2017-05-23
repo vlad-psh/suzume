@@ -22,14 +22,19 @@ table td {
 .album-cover-block {
   width: 200px; 
   height: 200px;
-  text-align: center;
-  vertical-align: bottom;
+  text-align: left;
   margin-right: 12px;
+}
+.album-cover-valign-helper {
+  display: inline-block;
+  height: 100%;
+  vertical-align: bottom;
 }
 img.album-cover {
   max-width: 200px;
   max-height: 200px;
   border-radius: 5px;
+  vertical-align: bottom;
 }
 .album-info-block {
   width: 150px;
