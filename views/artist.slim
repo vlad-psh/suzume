@@ -59,10 +59,10 @@ javascript:
   - next if !albums || albums.count == 0
   h2 = type
 
-  table
+  // tr.release-line id="release-line-#{a.id}"
+  div.releases-block
     - albums.each do |a|
-     tr.release-line id="release-line-#{a.id}"
-       == slim :album_line, locals: {album: a}
+      == slim :album_line, locals: {album: a}
 
 javascript:
   $(document).on('click', '.release-edit-button', function(){

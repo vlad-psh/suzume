@@ -20,15 +20,16 @@ paths index: '/',
     artist: '/artist/:id',
     artist_add_tag: '/artist/tag/add',
     artist_remove_tag: '/artist/tag/remove',
-    artists_by_tag: '/artists/tag/:id',
     albums: '/albums',
     album: '/album/:id',
     album_form: '/album_form/:id',
     album_line: '/album_line/:id',
     album_add_tag: '/album/tag/add',
     album_remove_tag: '/album/tag/remove',
+    album_cover: '/album_cover/:id',
     lastfm_tags: '/lastfm/artist/:id',
     search: '/search',
+    search_by_tag: '/tag/:id',
     tags_index: '/tags'
 
 helpers TulipHelpers
@@ -94,7 +95,7 @@ post :artists do
   redirect path_to(:artist).with(a.id)
 end
 
-get :artists_by_tag do
+get :search_by_tag do
   tag = Tag.find(params[:id].to_i)
 
   unless tag
@@ -103,6 +104,7 @@ get :artists_by_tag do
   end
 
   @artists = tag.artists
+  @albums = tag.albums
   slim :index
 end
 
@@ -247,6 +249,19 @@ post :album_remove_tag do
   album.tags.delete(tag)
 
   return "OK"
+end
+
+get :album_cover do
+  album = Album.find(params[:id].to_i)
+  artist = album.artists.first
+  artist_path = File.expand_path(artist.filename, $library_path)
+  album_path = File.expand_path(album.filename, artist_path)
+  cover_path = File.expand_path("cover.jpg", album_path)
+  if File.exist?(cover_path)
+    send_file(cover_path)
+  else
+    halt 404
+  end
 end
 
 get :lastfm_tags do

@@ -10,16 +10,33 @@ table td {
   vertical-align: top;
   padding: 0 8px 0 8px;
 }
-tr.album-have {
-  background: #add79d;
-  color: #19350e;
+.releases-block .album-item{
+  vertical-align: top;
 }
-td .details {
+.album-item {
+  display: inline-block;
+}
+.album-cover-block,
+.album-info-block {
+}
+.album-cover-block {
+  width: 200px; 
+  height: 200px;
+  text-align: center;
+  vertical-align: bottom;
+  margin-right: 12px;
+}
+img.album-cover {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 5px;
+}
+.album-info-block {
+  width: 150px;
+}
+.album-item .details {
   font-size: 0.6em;
   color: #999
-}
-table.album-suggestions {
-  font-size: 0.7em;
 }
 .release-save-buttons {
   display: none;
