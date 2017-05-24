@@ -7,4 +7,4 @@ div class="tag tag-#{tag.category}"
   = tag.title
   - if artist != nil || album != nil
     a class=(artist != nil ? "artist-remove-tag-link" : "album-remove-tag-link") style="cursor: pointer" data-artist-id=(artist ? artist.id : false) data-album-id=(album ? album.id : false) data-tag-id=tag.id
-      img src="/del.png"
+      img src="/img/del.png"

@@ -286,7 +286,7 @@ end
 def get_album_cover(id)
   begin
     album = Album.find(id)
-    raise StandardError unless album
+    raise StandardError.new("No album found with id #{id}") unless album
 
     artist = album.artists.first
     artist_path = File.expand_path(artist.filename, $library_path)
@@ -301,7 +301,7 @@ def get_album_cover(id)
       end
     end
 
-    raise StandardError unless cover_path
+    raise StandardError.new("No cover art found in album directory") unless cover_path
 
     img = ImageList.new(cover_path)
     ext = MIME_EXT[img.format] || 'jpg'
@@ -310,7 +310,7 @@ def get_album_cover(id)
     FileUtils.copy(cover_path, orig_cover_path)
     if [img.rows, img.columns].max > 400
       thumb = img.resize_to_fit(400, 400)
-      thumb.write(thumb_cover_path)
+      thumb.write(thumb_cover_path) { self.quality = 94 }
     else
       FileUtils.copy(cover_path, thumb_cover_path)
     end
