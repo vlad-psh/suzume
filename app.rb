@@ -343,7 +343,8 @@ end
 get :search do
   q = params[:query]
   @artists = Artist.where('title ILIKE ?', "%#{q}%")
-  @albums = Album.where('title ILIKE ?', "%#{q}%")
+  all_albums = Album.where('title ILIKE ?', "%#{q}%").order(year: :desc)
+  @sorted_albums = albums_by_type(all_albums)
 
   slim :index
 end
