@@ -11,6 +11,7 @@ require 'lastfm'
 require 'fileutils'
 require 'rmagick'
 include Magick
+require 'id3tag'
 
 require_relative './models.rb'
 require_relative './helpers.rb'
@@ -62,7 +63,7 @@ configure do
   use Rack::Flash
 end
 
-MIME_EXT = {"JPEG" => "jpg", "PNG" => "png"}
+MIME_EXT = {"JPEG" => "jpg", "image/jpeg" => "jpg", "PNG" => "png", "image/png" => "png"}
 
 def get_tulip_id(dir)
   tulip_files = Dir.glob(File.expand_path("*.tulip", dir))
@@ -258,6 +259,30 @@ post :album_remove_tag do
   return "OK"
 end
 
+def extract_cover(path, filename)
+  if File.exist?(filename)
+    ID3Tag.read(File.open(filename, "rb")).all_frames_by_id(:APIC).each do |pic|
+      random = (0...8).map { [('a'..'z').to_a, (0..9).to_a].flatten[rand(36)] }.join
+      if MIME_EXT.include?(pic.mime_type)
+        type = MIME_EXT[pic.mime_type]
+        cover_filename = File.exist?("#{path}/cover.#{type}") ? "#{path}/cover_#{random}.#{type}" : "#{path}/cover.#{type}"
+
+        cover_file = File.open(cover_filename, 'w')
+        cover_file.write(pic.content)
+        cover_file.close
+      end
+    end
+  end
+end
+
+def get_album_cover_file(path)
+  ['cover.jpg', 'front.jpg', 'cover.png'].each do |cn| 
+    _f = File.expand_path(cn, path)
+    return _f if File.exist?(_f)
+  end
+  return nil
+end
+
 def get_album_cover(id)
   begin
     album = Album.find(id)
@@ -266,9 +291,17 @@ def get_album_cover(id)
     artist = album.artists.first
     artist_path = File.expand_path(artist.filename, $library_path)
     album_path = File.expand_path(album.filename, artist_path)
-    cover_path = File.expand_path("cover.jpg", album_path)
+    cover_path = get_album_cover_file(album_path)
 
-    raise StandardError unless File.exist?(cover_path)
+    unless cover_path
+      mp3_file_path = Dir.glob("#{album_path}/*.{MP3,mp3}").first
+      if mp3_file_path
+        extract_cover(album_path, mp3_file_path)
+        cover_path = get_album_cover_file(album_path)
+      end
+    end
+
+    raise StandardError unless cover_path
 
     img = ImageList.new(cover_path)
     ext = MIME_EXT[img.format] || 'jpg'

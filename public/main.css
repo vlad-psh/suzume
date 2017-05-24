@@ -15,6 +15,7 @@ table td {
 }
 .album-item {
   display: inline-block;
+  margin: 8px 2px;
 }
 .album-cover-block,
 .album-info-block {
