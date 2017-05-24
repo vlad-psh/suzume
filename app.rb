@@ -8,6 +8,9 @@ require 'rack-flash'
 require 'yaml'
 require 'musicbrainz'
 require 'lastfm'
+require 'fileutils'
+require 'rmagick'
+include Magick
 
 require_relative './models.rb'
 require_relative './helpers.rb'
@@ -26,7 +29,8 @@ paths index: '/',
     album_line: '/album_line/:id',
     album_add_tag: '/album/tag/add',
     album_remove_tag: '/album/tag/remove',
-    album_cover: '/album_cover/:id',
+    album_cover_thumb: '/cover/thumb/:id',
+    album_cover_orig: '/cover/orig/:id',
     lastfm_tags: '/lastfm/artist/:id',
     search: '/search',
     search_by_tag: '/tag/:id',
@@ -47,6 +51,7 @@ configure do
         secret: $config['secret']
 
   $library_path = $config['library_path']
+  $covers_path = $config['covers_path']
   MusicBrainz.configure do |c|
     c.app_name = $config['app_name']
     c.app_version = $config['app_version']
@@ -56,6 +61,8 @@ configure do
 
   use Rack::Flash
 end
+
+MIME_EXT = {"JPEG" => "jpg", "PNG" => "png"}
 
 def get_tulip_id(dir)
   tulip_files = Dir.glob(File.expand_path("*.tulip", dir))
@@ -251,17 +258,47 @@ post :album_remove_tag do
   return "OK"
 end
 
-get :album_cover do
-  album = Album.find(params[:id].to_i)
-  artist = album.artists.first
-  artist_path = File.expand_path(artist.filename, $library_path)
-  album_path = File.expand_path(album.filename, artist_path)
-  cover_path = File.expand_path("cover.jpg", album_path)
-  if File.exist?(cover_path)
-    send_file(cover_path)
-  else
-    halt 404
+def get_album_cover(id)
+  begin
+    album = Album.find(id)
+    raise StandardError unless album
+
+    artist = album.artists.first
+    artist_path = File.expand_path(artist.filename, $library_path)
+    album_path = File.expand_path(album.filename, artist_path)
+    cover_path = File.expand_path("cover.jpg", album_path)
+
+    raise StandardError unless File.exist?(cover_path)
+
+    img = ImageList.new(cover_path)
+    ext = MIME_EXT[img.format] || 'jpg'
+    orig_cover_path = File.expand_path("orig/#{id}.#{ext}", $covers_path)
+    thumb_cover_path = File.expand_path("thumb/#{id}.#{ext}", $covers_path)
+    FileUtils.copy(cover_path, orig_cover_path)
+    if [img.rows, img.columns].max > 400
+      thumb = img.resize_to_fit(400, 400)
+      thumb.write(thumb_cover_path)
+    else
+      FileUtils.copy(cover_path, thumb_cover_path)
+    end
+    FileUtils.chmod(0644, orig_cover_path)
+    FileUtils.chmod(0644, thumb_cover_path)
+
+    return id
+  rescue StandardError => e
+    puts "== Error: #{e}"
+    return 0 # nocover placeholder
   end
+end
+
+get :album_cover_orig do
+  id = get_album_cover(params[:id].to_i)
+  redirect path_to(:album_cover_orig).with(id)
+end
+
+get :album_cover_thumb do
+  id = get_album_cover(params[:id].to_i)
+  redirect path_to(:album_cover_thumb).with(id)
 end
 
 get :lastfm_tags do

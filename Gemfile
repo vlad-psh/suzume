@@ -16,3 +16,4 @@ gem 'puma'
 
 gem 'musicbrainz', '~> 0.8.0'
 gem 'lastfm'
+gem 'rmagick'

@@ -37,7 +37,10 @@ img.album-cover {
   vertical-align: bottom;
 }
 .album-info-block {
-  width: 150px;
+  margin-top: 6px;
+  max-width: 200px;
+  color: #444;
+  font-size: 0.8em;
 }
 .album-item .details {
   font-size: 0.6em;
