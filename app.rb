@@ -113,7 +113,7 @@ get :search_by_tag do
   end
 
   @artists = tag.artists
-  @albums = tag.albums
+  @sorted_albums = albums_by_type(tag.albums.order(year: :desc))
   slim :index
 end
 
