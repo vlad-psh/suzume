@@ -4,6 +4,7 @@ div.album-item
   div.album-cover-block
     span.album-cover-valign-helper
     img.album-cover src=path_to(:album_cover_thumb).with(album.id)
+    div.play-link data-album-id=album.id play
   div.album-info-block
     div.title-romaji data-title=album.title data-romaji=album.romaji
       = "#{album.title} (#{album.year})"

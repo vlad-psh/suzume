@@ -29,3 +29,13 @@ $(document).on('click', '.album-remove-tag-link', function(){
 $(document).on('click', '.tags-block', function(){
   $(this).find('.new-tag-input').focus();
 });
+
+$(document).on('click', '.play-link', function(){
+  var album_id = $(this).attr("data-album-id");
+
+  $.ajax({
+    url: "/play",
+    method: "POST",
+    data: {id: album_id}
+  });
+});

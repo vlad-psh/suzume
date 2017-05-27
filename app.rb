@@ -35,7 +35,8 @@ paths index: '/',
     lastfm_tags: '/lastfm/artist/:id',
     search: '/search',
     search_by_tag: '/tag/:id',
-    tags_index: '/tags'
+    tags_index: '/tags',
+    play_album: '/play'
 
 helpers TulipHelpers
 
@@ -353,4 +354,14 @@ get :tags_index do
   @tags = Tag.all.order(category: :asc, title: :asc)
 
   slim :tags_index, locals: {tags: @tags}
+end
+
+post :play_album do
+   album = Album.find(params[:id].to_i)
+   artist = album.artists.first
+   album_path = File.join($library_path, artist.filename, album.filename)
+   cmus_command = "cmus-remote --server /run/user/1000/cmus-socket"
+  `#{cmus_command} -C 'player-stop' 'clear' 'set play_library=false' 'add #{album_path}'`
+   sleep 1
+  `#{cmus_command} -C 'player-next' 'player-play'`
 end
