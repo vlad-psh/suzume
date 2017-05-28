@@ -12,6 +12,8 @@ require 'fileutils'
 require 'rmagick'
 include Magick
 require 'id3tag'
+require 'open-uri'
+require 'tempfile'
 
 require_relative './models.rb'
 require_relative './helpers.rb'
@@ -32,6 +34,7 @@ paths index: '/',
     album_remove_tag: '/album/tag/remove',
     album_cover_thumb: '/cover/thumb/:id',
     album_cover_orig: '/cover/orig/:id',
+    set_album_cover_from_url: '/cover/url/:id',
     lastfm_tags: '/lastfm/artist/:id',
     search: '/search',
     search_by_tag: '/tag/:id',
@@ -284,6 +287,25 @@ def get_album_cover_file(path)
   return nil
 end
 
+def process_album_cover(album_id, cover_path)
+  img = ImageList.new(cover_path)
+  ext = MIME_EXT[img.format] || 'jpg'
+  orig_cover_path = File.expand_path("orig/#{album_id}.#{ext}", $covers_path)
+  thumb_cover_path = File.expand_path("thumb/#{album_id}.#{ext}", $covers_path)
+
+  FileUtils.copy(cover_path, orig_cover_path)
+
+  if [img.rows, img.columns].max > 400
+    thumb = img.resize_to_fit(400, 400)
+    thumb.write(thumb_cover_path) { self.quality = 94 }
+  else
+    FileUtils.copy(cover_path, thumb_cover_path)
+  end
+
+  FileUtils.chmod(0644, orig_cover_path)
+  FileUtils.chmod(0644, thumb_cover_path)
+end
+
 def get_album_cover(id)
   begin
     album = Album.find(id)
@@ -304,19 +326,7 @@ def get_album_cover(id)
 
     raise StandardError.new("No cover art found in album directory") unless cover_path
 
-    img = ImageList.new(cover_path)
-    ext = MIME_EXT[img.format] || 'jpg'
-    orig_cover_path = File.expand_path("orig/#{id}.#{ext}", $covers_path)
-    thumb_cover_path = File.expand_path("thumb/#{id}.#{ext}", $covers_path)
-    FileUtils.copy(cover_path, orig_cover_path)
-    if [img.rows, img.columns].max > 400
-      thumb = img.resize_to_fit(400, 400)
-      thumb.write(thumb_cover_path) { self.quality = 94 }
-    else
-      FileUtils.copy(cover_path, thumb_cover_path)
-    end
-    FileUtils.chmod(0644, orig_cover_path)
-    FileUtils.chmod(0644, thumb_cover_path)
+    process_album_cover(id, cover_path)
 
     return id
   rescue StandardError => e
@@ -333,6 +343,22 @@ end
 get :album_cover_thumb do
   id = get_album_cover(params[:id].to_i)
   redirect path_to(:album_cover_thumb).with(id)
+end
+
+post :set_album_cover_from_url do
+  album = Album.find(params[:id].to_i)
+
+  saved_file = Tempfile.new('tulip')
+  open(params[:url]) do |read_file|
+    saved_file.write(read_file.read)
+  end
+  saved_file.close
+
+  process_album_cover(album.id, saved_file.path)
+
+  saved_file.unlink
+
+  return album.id
 end
 
 get :lastfm_tags do

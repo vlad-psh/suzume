@@ -14,4 +14,8 @@ div.album-info-block
     br
     input.release-save-button type="button" value="Save" data-release-id=@album.id data-url=path_to(:album).with(@album.id)
     input.release-cancel-button type="button" value="Cancel" data-release-id=@album.id data-url=path_to(:album_line).with(@album.id)
-
+  ' Cover:
+  a href="https://duckduckgo.com/?q=#{@album.artists.first.title}%20#{@album.title}%20#{@album.year}&t=ffab&ia=web" DDG Search
+  form method="POST" action=path_to(:set_album_cover_from_url).with(@album.id)
+    input type="text" name="url"
+    input type="submit" value="Download"
