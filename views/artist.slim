@@ -46,11 +46,16 @@ javascript:
           ' Year:
           input> type="text" name="year"
           ' Title:
-          input> type="text" name="title"
+          input> type="text" name="title" value=a
           ' Romaji:
           input> type="text" name="romaji"
           ' Type:
-          input> type="text" name="type"
+          select name="type"
+            option value="Album" selected="selected" Album
+            option value="EP" EP
+            option value="Single" Single
+            option value="Compilation" Compilation
+            option value="Live" Live
           input type="submit" value="Save"
 
 == slim :albums_sorted, locals: {sorted_albums: @sorted_albums}

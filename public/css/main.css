@@ -88,10 +88,10 @@ img.album-cover {
   background-color: #ff921d;
   color: #3d2000;
 }
-.album-cover-block:hover .play-link {
+.album-cover-block:hover .album-buttons {
   visibility: visible;
 }
-.play-link {
+.album-buttons {
   visibility: hidden;
   position: relative;
   left: 3px;

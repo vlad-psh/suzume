@@ -1,15 +1,17 @@
-td
+div.album-info-block
   form id="release-form-#{@album.id}" method="POST" action=path_to(:album).with(@album.id)
     ' Year:
     input type="text" name="year" value=@album.year
+    br
     ' Type:
     input type="text" name="type" value=@album.primary_type
     br
     ' Title:
     input type="text" name="title" value=@album.title
+    br
     ' Romaji:
     input type="text" name="romaji" value=@album.romaji
-td
-  input.release-save-button type="button" value="Save" data-release-id=@album.id data-url=path_to(:album).with(@album.id)
-  br
-  input.release-cancel-button type="button" value="Cancel" data-release-id=@album.id data-url=path_to(:album_line).with(@album.id)
+    br
+    input.release-save-button type="button" value="Save" data-release-id=@album.id data-url=path_to(:album).with(@album.id)
+    input.release-cancel-button type="button" value="Cancel" data-release-id=@album.id data-url=path_to(:album_line).with(@album.id)
+

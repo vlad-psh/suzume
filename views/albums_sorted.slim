@@ -8,5 +8,6 @@
 
   div.releases-block
     - albums.each do |a|
-      == slim :album_line, locals: {album: a}
+      div class="album-item" id="release-line-#{a.id}"
+        == slim :album_line, locals: {album: a}
 
