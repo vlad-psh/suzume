@@ -1,5 +1,5 @@
 div.album-info-block
-  form id="release-form-#{@album.id}" method="POST" action=path_to(:album).with(@album.id)
+  form
     ' Year:
     input type="text" name="year" value=@album.year
     br
@@ -16,6 +16,6 @@ div.album-info-block
     input.release-cancel-button type="button" value="Cancel" data-release-id=@album.id data-url=path_to(:album_line).with(@album.id)
   ' Cover:
   a href="https://duckduckgo.com/?q=#{@album.artists.first.title}%20#{@album.title}%20#{@album.year}&t=ffab&ia=web" DDG Search
-  form method="POST" action=path_to(:set_album_cover_from_url).with(@album.id)
+  form
     input type="text" name="url"
-    input type="submit" value="Download"
+    input.release-save-button type="button" value="Download" data-release-id=@album.id data-url=path_to(:set_album_cover_from_url).with(@album.id)

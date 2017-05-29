@@ -39,3 +39,48 @@ $(document).on('click', '.play-link', function(){
     data: {id: album_id}
   });
 });
+
+$(document).on('click', '.release-edit-button', function(){
+  var id = $(this).attr("data-release-id");
+  $.ajax({
+    url: $(this).attr("data-url"),
+    method: "GET"
+  }).done(function(data){
+    $("#release-line-" + id).html(data);
+  });
+});
+
+$(document).on('click', '.release-cancel-button', function(){
+  var id = $(this).attr("data-release-id");
+  $.ajax({
+    url: $(this).attr("data-url"),
+    method: "GET"
+  }).done(function(data){
+    $("#release-line-" + id).html(data);
+  });
+});
+
+$(document).on('click', '.release-save-button', function(){
+  var id = $(this).attr("data-release-id");
+  var serialized_form = $(this).parent().serialize();
+  $("#release-line-" + id + " input").prop("disabled", true);
+
+  $.ajax({
+    url: $(this).attr("data-url"),
+    method: "POST",
+    data: serialized_form
+  }).done(function(data){
+    $("#release-line-" + id).html(data);
+  });
+});
+
+$(document).on('mouseenter', '.release-line', function(){
+  var textArea = $(this).find('.title-romaji');
+  textArea.text(textArea.attr("data-romaji"));
+});
+
+$(document).on('mouseleave', '.release-line', function(){
+  var textArea = $(this).find('.title-romaji');
+  textArea.text(textArea.attr("data-title"));
+});
+

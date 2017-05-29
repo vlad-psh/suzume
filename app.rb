@@ -209,12 +209,13 @@ end
 
 post :albums do
   artist = Artist.find(params[:artist_id].to_i)
-  album = Album.find_or_initialize_by(filename: params[:filename])
-  album.year = params[:year].to_i || nil
-  album.title = params[:title]
-  album.romaji = params[:romaji].empty? ? nil : params[:romaji]
-  album.primary_type = params[:type]
-  album.save
+  album = Album.create(
+        filename: params[:filename],
+        year: params[:year].to_i || nil,
+        title: params[:title],
+        romaji: params[:romaji].empty? ? nil : params[:romaji],
+        primary_type: params[:type]
+  )
 
   artist.albums << album
 
@@ -358,7 +359,7 @@ post :set_album_cover_from_url do
 
   saved_file.unlink
 
-  return album.id
+  slim :album_line, layout: false, locals: {album: album}
 end
 
 get :lastfm_tags do
