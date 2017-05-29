@@ -2,7 +2,7 @@
 
 div.album-cover-block
   span.album-cover-valign-helper
-  img.album-cover src=path_to(:album_cover_thumb).with(album.id)
+  img.album-cover src=path_to(:album_cover_thumb).with(album.has_cover > 0 ? album.id : 0)
   div.album-buttons
     span.play-link data-album-id=album.id play
     '  |

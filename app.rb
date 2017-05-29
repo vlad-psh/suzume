@@ -32,8 +32,6 @@ paths index: '/',
     album_line: '/album_line/:id',
     album_add_tag: '/album/tag/add',
     album_remove_tag: '/album/tag/remove',
-    album_cover_thumb: '/cover/thumb/:id',
-    album_cover_orig: '/cover/orig/:id',
     set_album_cover_from_url: '/cover/url/:id',
     lastfm_tags: '/lastfm/artist/:id',
     search: '/search',
@@ -216,8 +214,11 @@ post :albums do
         romaji: params[:romaji].empty? ? nil : params[:romaji],
         primary_type: params[:type]
   )
-
   artist.albums << album
+
+  # get_album_cover needs album with ID (ie: saved object) and artist ID link
+  album.has_cover = (get_album_cover(album) == 0 ? 0 : 1)
+  album.save
 
   redirect path_to(:artist).with(artist.id)
 end
@@ -307,11 +308,8 @@ def process_album_cover(album_id, cover_path)
   FileUtils.chmod(0644, thumb_cover_path)
 end
 
-def get_album_cover(id)
+def get_album_cover(album)
   begin
-    album = Album.find(id)
-    raise StandardError.new("No album found with id #{id}") unless album
-
     artist = album.artists.first
     artist_path = File.expand_path(artist.filename, $library_path)
     album_path = File.expand_path(album.filename, artist_path)
@@ -327,23 +325,13 @@ def get_album_cover(id)
 
     raise StandardError.new("No cover art found in album directory") unless cover_path
 
-    process_album_cover(id, cover_path)
+    process_album_cover(album.id, cover_path)
 
-    return id
+    return album.id
   rescue StandardError => e
     puts "== Error: #{e}"
     return 0 # nocover placeholder
   end
-end
-
-get :album_cover_orig do
-  id = get_album_cover(params[:id].to_i)
-  redirect path_to(:album_cover_orig).with(id)
-end
-
-get :album_cover_thumb do
-  id = get_album_cover(params[:id].to_i)
-  redirect path_to(:album_cover_thumb).with(id)
 end
 
 post :set_album_cover_from_url do
@@ -358,6 +346,9 @@ post :set_album_cover_from_url do
   process_album_cover(album.id, saved_file.path)
 
   saved_file.unlink
+
+  album.has_cover = 1
+  album.save
 
   slim :album_line, layout: false, locals: {album: album}
 end
