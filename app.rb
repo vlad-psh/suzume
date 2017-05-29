@@ -37,7 +37,8 @@ paths index: '/',
     search: '/search',
     search_by_tag: '/tag/:id',
     tags_index: '/tags',
-    play_album: '/play'
+    cmus_play: '/cmus/play',
+    cmus_add: '/cmus/add'
 
 helpers TulipHelpers
 
@@ -66,6 +67,7 @@ configure do
 end
 
 MIME_EXT = {"JPEG" => "jpg", "image/jpeg" => "jpg", "PNG" => "png", "image/png" => "png"}
+CMUS_COMMAND = 'cmus-remote --server /run/user/1000/cmus-socket'
 
 def get_tulip_id(dir)
   tulip_files = Dir.glob(File.expand_path("*.tulip", dir))
@@ -374,12 +376,18 @@ get :tags_index do
   slim :tags_index, locals: {tags: @tags}
 end
 
-post :play_album do
+post :cmus_play do
    album = Album.find(params[:id].to_i)
    artist = album.artists.first
    album_path = File.join($library_path, artist.filename, album.filename)
-   cmus_command = "cmus-remote --server /run/user/1000/cmus-socket"
-  `#{cmus_command} -C 'player-stop' 'clear' 'set play_library=false' 'add #{album_path}'`
+  `#{CMUS_COMMAND} -C 'player-stop' 'clear' 'set play_library=false' 'add #{album_path}'`
    sleep 1
-  `#{cmus_command} -C 'player-next' 'player-play'`
+  `#{CMUS_COMMAND} -C 'player-next' 'player-play'`
+end
+
+post :cmus_add do
+   album = Album.find(params[:id].to_i)
+   artist = album.artists.first
+   album_path = File.join($library_path, artist.filename, album.filename)
+  `#{CMUS_COMMAND} -C 'add #{album_path}'`
 end

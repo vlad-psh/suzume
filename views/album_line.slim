@@ -4,7 +4,9 @@ div.album-cover-block
   span.album-cover-valign-helper
   img.album-cover src=path_to(:album_cover_thumb).with(album.has_cover > 0 ? album.id : 0)
   div.album-buttons
-    span.play-link data-album-id=album.id play
+    span.cmus-link data-album-id=album.id data-url=path_to(:cmus_play) play
+    '  |
+    span.cmus-link data-album-id=album.id data-url=path_to(:cmus_add) add
     '  |
     span.release-edit-button data-release-id=album.id data-url=path_to(:album_form).with(album.id) edit
 div.album-info-block

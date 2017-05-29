@@ -30,11 +30,12 @@ $(document).on('click', '.tags-block', function(){
   $(this).find('.new-tag-input').focus();
 });
 
-$(document).on('click', '.play-link', function(){
+$(document).on('click', '.cmus-link', function(){
   var album_id = $(this).data("album-id");
+  var url = $(this).data("url");
 
   $.ajax({
-    url: "/play",
+    url: url,
     method: "POST",
     data: {id: album_id}
   });
