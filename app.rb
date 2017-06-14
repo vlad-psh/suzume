@@ -33,6 +33,7 @@ paths index: '/',
     album_add_tag: '/album/tag/add',
     album_remove_tag: '/album/tag/remove',
     set_album_cover_from_url: '/cover/url/:id',
+    album_cover_thumb: '/cover/thumb/:id', # handled by nginx
     lastfm_tags: '/lastfm/artist/:id',
     search: '/search',
     search_by_tag: '/tag/:id',
@@ -376,11 +377,17 @@ get :tags_index do
   slim :tags_index, locals: {tags: @tags}
 end
 
+def escape_apos(text)
+#  temp = text.gsub("'", "¤'")
+#  return temp.gsub("¤", 92.chr)
+  return text.gsub("'", "'\"'\"'") # xx'yy -> xx'"'"'yy (same as '...xx' + "'" + 'yy...')
+end
+
 post :cmus_play do
    album = Album.find(params[:id].to_i)
    artist = album.artists.first
    album_path = File.join($library_path, artist.filename, album.filename)
-  `#{CMUS_COMMAND} -C 'player-stop' 'clear' 'set play_library=false' 'add #{album_path}'`
+  `#{CMUS_COMMAND} -C 'player-stop' 'clear' 'set play_library=false' 'add #{escape_apos(album_path)}'`
    sleep 1
   `#{CMUS_COMMAND} -C 'player-next' 'player-play'`
 end
@@ -389,5 +396,5 @@ post :cmus_add do
    album = Album.find(params[:id].to_i)
    artist = album.artists.first
    album_path = File.join($library_path, artist.filename, album.filename)
-  `#{CMUS_COMMAND} -C 'add #{album_path}'`
+  `#{CMUS_COMMAND} -C 'add #{escape_apos(album_path)}'`
 end
