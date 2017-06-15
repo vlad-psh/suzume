@@ -34,6 +34,7 @@ paths index: '/',
     album_remove_tag: '/album/tag/remove',
     set_album_cover_from_url: '/cover/url/:id',
     album_cover_thumb: '/cover/thumb/:id', # handled by nginx
+    album_cover_orig: '/cover/orig/:id',
     lastfm_tags: '/lastfm/artist/:id',
     search: '/search',
     search_by_tag: '/tag/:id',
@@ -288,7 +289,7 @@ def extract_cover(path, filename)
 end
 
 def get_album_cover_file(path)
-  ['cover.jpg', 'front.jpg', 'cover.png'].each do |cn| 
+  ['cover.jpg', 'front.jpg', 'cover.png', 'folder.jpg'].each do |cn| 
     _f = File.expand_path(cn, path)
     return _f if File.exist?(_f)
   end

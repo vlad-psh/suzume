@@ -1,6 +1,12 @@
 body {
-  font-family: Trebuchet, Trebuchet MS, Helvetica Neue, Helvetica;
+  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;
   font-weight: 300;
+}
+h1 {
+  font-weight: 600;
+}
+h2 {
+  font-weight: 400;
 }
 .flash-notice {
   background: #80c921;
@@ -98,9 +104,20 @@ img.album-cover {
 .album-buttons {
   visibility: hidden;
   position: relative;
-  left: 3px;
   bottom: 24px;
-  text-shadow: 0 0 1px black;
   color: white;
   cursor: pointer;
+}
+.album-buttons div {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 4px;
+  margin-right: 1px;
+}
+.album-buttons div:hover {
+  background: #80dbe1;
+}
+.album-buttons img {
+  display: block;
+  vertical-align: bottom;
 }
