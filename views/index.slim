@@ -1,8 +1,9 @@
-- @total_pages.times do |p|
-  - if p == @page
-    = "#{p + 1} "
-  - else
-    a> href=("#{path_to(:index)}?page=#{p + 1}") = p + 1
+- if @total_pages && @page
+  - @total_pages.times do |p|
+    - if p == @page
+      = "#{p + 1} "
+    - else
+      a> href=("#{path_to(:index)}?page=#{p + 1}") = p + 1
 
 - if @new_artists
   h2. New artists
