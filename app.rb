@@ -78,7 +78,10 @@ def get_tulip_id(dir)
 end
 
 get :index do
-  @artists = Artist.includes(:tags).all
+  artists_per_page = 50
+  @page = params[:page] ? params[:page].to_i - 1 : 0
+  @total_pages = (Artist.count / artists_per_page.to_f).ceil
+  @artists = Artist.includes(:tags).order(created_at: :desc).limit(artists_per_page).offset(@page * artists_per_page).all
 
   request.accept.each do |type|
     if type.to_s == 'text/json'
