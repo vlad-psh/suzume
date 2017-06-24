@@ -39,6 +39,9 @@ paths index: '/',
     search: '/search',
     search_by_tag: '/tag/:id',
     tags_index: '/tags',
+    api_index: '/api/index',
+    api_artist: '/api/artist/:id',
+    api_album: '/api/album/:id',
     cmus_play: '/cmus/play',
     cmus_add: '/cmus/add'
 
@@ -390,6 +393,35 @@ def escape_apos(text)
 #  temp = text.gsub("'", "¤'")
 #  return temp.gsub("¤", 92.chr)
   return text.gsub("'", "'\"'\"'") # xx'yy -> xx'"'"'yy (same as '...xx' + "'" + 'yy...')
+end
+
+get :api_index do
+  result = {artists: [], albums: [], songs: []}
+  Artist.all.order(title: :asc).each do |a|
+    result[:artists] << {id: a.id, title: a.title}
+  end
+  return result.to_json
+end
+
+get :api_artist do
+  artist = Artist.find(params[:id])
+
+  return {error: '404'}.to_json unless artist
+
+  result = {artists: [], albums: [], songs: []}
+  artist.albums.each do |a|
+    result[:albums] << {id: a.id, title: a.title}
+  end
+  return result.to_json
+end
+
+
+get :api_album do
+  album = Album.find(params[:id])
+
+  return {error: '404'}.to_json unless album
+
+  return {artists: [], albums: [], songs: []}.to_json
 end
 
 post :cmus_play do
