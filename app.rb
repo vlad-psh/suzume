@@ -184,6 +184,7 @@ post :artist do
   a = Artist.find(params[:id].to_i)
   a.title = params[:title]
   a.romaji = params[:romaji]
+  a.aliases = params[:aliases]
   a.save
 
   redirect path_to(:artist).with(a.id)
@@ -367,9 +368,9 @@ get :lastfm_tags do
 end
 
 get :search do
-  q = params[:query]
-  @artists = Artist.where('title ILIKE ? OR romaji ILIKE ?', "%#{q}%", "%#{q}%")
-  all_albums = Album.where('title ILIKE ? OR romaji ILIKE ?', "%#{q}%", "%#{q}%").order(year: :desc)
+  q = "%#{params[:query]}%"
+  @artists = Artist.where('title ILIKE ? OR romaji ILIKE ? OR aliases ILIKE ?', q, q, q)
+  all_albums = Album.where('title ILIKE ? OR romaji ILIKE ?', q, q).order(year: :desc)
   @sorted_albums = albums_by_type(all_albums)
 
   slim :index
