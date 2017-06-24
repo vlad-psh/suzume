@@ -421,7 +421,14 @@ get :api_album do
 
   return {error: '404'}.to_json unless album
 
-  return {artists: [], albums: [], songs: []}.to_json
+  artist = album.artists.first
+
+  old_pwd = Dir.pwd
+  album_path = File.join($library_path, artist.filename, album.filename)
+  Dir.chdir(album_path)
+  songs = Dir.glob("*.mp3").sort
+  Dir.chdir(old_pwd)
+  return {artists: [], albums: [], songs: songs}.to_json
 end
 
 post :cmus_play do
