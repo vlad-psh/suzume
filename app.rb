@@ -373,7 +373,11 @@ get :search do
   all_albums = Album.where('title ILIKE ? OR romaji ILIKE ?', q, q).order(year: :desc)
   @sorted_albums = albums_by_type(all_albums)
 
-  slim :index
+  if all_albums.count == 0 && @artists.count == 1
+    redirect path_to(:artist).with(@artists[0].id)
+  else
+    slim :index
+  end
 end
 
 get :tags_index do
