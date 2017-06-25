@@ -42,6 +42,7 @@ paths index: '/',
     api_index: '/api/index',
     api_artist: '/api/artist/:id',
     api_album: '/api/album/:id',
+    download: '/download/:id/:filename',
     cmus_play: '/cmus/play',
     cmus_add: '/cmus/add'
 
@@ -429,6 +430,15 @@ get :api_album do
   songs = Dir.glob("*.mp3").sort
   Dir.chdir(old_pwd)
   return {artists: [], albums: [], songs: songs}.to_json
+end
+
+get :download do
+  album = Album.find(params[:id])
+  artist = album.artists.first
+  album_path = File.join(artist.filename, album.filename)
+
+  filename = params[:filename].force_encoding('UTF-8')
+  redirect "/lib/#{album_path}/#{params[:filename]}"
 end
 
 post :cmus_play do
