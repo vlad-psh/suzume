@@ -214,7 +214,6 @@ post :album do
   album.romaji = params[:romaji].empty? ? nil : params[:romaji]
   album.save
 
-#  redirect path_to(:artist).with(album.artists.first.id)
   slim :album_line, layout: false, locals: {album: album}
 end
 
@@ -323,16 +322,13 @@ end
 
 def get_album_cover(album)
   begin
-    artist = album.artists.first
-    artist_path = File.expand_path(artist.filename, $library_path)
-    album_path = File.expand_path(album.filename, artist_path)
-    cover_path = get_album_cover_file(album_path)
+    cover_path = get_album_cover_file(album.full_path)
 
     unless cover_path
-      mp3_file_path = Dir.glob("#{album_path}/*.{MP3,mp3}").first
+      mp3_file_path = Dir.glob("#{album.full_path}/*.{MP3,mp3}").first
       if mp3_file_path
-        extract_cover(album_path, mp3_file_path)
-        cover_path = get_album_cover_file(album_path)
+        extract_cover(album.full_path, mp3_file_path)
+        cover_path = get_album_cover_file(album.full_path)
       end
     end
 
@@ -423,11 +419,8 @@ get :api_album do
 
   return {error: '404'}.to_json unless album
 
-  artist = album.artists.first
-
   old_pwd = Dir.pwd
-  album_path = File.join($library_path, artist.filename, album.filename)
-  Dir.chdir(album_path)
+  Dir.chdir(album.full_path)
   songs = Dir.glob("*.mp3").sort
   Dir.chdir(old_pwd)
   return {artists: [], albums: [], songs: songs}.to_json
@@ -435,10 +428,8 @@ end
 
 get :download do
   album = Album.find(params[:id])
-  artist = album.artists.first
-
   filename = params[:filename].force_encoding('UTF-8')
-  fullpath = File.join($library_path, artist.filename, album.filename, filename)
+  fullpath = File.join(album.full_path, filename)
 
   begin
     tmphex = SecureRandom.hex
@@ -453,17 +444,13 @@ get :download do
 end
 
 post :cmus_play do
-   album = Album.find(params[:id].to_i)
-   artist = album.artists.first
-   album_path = File.join($library_path, artist.filename, album.filename)
-  `#{CMUS_COMMAND} -C 'player-stop' 'clear' 'set play_library=false' 'add #{escape_apos(album_path)}'`
+   album = Album.find(params[:id])
+  `#{CMUS_COMMAND} -C 'player-stop' 'clear' 'set play_library=false' 'add #{escape_apos(album.full_path)}'`
    sleep 1
   `#{CMUS_COMMAND} -C 'player-next' 'player-play'`
 end
 
 post :cmus_add do
    album = Album.find(params[:id].to_i)
-   artist = album.artists.first
-   album_path = File.join($library_path, artist.filename, album.filename)
-  `#{CMUS_COMMAND} -C 'add #{escape_apos(album_path)}'`
+  `#{CMUS_COMMAND} -C 'add #{escape_apos(album.full_path)}'`
 end
