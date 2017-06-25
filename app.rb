@@ -325,7 +325,7 @@ def get_album_cover(album)
     cover_path = get_album_cover_file(album.full_path)
 
     unless cover_path
-      mp3_file_path = Dir.glob("#{album.full_path}/*.{MP3,mp3}").first
+      mp3_file_path = Dir.glob("#{album.full_path}/*/*.mp3", File::FNM_CASEFOLD).first
       if mp3_file_path
         extract_cover(album.full_path, mp3_file_path)
         cover_path = get_album_cover_file(album.full_path)
@@ -419,11 +419,7 @@ get :api_album do
 
   return {error: '404'}.to_json unless album
 
-  old_pwd = Dir.pwd
-  Dir.chdir(album.full_path)
-  songs = Dir.glob("*.mp3").sort
-  Dir.chdir(old_pwd)
-  return {artists: [], albums: [], songs: songs}.to_json
+  return {artists: [], albums: [], songs: album.all_tracks}.to_json
 end
 
 get :download do

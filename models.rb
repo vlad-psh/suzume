@@ -12,6 +12,15 @@ class Album < ActiveRecord::Base
     _artist = artists.first
     @_full_path = File.join($library_path, _artist.filename, filename)
   end
+
+  def all_tracks
+    old_pwd = Dir.pwd
+    Dir.chdir(full_path)
+    tracks  = Dir.glob("**/*.mp3", File::FNM_CASEFOLD)
+    tracks += Dir.glob("**/*.m4a", File::FNM_CASEFOLD)
+    Dir.chdir(old_pwd)
+    return tracks.sort
+  end
 end
 
 class Tag < ActiveRecord::Base
