@@ -14,6 +14,7 @@ include Magick
 require 'id3tag'
 require 'open-uri'
 require 'tempfile'
+require 'securerandom'
 
 require_relative './models.rb'
 require_relative './helpers.rb'
@@ -435,10 +436,20 @@ end
 get :download do
   album = Album.find(params[:id])
   artist = album.artists.first
-  album_path = File.join(artist.filename, album.filename)
 
   filename = params[:filename].force_encoding('UTF-8')
-  redirect "/lib/#{album_path}/#{params[:filename]}"
+  fullpath = File.join($library_path, artist.filename, album.filename, filename)
+
+  begin
+    tmphex = SecureRandom.hex
+    tmpfile = "public/lib/#{tmphex}"
+  end while File.exist?("public/lib/#{tmpfile}")
+  File.symlink(fullpath, tmpfile)
+
+  # Sinatra's 'redirect' function not used because it inserts host to 'Location' header
+  status 302
+  response['Location'] = "/lib/#{tmphex}"
+  return
 end
 
 post :cmus_play do

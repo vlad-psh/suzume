@@ -5,3 +5,4 @@ Gemfile.lock
 *.sqlite3
 *.sqlite3-journal
 public/cover
+public/lib
