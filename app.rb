@@ -172,6 +172,13 @@ get :artist do
   end
 
   all_albums = @artist.albums.order(year: :desc) # is_mock: :asc
+  # try to set cover for albums with .has_cover == -1
+  all_albums.each do |a|
+    if a.has_cover == -1
+      a.has_cover = (get_album_cover(a) == 0 ? 0 : 1)
+      a.save
+    end
+  end
   @sorted_albums = albums_by_type(all_albums)
 
   @new_albums = []
@@ -294,10 +301,13 @@ def extract_cover(path, filename)
 end
 
 def get_album_cover_file(path)
-  ['cover.jpg', 'front.jpg', 'cover.png', 'folder.jpg'].each do |cn| 
-    _f = File.expand_path(cn, path)
-    return _f if File.exist?(_f)
+  ['cover', 'front', 'folder'].each do |n|
+    ['jpg', 'jpeg', 'png'].each do |ext|
+      files = Dir.glob("#{path}/**/#{n}.#{ext}", File::FNM_CASEFOLD)
+      return files.first if files.count > 0
+    end
   end
+
   return nil
 end
 
