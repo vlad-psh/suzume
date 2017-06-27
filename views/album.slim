@@ -1,0 +1,8 @@
+
+table
+  - @album.all_tracks.each do |t|
+    tr
+      td
+        a href=(path_to(:download).with(@album.id, t)) = t
+      td
+        audio src=(path_to(:download).with(@album.id, t)) preload="none" controls="controls" style="width: 500px"

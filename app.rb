@@ -213,6 +213,12 @@ get :album_line do
   slim :album_line, layout: false, locals: {album: album}
 end
 
+get :album do
+  @album = Album.find(params[:id])
+
+  slim :album
+end
+
 post :album do
   album = Album.find(params[:id].to_i)
   album.year = params[:year].to_i
@@ -335,7 +341,7 @@ def get_album_cover(album)
     cover_path = get_album_cover_file(album.full_path)
 
     unless cover_path
-      mp3_file_path = Dir.glob("#{album.full_path}/*/*.mp3", File::FNM_CASEFOLD).first
+      mp3_file_path = File.join(album.full_path, album.all_tracks.first)
       if mp3_file_path
         extract_cover(album.full_path, mp3_file_path)
         cover_path = get_album_cover_file(album.full_path)
@@ -417,7 +423,7 @@ get :api_artist do
   return {error: '404'}.to_json unless artist
 
   result = {artists: [], albums: [], songs: []}
-  artist.albums.each do |a|
+  artist.albums.order(year: :desc).each do |a|
     result[:albums] << {id: a.id, title: a.title}
   end
   return result.to_json
