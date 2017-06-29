@@ -1,13 +1,29 @@
-class Artist < ActiveRecord::Base
-  has_and_belongs_to_many :albums
-  has_and_belongs_to_many :tags
+module NoteParent
+  def simple_type
+    if self.kind_of?(Artist)
+      return 'p'
+    elsif self.kind_of?(Album)
+      return 'r'
+    elsif self.kind_of?(Track)
+      return 't'
+    else
+      throw StandardError.new("Unknown NoteParent type: #{self.class}")
+    end
+  end
 
   def notes
-    return Note.lookup(self)
+    return Note.where(parent_type: simple_type, parent_id: id)
   end
 end
 
+class Artist < ActiveRecord::Base
+  include NoteParent
+  has_and_belongs_to_many :albums
+  has_and_belongs_to_many :tags
+end
+
 class Album < ActiveRecord::Base
+  include NoteParent
   has_and_belongs_to_many :artists
   has_and_belongs_to_many :tags
   has_many :tracks
@@ -26,10 +42,6 @@ class Album < ActiveRecord::Base
     Dir.chdir(old_pwd)
     return tracks.sort
   end
-
-  def notes
-    return Note.lookup(self)
-  end
 end
 
 class Tag < ActiveRecord::Base
@@ -38,26 +50,11 @@ class Tag < ActiveRecord::Base
 end
 
 class Track < ActiveRecord::Base
+  include NoteParent
   belongs_to :album
-
-  def notes
-    return Note.lookup(self)
-  end
 end
 
 class Note < ActiveRecord::Base
-  def self.lookup(obj)
-    if obj.kind_of?(Artist)
-      return Note.where(parent_type: 'p', parent_id: obj.id)
-    elsif obj.kind_of?(Album)
-      return Note.where(parent_type: 'r', parent_id: obj.id)
-    elsif obj.kind_of?(Track)
-      return Note.where(parent_type: 't', parent_id: obj.id)
-    else
-      return nil
-    end
-  end
-
   def parent
     result = case parent_type
       when 'p' then Artist.find(parent_id)
