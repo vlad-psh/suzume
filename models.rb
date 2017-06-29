@@ -6,6 +6,7 @@ end
 class Album < ActiveRecord::Base
   has_and_belongs_to_many :artists
   has_and_belongs_to_many :tags
+  has_many :tracks
 
   def full_path
     return @_full_path if @_full_path
@@ -26,4 +27,19 @@ end
 class Tag < ActiveRecord::Base
   has_and_belongs_to_many :artists
   has_and_belongs_to_many :albums
+end
+
+class Track < ActiveRecord::Base
+  belongs_to :album
+end
+
+class Note < ActiveRecord::Base
+  def parent
+    result = case parent_type
+      when 'p' then Artist.find(parent_id)
+      when 'r' then Album.find(parent_id)
+      when 't' then Track.find(parent_id)
+      else throw StandardError.new("Unknown parent_type: #{parent_type}")
+    end
+  end
 end
