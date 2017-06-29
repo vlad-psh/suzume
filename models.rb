@@ -1,6 +1,10 @@
 class Artist < ActiveRecord::Base
   has_and_belongs_to_many :albums
   has_and_belongs_to_many :tags
+
+  def notes
+    return Note.lookup(self)
+  end
 end
 
 class Album < ActiveRecord::Base
@@ -22,6 +26,10 @@ class Album < ActiveRecord::Base
     Dir.chdir(old_pwd)
     return tracks.sort
   end
+
+  def notes
+    return Note.lookup(self)
+  end
 end
 
 class Tag < ActiveRecord::Base
@@ -31,9 +39,25 @@ end
 
 class Track < ActiveRecord::Base
   belongs_to :album
+
+  def notes
+    return Note.lookup(self)
+  end
 end
 
 class Note < ActiveRecord::Base
+  def self.lookup(obj)
+    if obj.kind_of?(Artist)
+      return Note.where(parent_type: 'p', parent_id: obj.id)
+    elsif obj.kind_of?(Album)
+      return Note.where(parent_type: 'r', parent_id: obj.id)
+    elsif obj.kind_of?(Track)
+      return Note.where(parent_type: 't', parent_id: obj.id)
+    else
+      return nil
+    end
+  end
+
   def parent
     result = case parent_type
       when 'p' then Artist.find(parent_id)

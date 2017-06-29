@@ -1,4 +1,4 @@
-
+h2 Tracks
 table
   - @album.all_tracks.each do |t|
     tr
@@ -6,3 +6,9 @@ table
         a href=(path_to(:download).with(@album.id, t)) = t
       td
         audio src=(path_to(:download).with(@album.id, t)) preload="none" controls="controls" style="width: 500px"
+
+h2 Notes
+ul
+  - @album.notes.each do |n|
+    li
+      = n.content
