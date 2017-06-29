@@ -45,7 +45,8 @@ paths index: '/',
     api_album: '/api/album/:id',
     download: '/download/:id/:filename',
     cmus_play: '/cmus/play',
-    cmus_add: '/cmus/add'
+    cmus_add: '/cmus/add',
+    notes: '/notes'
 
 helpers TulipHelpers
 
@@ -470,4 +471,17 @@ end
 post :cmus_add do
    album = Album.find(params[:id].to_i)
   `#{CMUS_COMMAND} -C 'add #{escape_apos(album.full_path)}'`
+end
+
+post :notes do
+  Note.create(parent_type: params[:parent_type],
+        parent_id: params[:parent_id],
+        content: params[:content])
+
+  case params[:parent_type]
+    when 'p' then redirect path_to(:artist).with(params[:parent_id])
+    when 'r' then redirect path_to(:album).with(params[:parent_id])
+    when 't' then throw StandardError.new("Not Implemented Yet")
+    else "Unknown parent type: #{params[:parent_type]}"
+  end
 end

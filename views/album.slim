@@ -12,3 +12,4 @@ ul
   - @album.notes.each do |n|
     li
       = n.content
+== slim :note_form, locals: {note_parent: @album}
