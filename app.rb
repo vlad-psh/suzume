@@ -171,7 +171,7 @@ get :artist do
     end
   end
 
-  all_albums = @artist.albums.order(year: :desc) # is_mock: :asc
+  all_albums = @artist.albums.order(year: :desc, title: :asc) # is_mock: :asc
   # try to set cover for albums with .has_cover == -1
   all_albums.each do |a|
     if a.has_cover == -1
@@ -362,18 +362,23 @@ end
 post :set_album_cover_from_url do
   album = Album.find(params[:id].to_i)
 
-  saved_file = Tempfile.new('tulip')
-  open(params[:url]) do |read_file|
-    saved_file.write(read_file.read)
+  if params[:url].empty?
+    album.has_cover = (get_album_cover(album) == 0 ? 0 : 1)
+    album.save
+  else
+    saved_file = Tempfile.new('tulip')
+    open(params[:url]) do |read_file|
+      saved_file.write(read_file.read)
+    end
+    saved_file.close
+
+    process_album_cover(album.id, saved_file.path)
+
+    saved_file.unlink
+
+    album.has_cover = 1
+    album.save
   end
-  saved_file.close
-
-  process_album_cover(album.id, saved_file.path)
-
-  saved_file.unlink
-
-  album.has_cover = 1
-  album.save
 
   slim :album_line, layout: false, locals: {album: album}
 end
