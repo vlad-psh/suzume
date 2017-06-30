@@ -16,12 +16,6 @@ require 'open-uri'
 require 'tempfile'
 require 'securerandom'
 
-require_relative './models.rb'
-require_relative './helpers.rb'
-
-also_reload './models.rb'
-also_reload './helpers.rb'
-
 paths index: '/',
     artists: '/artists',
     artist: '/artist/:id',
@@ -47,6 +41,15 @@ paths index: '/',
     cmus_play: '/cmus/play',
     cmus_add: '/cmus/add',
     notes: '/notes'
+
+require_relative './models.rb'
+require_relative './helpers.rb'
+require_relative './api.rb'
+
+also_reload './models.rb'
+also_reload './helpers.rb'
+also_reload './api.rb'
+
 
 helpers TulipHelpers
 
@@ -413,35 +416,6 @@ def escape_apos(text)
 #  temp = text.gsub("'", "¤'")
 #  return temp.gsub("¤", 92.chr)
   return text.gsub("'", "'\"'\"'") # xx'yy -> xx'"'"'yy (same as '...xx' + "'" + 'yy...')
-end
-
-get :api_index do
-  result = {artists: [], albums: [], songs: []}
-  Artist.all.order(title: :asc).each do |a|
-    result[:artists] << {id: a.id, title: a.title}
-  end
-  return result.to_json
-end
-
-get :api_artist do
-  artist = Artist.find(params[:id])
-
-  return {error: '404'}.to_json unless artist
-
-  result = {artists: [], albums: [], songs: []}
-  artist.albums.order(year: :desc).each do |a|
-    result[:albums] << {id: a.id, title: a.title}
-  end
-  return result.to_json
-end
-
-
-get :api_album do
-  album = Album.find(params[:id])
-
-  return {error: '404'}.to_json unless album
-
-  return {artists: [], albums: [], songs: album.all_tracks}.to_json
 end
 
 get :download do
