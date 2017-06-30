@@ -1,11 +1,19 @@
 h2 Tracks
 table
-  - @album.all_tracks.each do |t|
+  - @tracks.each do |t|
     tr
       td
         a href=(path_to(:download).with(@album.id, t.filename)) = t.filename
       td
         audio src=(path_to(:download).with(@album.id, t.filename)) preload="none" controls="controls" style="width: 500px"
+      td
+        == slim :note_form, locals: {note_parent: t}
+    tr
+      td
+        ul
+          - if @notes[t.id]
+            - @notes[t.id].each do |n|
+              li = n.content
 
 h2 Notes
 ul

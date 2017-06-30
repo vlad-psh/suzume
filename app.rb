@@ -219,6 +219,12 @@ end
 
 get :album do
   @album = Album.find(params[:id])
+  @tracks = @album.all_tracks
+  @notes = {}
+  Note.where(parent_type: 't', parent_id: @tracks).each do |n|
+    @notes[n.parent_id] ||= []
+    @notes[n.parent_id] << n
+  end
 
   slim :album
 end
@@ -455,7 +461,7 @@ post :notes do
   case params[:parent_type]
     when 'p' then redirect path_to(:artist).with(params[:parent_id])
     when 'r' then redirect path_to(:album).with(params[:parent_id])
-    when 't' then throw StandardError.new("Not Implemented Yet")
+    when 't' then redirect path_to(:album).with(Track.find(params[:parent_id]).album.id)
     else "Unknown parent type: #{params[:parent_type]}"
   end
 end
