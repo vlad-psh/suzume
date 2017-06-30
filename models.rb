@@ -34,13 +34,29 @@ class Album < ActiveRecord::Base
     @_full_path = File.join($library_path, _artist.filename, filename)
   end
 
-  def all_tracks
+  def search_tracks
     old_pwd = Dir.pwd
     Dir.chdir(full_path)
     tracks  = Dir.glob("**/*.mp3", File::FNM_CASEFOLD)
     tracks += Dir.glob("**/*.m4a", File::FNM_CASEFOLD)
     Dir.chdir(old_pwd)
     return tracks.sort
+  end
+
+  def all_tracks
+    filenames = search_tracks
+    _tracks = tracks
+
+    _tracks.each do |t|
+      filenames.delete(t.filename) if filenames.include?(t.filename)
+    end
+
+    filenames.each do |fn|
+      t = Track.create(album: self, filename: fn)
+      _tracks << t
+    end
+
+    return _tracks
   end
 end
 

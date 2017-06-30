@@ -345,7 +345,7 @@ def get_album_cover(album)
     cover_path = get_album_cover_file(album.full_path)
 
     unless cover_path
-      mp3_file_path = File.join(album.full_path, album.all_tracks.first)
+      mp3_file_path = File.join(album.full_path, album.all_tracks.first.filename)
       if mp3_file_path
         extract_cover(album.full_path, mp3_file_path)
         cover_path = get_album_cover_file(album.full_path)

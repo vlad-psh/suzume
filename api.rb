@@ -24,6 +24,10 @@ get :api_album do
 
   return {error: '404'}.to_json unless album
 
-  return {artists: [], albums: [], songs: album.all_tracks}.to_json
+  return {
+    artists: [],
+    albums: [],
+    songs: album.all_tracks.map{|t|t.filename}
+  }.to_json
 end
 
