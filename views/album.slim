@@ -4,7 +4,7 @@ h2 Tracks
 ul
   - @tracks.each do |t|
     li
-      a.ajax-link.playlist-item data-song-path=(path_to(:download).with(@album.id, t.filename)) = t.filename
+      a.ajax-link.track-playback-link data-track-url=(path_to(:download).with(@album.id, t.filename)) = t.filename
       |  (
       a href=(path_to(:download).with(@album.id, t.filename)) Download
       '  |
@@ -30,4 +30,10 @@ javascript:
   $(document).on('click', '.track-add-note-link', function(){
     var id = $(this).data('id');
     $("#note-form-" + id).show();
+  });
+
+  $(document).on('click', '.track-playback-link', function(){
+    var track_url = $(this).data('track-url');
+    $('#main-player').attr('src', track_url);
+    $('#main-player')[0].play();
   });
