@@ -1,19 +1,23 @@
+audio#main-player preload="none" controls="controls" style="width: 500px"
+
 h2 Tracks
-table
+ul
   - @tracks.each do |t|
-    tr
-      td
-        a href=(path_to(:download).with(@album.id, t.filename)) = t.filename
-      td
-        audio src=(path_to(:download).with(@album.id, t.filename)) preload="none" controls="controls" style="width: 500px"
-      td
+    li
+      a.ajax-link.playlist-item data-song-path=(path_to(:download).with(@album.id, t.filename)) = t.filename
+      |  (
+      a href=(path_to(:download).with(@album.id, t.filename)) Download
+      '  |
+      a.ajax-link.track-add-note-link data-id=t.id Add note
+      | )
+      - if @notes[t.id]
+        table.track-notes-table
+          - @notes[t.id].each do |n|
+            tr
+              td.track-note-date = n.created_at.localtime.strftime('%-d %b %Y, %H:%M')
+              td.track-note-content = n.content
+      div.track-note-form id="note-form-#{t.id}"
         == slim :note_form, locals: {note_parent: t}
-    tr
-      td
-        ul
-          - if @notes[t.id]
-            - @notes[t.id].each do |n|
-              li = n.content
 
 h2 Notes
 ul
@@ -21,3 +25,9 @@ ul
     li
       = n.content
 == slim :note_form, locals: {note_parent: @album}
+
+javascript:
+  $(document).on('click', '.track-add-note-link', function(){
+    var id = $(this).data('id');
+    $("#note-form-" + id).show();
+  });

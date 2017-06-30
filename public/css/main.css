@@ -16,6 +16,16 @@ h2 {
   background: #c92d21;
   color: #270300;
 }
+a {
+  color: #1c79cb;
+}
+a:hover {
+  color: #529fe2;
+}
+.ajax-link {
+  cursor: pointer;
+  border-bottom: 1px dashed #1c79cb;
+}
 table td {
   vertical-align: top;
   padding: 0 8px 0 8px;
@@ -120,4 +130,18 @@ img.album-cover {
 .album-buttons img {
   display: block;
   vertical-align: bottom;
+}
+.track-note-form {
+  display: none;
+}
+.track-notes-table td {
+  vertical-align: baseline;
+  max-width: 40em;
+}
+.track-notes-table .track-note-date {
+  color: #777;
+  font-size: 0.8em;
+}
+.track-notes-table .track-note-content {
+  font-size: 0.85em;
 }

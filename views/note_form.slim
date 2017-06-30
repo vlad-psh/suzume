@@ -3,5 +3,6 @@
 form action=path_to(:notes) method="POST"
   input type="hidden" name="parent_type" value=note_parent.simple_type
   input type="hidden" name="parent_id" value=note_parent.id
-  textarea name="content"
+  textarea name="content" style="width: 400px; height: 70px;"
+  br
   input type="submit" value="Create"

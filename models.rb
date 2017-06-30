@@ -1,11 +1,11 @@
 module NoteParent
   def simple_type
     if self.kind_of?(Artist)
-      return 'p'
+      return :p
     elsif self.kind_of?(Album)
-      return 'r'
+      return :r
     elsif self.kind_of?(Track)
-      return 't'
+      return :t
     else
       throw StandardError.new("Unknown NoteParent type: #{self.class}")
     end
@@ -73,9 +73,9 @@ end
 class Note < ActiveRecord::Base
   def parent
     result = case parent_type
-      when 'p' then Artist.find(parent_id)
-      when 'r' then Album.find(parent_id)
-      when 't' then Track.find(parent_id)
+      when :p then Artist.find(parent_id)
+      when :r then Album.find(parent_id)
+      when :t then Track.find(parent_id)
       else throw StandardError.new("Unknown parent_type: #{parent_type}")
     end
   end
