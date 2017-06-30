@@ -134,14 +134,14 @@ img.album-cover {
 .track-note-form {
   display: none;
 }
-.track-notes-table td {
+.notes-table td {
   vertical-align: baseline;
   max-width: 40em;
 }
-.track-notes-table .track-note-date {
+.notes-table .note-date {
   color: #777;
   font-size: 0.8em;
 }
-.track-notes-table .track-note-content {
+.notes-table .note-content {
   font-size: 0.85em;
 }

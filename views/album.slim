@@ -10,20 +10,12 @@ ul
       '  |
       a.ajax-link.track-add-note-link data-id=t.id Add note
       | )
-      - if @notes[t.id]
-        table.track-notes-table
-          - @notes[t.id].each do |n|
-            tr
-              td.track-note-date = n.created_at.localtime.strftime('%-d %b %Y, %H:%M')
-              td.track-note-content = n.content
+      == slim :notes_table, locals: {notes: @notes[t.id]}
       div.track-note-form id="note-form-#{t.id}"
         == slim :note_form, locals: {note_parent: t}
 
 h2 Notes
-ul
-  - @album.notes.each do |n|
-    li
-      = n.content
+== slim :notes_table, locals: {notes: @album.notes}
 == slim :note_form, locals: {note_parent: @album}
 
 javascript:

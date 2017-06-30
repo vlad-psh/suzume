@@ -1,0 +1,8 @@
+// locals: notes
+
+- if notes && notes.count > 0
+  table.notes-table
+    - notes.each do |n|
+      tr
+        td.note-date = n.created_at.localtime.strftime('%-d %b %Y, %H:%M')
+        td.note-content = n.content
