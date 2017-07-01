@@ -9,11 +9,11 @@ div class="tags-block"
   form method="POST" action=submit_path
     - if artist
       - artist.tags.each do |t|
-        == slim :tag, locals: {tag: t, artist: artist}
+        == slim :tag_item, locals: {tag: t, artist: artist}
       input type="hidden" name="artist_id" value=artist.id
     - elsif album
       - album.tags.each do |t|
-        == slim :tag, locals: {tag: t, album: album}
+        == slim :tag_item, locals: {tag: t, album: album}
       input type="hidden" name="album_id" value=album.id
     - elsif tags_array
       - tags_array.each do |t|

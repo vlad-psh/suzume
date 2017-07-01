@@ -94,7 +94,7 @@ get :index do
   artists_per_page = 50
   @page = params[:page] ? params[:page].to_i - 1 : 0
   @total_pages = (Artist.count / artists_per_page.to_f).ceil
-  @artists = Artist.includes(:tags).order(created_at: :desc).limit(artists_per_page).offset(@page * artists_per_page).all
+  @artists = Artist.order(created_at: :desc).limit(artists_per_page).offset(@page * artists_per_page).all
 
   request.accept.each do |type|
     if type.to_s == 'text/json'
@@ -168,7 +168,7 @@ def albums_by_type(all_albums)
 end
 
 get :artist do
-  @artist = Artist.includes(:tags).find(params[:id])
+  @artist = Artist.find(params[:id])
 
   request.accept.each do |type|
     if type.to_s == 'text/json'

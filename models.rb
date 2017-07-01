@@ -1,4 +1,4 @@
-module NoteParent
+module MusicObject
   def simple_type
     if self.kind_of?(Artist)
       return :p
@@ -7,25 +7,27 @@ module NoteParent
     elsif self.kind_of?(Track)
       return :t
     else
-      throw StandardError.new("Unknown NoteParent type: #{self.class}")
+      throw StandardError.new("Unknown MusicObject type: #{self.class}")
     end
   end
 
   def notes
     return Note.where(parent_type: simple_type, parent_id: id)
   end
+
+  def tags
+    return Tag.where(id: TagRelation.where(linked_object: "#{simple_type}#{id}").pluck(:tag_id))
+  end
 end
 
 class Artist < ActiveRecord::Base
-  include NoteParent
+  include MusicObject
   has_and_belongs_to_many :albums
-  has_and_belongs_to_many :tags
 end
 
 class Album < ActiveRecord::Base
-  include NoteParent
+  include MusicObject
   has_and_belongs_to_many :artists
-  has_and_belongs_to_many :tags
   has_many :tracks
 
   def full_path
@@ -60,21 +62,14 @@ end
 
 class Tag < ActiveRecord::Base
   has_many :tag_relations
-  has_and_belongs_to_many :artists
-  has_and_belongs_to_many :albums
 end
 
 class TagRelation < ActiveRecord::Base
   belongs_to :tag
 end
 
-class ArtistsTag < ActiveRecord::Base
-end
-class AlbumsTag < ActiveRecord::Base
-end
-
 class Track < ActiveRecord::Base
-  include NoteParent
+  include MusicObject
   belongs_to :album
 end
 
