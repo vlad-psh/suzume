@@ -317,13 +317,19 @@ def extract_cover(path, filename)
 end
 
 def get_album_cover_file(path)
+  old_pwd = Dir.pwd
+  Dir.chdir(path)
+
   ['cover', 'front', 'folder'].each do |n|
     ['jpg', 'jpeg', 'png'].each do |ext|
-      files = Dir.glob("#{path}/**/#{n}.#{ext}", File::FNM_CASEFOLD)
-      return files.first if files.count > 0
+      files = Dir.glob("**/#{n}.#{ext}", File::FNM_CASEFOLD)
+      if files.count > 0
+        Dir.chdir(old_pwd)
+        return File.expand_path(files.first, path)
+      end
     end
   end
-
+  Dir.chdir(old_pwd)
   return nil
 end
 
