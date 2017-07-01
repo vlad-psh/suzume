@@ -1,23 +1,7 @@
-// locals: submit_path, artist||album||tags_array
+// locals: tags
 
-ruby:
-  artist ||= nil
-  album ||= nil
-  tags_array ||= nil
+h2. Tags
 
-div class="tags-block"
-  form method="POST" action=submit_path
-    - if artist
-      - artist.tags.each do |t|
-        == slim :tag, locals: {tag: t, artist: artist}
-      input type="hidden" name="artist_id" value=artist.id
-    - elsif album
-      - album.tags.each do |t|
-        == slim :tag, locals: {tag: t, album: album}
-      input type="hidden" name="album_id" value=album.id
-    - elsif tags_array
-      - tags_array.each do |t|
-        div class="tag tag-g"
-          = "#{t['name']} (#{t['count']})"
-    - if artist || album
-      input class="new-tag-input" type="text" name="tag" autocomplete="off"
+- tags.each do |t|
+  div class="tag tag-#{t.category}"
+    a href=path_to(:search_by_tag).with(t.id) = t.title

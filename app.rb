@@ -19,24 +19,27 @@ require 'securerandom'
 paths index: '/',
     artists: '/artists',
     artist: '/artist/:id',
-    artist_add_tag: '/artist/tag/add',
-    artist_remove_tag: '/artist/tag/remove',
     albums: '/albums',
     album: '/album/:id',
     album_form: '/album_form/:id',
     album_line: '/album_line/:id',
-    album_add_tag: '/album/tag/add',
-    album_remove_tag: '/album/tag/remove',
+
     set_album_cover_from_url: '/cover/url/:id',
     album_cover_thumb: '/cover/thumb/:id', # handled by nginx
     album_cover_orig: '/cover/orig/:id',
-    lastfm_tags: '/lastfm/artist/:id',
+
     search: '/search',
     search_by_tag: '/tag/:id',
-    tags_index: '/tags',
+
+    tags: '/tags', # index
+    tag_add: '/tag/add',
+    tag_remove: '/tag/remove',
+    lastfm_tags: '/lastfm/artist/:id',
+
     api_index: '/api/index',
     api_artist: '/api/artist/:id',
     api_album: '/api/album/:id',
+
     download: '/download/:id/:filename',
     cmus_play: '/cmus/play',
     cmus_add: '/cmus/add',
@@ -258,48 +261,6 @@ post :albums do
   redirect path_to(:artist).with(artist.id)
 end
 
-post :artist_add_tag do
-  artist = Artist.find(params[:artist_id].to_i)
-
-  t = params[:tag]
-  tag_category, tag_name = t.downcase.split(":")
-  unless tag_category.length != 1
-    tag = Tag.find_or_create_by(category: tag_category.strip, title: tag_name.strip)
-    artist.tags << tag
-  end
-
-  redirect path_to(:artist).with(artist.id)
-end
-
-post :artist_remove_tag do
-  artist = Artist.find(params[:artist_id].to_i)
-  tag = Tag.find(params[:tag_id].to_i)
-  artist.tags.delete(tag)
-
-  return "OK"
-end
-
-post :album_add_tag do
-  album = Album.find(params[:album_id].to_i)
-
-  t = params[:tag]
-  tag_category, tag_name = t.downcase.split(":")
-  unless tag_category.length != 1
-    tag = Tag.find_or_create_by(category: tag_category.strip, title: tag_name.strip)
-    album.tags << tag
-  end
-
-  redirect path_to(:artist).with(album.artists.first.id)
-end
-
-post :album_remove_tag do
-  album = Album.find(params[:album_id].to_i)
-  tag = Tag.find(params[:tag_id].to_i)
-  album.tags.delete(tag)
-
-  return "OK"
-end
-
 def extract_cover(path, filename)
   if File.exist?(filename)
     ID3Tag.read(File.open(filename, "rb")).all_frames_by_id(:APIC).each do |pic|
@@ -402,7 +363,7 @@ end
 get :lastfm_tags do
   artist = Artist.find(params[:id].to_i)
   tags = $lastfm.artist.get_top_tags(artist: artist.title)
-  slim :tags, layout: false, locals: {tags_array: tags, submit_path: ''}
+  slim :tags_form, layout: false, locals: {tags_array: tags, submit_path: ''}
 end
 
 get :search do
@@ -418,10 +379,18 @@ get :search do
   end
 end
 
-get :tags_index do
+get :tags do
   @tags = Tag.all.order(category: :asc, title: :asc)
 
-  slim :tags_index, locals: {tags: @tags}
+  slim :tags, locals: {tags: @tags}
+end
+
+post :tag_add do
+  
+end
+
+post :tag_remove do
+  
 end
 
 def escape_apos(text)

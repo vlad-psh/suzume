@@ -45,24 +45,32 @@ class Album < ActiveRecord::Base
 
   def all_tracks
     filenames = search_tracks
-    _tracks = tracks
 
-    _tracks.each do |t|
+    tracks.each do |t|
       filenames.delete(t.filename) if filenames.include?(t.filename)
     end
 
     filenames.each do |fn|
-      t = Track.create(album: self, filename: fn)
-      _tracks << t
+      tracks << Track.create(album: self, filename: fn)
     end
 
-    return _tracks
+    return tracks.order(filename: :asc)
   end
 end
 
 class Tag < ActiveRecord::Base
+  has_many :tag_relations
   has_and_belongs_to_many :artists
   has_and_belongs_to_many :albums
+end
+
+class TagRelation < ActiveRecord::Base
+  belongs_to :tag
+end
+
+class ArtistsTag < ActiveRecord::Base
+end
+class AlbumsTag < ActiveRecord::Base
 end
 
 class Track < ActiveRecord::Base

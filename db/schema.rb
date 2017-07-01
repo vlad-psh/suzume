@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170629171417) do
+ActiveRecord::Schema.define(version: 20170701152029) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,15 @@ ActiveRecord::Schema.define(version: 20170629171417) do
     t.string "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "tag_relations", force: :cascade do |t|
+    t.string "linked_object"
+    t.bigint "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["linked_object"], name: "index_tag_relations_on_linked_object"
+    t.index ["tag_id"], name: "index_tag_relations_on_tag_id"
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
