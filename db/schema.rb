@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170701153330) do
+ActiveRecord::Schema.define(version: 20170701161801) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,8 @@ ActiveRecord::Schema.define(version: 20170701153330) do
     t.bigint "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "parent_type"
+    t.integer "parent_id"
     t.index ["linked_object"], name: "index_tag_relations_on_linked_object"
     t.index ["tag_id"], name: "index_tag_relations_on_tag_id"
   end

@@ -28,7 +28,7 @@
         a href=path_to(:artist).with(a.id) = a.title
         '  : 
         a href="https://musicbrainz.org/artist/#{a.mbid}"
-        == slim :tags_form, locals: {submit_path: path_to(:artist_add_tag), artist: a}
+        == slim :tags_form, locals: {artist: a}
 
 - if @sorted_albums && @sorted_albums.length > 0
   == slim :albums_sorted, locals: {sorted_albums: @sorted_albums}

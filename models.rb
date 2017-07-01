@@ -16,7 +16,7 @@ module MusicObject
   end
 
   def tags
-    return Tag.where(id: TagRelation.where(linked_object: "#{simple_type}#{id}").pluck(:tag_id))
+    return TagRelation.includes(:tag).where(parent_type: simple_type, parent_id: id).map{|i|i.tag}
   end
 end
 
@@ -62,6 +62,11 @@ end
 
 class Tag < ActiveRecord::Base
   has_many :tag_relations
+
+  def artists
+#    return TagRelation.where(parent_type: 'p', tag_id: 
+    return nil
+  end
 end
 
 class TagRelation < ActiveRecord::Base

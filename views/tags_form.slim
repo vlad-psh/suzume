@@ -1,4 +1,4 @@
-// locals: submit_path, artist||album||tags_array
+// locals: artist||album||tags_array
 
 ruby:
   artist ||= nil
@@ -6,7 +6,7 @@ ruby:
   tags_array ||= nil
 
 div class="tags-block"
-  form method="POST" action=submit_path
+  form method="POST" action=path_to(:tag_add)
     - if artist
       - artist.tags.each do |t|
         == slim :tag_item, locals: {tag: t, artist: artist}
