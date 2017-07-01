@@ -1,7 +1,17 @@
+h2
+  - i = 0
+  - @album.artists.each do |a|
+    - if i > 0
+      ' /
+    a href=path_to(:artist).with(a.id) = a.title
+    - i += 1
+  |  - 
+  = "#{@album.title} [#{@album.year}]"
+
 audio#main-player preload="none" controls="controls" style="width: 500px"
 
 h2 Tracks
-ul
+ul.playlist
   - @tracks.each do |t|
     li
       a.ajax-link.track-playback-link data-track-url=(path_to(:download).with(@album.id, t.filename)) = t.filename
