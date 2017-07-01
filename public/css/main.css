@@ -131,6 +131,9 @@ img.album-cover {
   display: block;
   vertical-align: bottom;
 }
+.track-now-playing {
+  background: #ffec83;
+}
 .track-note-form {
   display: none;
 }
