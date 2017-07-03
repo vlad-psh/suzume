@@ -1,23 +1,10 @@
-// locals: artist||album||tags_array
-
-ruby:
-  artist ||= nil
-  album ||= nil
-  tags_array ||= nil
+// locals: parent_object
 
 div class="tags-block"
   form method="POST" action=path_to(:tag_add)
-    - if artist
-      - artist.tags.each do |t|
-        == slim :tag_item, locals: {tag: t, artist: artist}
-      input type="hidden" name="artist_id" value=artist.id
-    - elsif album
-      - album.tags.each do |t|
-        == slim :tag_item, locals: {tag: t, album: album}
-      input type="hidden" name="album_id" value=album.id
-    - elsif tags_array
-      - tags_array.each do |t|
-        div class="tag tag-g"
-          = "#{t['name']} (#{t['count']})"
-    - if artist || album
-      input class="new-tag-input" type="text" name="tag" autocomplete="off"
+    input type="hidden" name="obj_type" value=parent_object.simple_type
+    input type="hidden" name="obj_id" value=parent_object.id
+    - parent_object.tags.each do |t|
+      == slim :tag_item, locals: {tag: t, parent_object: parent_object}
+    input class="new-tag-input" type="text" name="tag_name" autocomplete="off"
+

@@ -386,11 +386,34 @@ get :tags do
 end
 
 post :tag_add do
-  
+  t = params[:tag_name]
+  tag_category, tag_name = t.downcase.split(":")
+  unless tag_category.length != 1
+    tag = Tag.find_or_create_by(category: tag_category.strip, title: tag_name.strip)
+    TagRelation.create(
+            parent_type: params[:obj_type],
+            parent_id: params[:obj_id],
+            tag_id: tag.id)
+  end
+
+  if params[:obj_type] == 'p'
+    redirect path_to(:artist).with(params[:obj_id])
+  elsif params[:obj_type] == 'r'
+    redirect path_to(:album).with(params[:obj_id])
+  else
+    redirect path_to(:index)
+  end
 end
 
 post :tag_remove do
-  
+  TagRelation.where(
+        parent_type: params[:obj_type],
+        parent_id: params[:obj_id],
+        tag_id: params[:tag_id]).each do |tr|
+    tr.delete
+  end
+
+  return "OK"
 end
 
 def escape_apos(text)

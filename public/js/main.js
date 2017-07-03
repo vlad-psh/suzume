@@ -1,26 +1,13 @@
-$(document).on('click', '.artist-remove-tag-link', function(){
+$(document).on('click', '.remove-tag-link', function(){
   var tag_id = $(this).data("tag-id");
-  var artist_id = $(this).data("artist-id");
+  var obj_type = $(this).data("parent-type");
+  var obj_id = $(this).data("parent-id");
   var this_parent = $(this).parent();
 
   $.ajax({
-    url: "/artist/tag/remove",
+    url: "/tag/remove",
     method: "POST",
-    data: {artist_id: artist_id, tag_id: tag_id}
-  }).done(function(data){
-    this_parent.remove();
-  });
-});
-
-$(document).on('click', '.album-remove-tag-link', function(){
-  var tag_id = $(this).data("tag-id");
-  var album_id = $(this).data("album-id");
-  var this_parent = $(this).parent();
- 
-  $.ajax({
-    url: "/album/tag/remove",
-    method: "POST",
-    data: {album_id: album_id, tag_id: tag_id}
+    data: {obj_type: obj_type, obj_id: obj_id, tag_id: tag_id}
   }).done(function(data){
     this_parent.remove();
   });

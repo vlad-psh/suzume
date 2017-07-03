@@ -18,4 +18,4 @@ div.album-cover-block
 div.album-info-block
   div.title-romaji data-title=album.title data-romaji=album.romaji
     = "#{album.title} (#{album.year})"
-  == slim :tags_form, locals: {album: album}
+  == slim :tags_form, locals: {parent_object: album}
