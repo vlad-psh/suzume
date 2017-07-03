@@ -363,7 +363,7 @@ end
 get :lastfm_tags do
   artist = Artist.find(params[:id].to_i)
   tags = $lastfm.artist.get_top_tags(artist: artist.title)
-  slim :tags_form, layout: false, locals: {tags_array: tags, submit_path: ''}
+  slim :tags_list, layout: false, locals: {tags_array: tags}
 end
 
 get :search do
@@ -399,7 +399,9 @@ post :tag_add do
   if params[:obj_type] == 'p'
     redirect path_to(:artist).with(params[:obj_id])
   elsif params[:obj_type] == 'r'
-    redirect path_to(:album).with(params[:obj_id])
+a = Album.find(params[:obj_id]).artists.first
+redirect path_to(:artist).with(a.id)
+#    redirect path_to(:album).with(params[:obj_id])
   else
     redirect path_to(:index)
   end
