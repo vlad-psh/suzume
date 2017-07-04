@@ -1,7 +1,7 @@
 // locals: parent_object
 
 div class="tags-block"
-  form method="POST" action=path_to(:tag_add)
+  form class="add-tag-form" method="POST" action=path_to(:tag_add)
     input type="hidden" name="obj_type" value=parent_object.simple_type
     input type="hidden" name="obj_id" value=parent_object.id
     - parent_object.tags.each do |t|

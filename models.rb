@@ -1,4 +1,13 @@
 module MusicObject
+  def self.find(obj_type, obj_id)
+    return case obj_type.to_sym
+      when :p then Artist.find(obj_id)
+      when :r then Album.find(obj_id)
+      when :t then Track.find(obj_id)
+      else throw StandardError.new("Unknown parent_type: #{obj_type}")
+    end
+  end
+
   def simple_type
     if self.kind_of?(Artist)
       return :p

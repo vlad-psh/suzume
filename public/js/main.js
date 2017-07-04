@@ -1,3 +1,25 @@
+$(document).on('submit', '.add-tag-form', function(event){
+  event.preventDefault();
+
+  var serialized_form = $(this).serialize();
+  var input_tag = $(this).find('.new-tag-input');
+  var new_tag = input_tag.val().split(':');
+  if (new_tag.length != 2) {
+    alert("Please enter correct tag");
+    return false;
+  }
+
+  input_tag.val('');
+
+  $.ajax({
+    url: "/tag/add",
+    method: "POST",
+    data: serialized_form
+  }).done(function(data){
+    input_tag.before(data);
+  });
+});
+
 $(document).on('click', '.remove-tag-link', function(){
   var tag_id = $(this).data("tag-id");
   var obj_type = $(this).data("parent-type");

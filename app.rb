@@ -386,25 +386,21 @@ get :tags do
 end
 
 post :tag_add do
+  parent_obj = MusicObject.find(params[:obj_type], params[:obj_id])
+
   t = params[:tag_name]
   tag_category, tag_name = t.downcase.split(":")
   unless tag_category.length != 1
     tag = Tag.find_or_create_by(category: tag_category.strip, title: tag_name.strip)
-    TagRelation.create(
-            parent_type: params[:obj_type],
-            parent_id: params[:obj_id],
+    TagRelation.find_or_create_by(
+            parent_type: parent_obj.simple_type,
+            parent_id: parent_obj.id,
             tag_id: tag.id)
+  else
+    return 'Error'
   end
 
-  if params[:obj_type] == 'p'
-    redirect path_to(:artist).with(params[:obj_id])
-  elsif params[:obj_type] == 'r'
-a = Album.find(params[:obj_id]).artists.first
-redirect path_to(:artist).with(a.id)
-#    redirect path_to(:album).with(params[:obj_id])
-  else
-    redirect path_to(:index)
-  end
+  slim :tag_item, layout: false, locals: {tag: tag, parent_object: parent_obj}
 end
 
 post :tag_remove do
