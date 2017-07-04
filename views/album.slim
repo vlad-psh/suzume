@@ -20,6 +20,7 @@ ul.playlist
       '  |
       a.ajax-link.track-add-note-link data-id=t.id Add note
       | )
+      == slim :tags_form, locals: {parent_object: t}
       == slim :notes_table, locals: {notes: @notes[t.id]}
       div.track-note-form id="note-form-#{t.id}"
         == slim :note_form, locals: {note_parent: t}
