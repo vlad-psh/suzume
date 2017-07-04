@@ -92,24 +92,31 @@ img.album-cover {
 }
 .tag {
   display: inline-block;
-  padding: 2px 4px;
-  margin: 2px 4px;
+  margin: 0 4px;
+  font-weight: 600;
 }
-.tag-c {
-  background-color: #80dbe1;
-  color: #035b61;
+.tag .tag-category {
+  opacity: 0.5;
 }
-.tag-g {
-  background-color: #c0e180;
-  color: #445c16;
+.tag-c,
+.tag-c a {
+  color: #005cd9;
 }
-.tag-l {
-  background-color: #b780e1;
-  color: #350a57;
+.tag-g,
+.tag-g a {
+  color: #008720;
 }
-.tag-i {
-  background-color: #ff921d;
-  color: #3d2000;
+.tag-l,
+.tag-l a {
+  color: #9600bc;
+}
+.tag-i,
+.tag-i a {
+  color: #bc5400;
+}
+.tag-p,
+.tag-p a {
+  color: #ffc000;
 }
 .album-cover-block:hover .album-buttons {
   visibility: visible;
