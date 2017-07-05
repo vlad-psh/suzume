@@ -1,5 +1,6 @@
 body {
-  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;
+/*  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;*/
+  font-family: Cambria, myfont2, serif;
   font-weight: 300;
 }
 h1 {
@@ -80,11 +81,13 @@ img.album-cover {
   cursor: pointer;
 }
 .tags-block {
-  border: 1px solid #ccc;
-  display: inline-block;
-  margin: 4px 2px;
+  border-bottom: 1px solid #ccc;
+  display: inline;
   padding: 1px 4px 2px 4px;
   cursor: text;
+}
+.tags-block form {
+  display: inline;
 }
 .new-tag-input {
   border: none;
@@ -92,7 +95,7 @@ img.album-cover {
 }
 .tag {
   display: inline-block;
-  margin: 0 4px;
+  padding: 4px;
   font-weight: 600;
 }
 .tag .tag-category {

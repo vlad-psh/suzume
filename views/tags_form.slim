@@ -6,5 +6,5 @@ div class="tags-block"
     input type="hidden" name="obj_id" value=parent_object.id
     - parent_object.tags.each do |t|
       == slim :tag_item, locals: {tag: t, parent_object: parent_object}
-    input class="new-tag-input" type="text" name="tag_name" autocomplete="off"
+    input class="new-tag-input" type="text" name="tag_name" autocomplete="off" placeholder="Add new tag..."
 
