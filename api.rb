@@ -27,7 +27,7 @@ get :api_album do
   return {
     artists: [],
     albums: [],
-    songs: album.all_tracks.map{|t|t.filename}
+    songs: album.all_tracks.map{|t| {id: t.id, filename: t.filename} }
   }.to_json
 end
 

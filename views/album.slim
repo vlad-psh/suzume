@@ -14,9 +14,9 @@ h2 Tracks
 ul.playlist
   - @tracks.each do |t|
     li
-      a.ajax-link.track-playback-link data-track-url=(path_to(:download).with(@album.id, t.filename)) = t.filename
+      a.ajax-link.track-playback-link data-track-url=(path_to(:download).with(t.id)) = t.filename
       |  (
-      a href=(path_to(:download).with(@album.id, t.filename)) Download
+      a href=(path_to(:download).with(t.id)) Download
       '  |
       a.ajax-link.track-add-note-link data-id=t.id Add note
       | )

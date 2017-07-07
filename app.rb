@@ -40,7 +40,7 @@ paths index: '/',
     api_artist: '/api/artist/:id',
     api_album: '/api/album/:id',
 
-    download: '/download/:id/:filename',
+    download: '/download/:id',
     cmus_play: '/cmus/play',
     cmus_add: '/cmus/add',
     notes: '/notes'
@@ -421,9 +421,9 @@ def escape_apos(text)
 end
 
 get :download do
-  album = Album.find(params[:id])
-  filename = params[:filename].force_encoding('UTF-8')
-  fullpath = File.join(album.full_path, filename)
+  track = Track.find(params[:id])
+  album = track.album
+  fullpath = File.join(album.full_path, track.filename)
 
   begin
     tmphex = SecureRandom.hex
