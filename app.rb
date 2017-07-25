@@ -196,6 +196,7 @@ get :artist do
     @new_albums << dir if File.directory?(File.expand_path(dir, artist_dir))
   end
 
+  @title = "#{@artist.title}"
   slim :artist
 end
 
@@ -229,6 +230,7 @@ get :album do
     @notes[n.parent_id] << n
   end
 
+  @title = "#{@album.artists.first.title} - #{@album.title}"
   slim :album
 end
 
@@ -375,6 +377,7 @@ get :search do
   if all_albums.count == 0 && @artists.count == 1
     redirect path_to(:artist).with(@artists[0].id)
   else
+    @title = "#{params[:query]} - Search"
     slim :index
   end
 end
