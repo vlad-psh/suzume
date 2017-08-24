@@ -176,37 +176,16 @@ ul.playlist li {
   border-radius: 5px;
   cursor: pointer;
 }
-.rated-0 {
-  background-color: #eee;
-  color: #777;
-}
-.rated-1 {
-  background-color: black;
-}
-.rated-2 {
-  background-color: #85312C;
-}
-.rated-3 {
-  background-color: #ED1C24;
-}
-.rated-4 {
-  background-color: #F58220;
-}
-.rated-5 {
-  background-color: #FFF200;
-}
-.rated-6 {
-  background-color: #A6CE39;
-}
-.rated-7 {
-  background-color: #00A651;
-}
-.rated-8 {
-  background-color: #00AEEF;
-}
-.rated-9 {
-  background-color: #A64686;
-}
-.rated-10 {
-  background-color: #EC008C;
-}
+.rated-0  {background-color: #EEEEEE; color: #777777}
+.rated-1  {background-color: #222222; color: #777777}
+/* text color is a 15% color from base (background) color
+   calculated here: https://www.w3schools.com/colors/colors_picker.asp */
+.rated-2  {background-color: #85312C; color: #391513}
+.rated-3  {background-color: #ED1C24; color: #470608}
+.rated-4  {background-color: #F58220; color: #492403}
+.rated-5  {background-color: #FFF200; color: #4d4900}
+.rated-6  {background-color: #A6CE39; color: #313d0f}
+.rated-7  {background-color: #00A651; color: #004d25}
+.rated-8  {background-color: #00AEEF; color: #00384d}
+.rated-9  {background-color: #A64686; color: #36172b}
+.rated-10 {background-color: #EC008C; color: #4d002e}
