@@ -164,3 +164,45 @@ ul.playlist li {
 .notes-table .note-content {
   font-size: 0.85em;
 }
+.rating {
+  display: inline-block;
+  padding: 1px;
+  margin: 1px 4px 1px 4px;
+  text-align: center;
+  width: 90px;
+  border-radius: 5px;
+}
+.rated-0 {
+  background-color: #eee;
+  color: #777;
+}
+.rated-1 {
+  background-color: black;
+}
+.rated-2 {
+  background-color: #85312C;
+}
+.rated-3 {
+  background-color: #ED1C24;
+}
+.rated-4 {
+  background-color: #F58220;
+}
+.rated-5 {
+  background-color: #FFF200;
+}
+.rated-6 {
+  background-color: #A6CE39;
+}
+.rated-7 {
+  background-color: #00A651;
+}
+.rated-8 {
+  background-color: #00AEEF;
+}
+.rated-9 {
+  background-color: #A64686;
+}
+.rated-10 {
+  background-color: #EC008C;
+}

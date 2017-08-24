@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170701161801) do
+ActiveRecord::Schema.define(version: 20170824175712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20170701161801) do
     t.string "romaji"
     t.integer "year"
     t.integer "has_cover", default: -1
+    t.integer "rating", default: 0
   end
 
   create_table "albums_artists", id: :serial, force: :cascade do |t|
@@ -44,6 +45,7 @@ ActiveRecord::Schema.define(version: 20170701161801) do
     t.datetime "updated_at", null: false
     t.string "romaji"
     t.string "aliases"
+    t.integer "rating", default: 0
   end
 
   create_table "notes", force: :cascade do |t|
@@ -77,6 +79,7 @@ ActiveRecord::Schema.define(version: 20170701161801) do
     t.string "filename"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "rating", default: 0
     t.index ["album_id"], name: "index_tracks_on_album_id"
   end
 

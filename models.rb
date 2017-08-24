@@ -79,6 +79,10 @@ class Tag < ActiveRecord::Base
   def albums
     return Album.where(id: TagRelation.where(parent_type: :r, tag_id: id).pluck(:parent_id))
   end
+
+  def tracks
+    return Track.where(id: TagRelation.where(parent_type: :t, tag_id: id).pluck(:parent_id))
+  end
 end
 
 class TagRelation < ActiveRecord::Base

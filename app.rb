@@ -82,6 +82,8 @@ end
 
 MIME_EXT = {"JPEG" => "jpg", "image/jpeg" => "jpg", "PNG" => "png", "image/png" => "png"}
 CMUS_COMMAND = 'cmus-remote --server /run/user/1000/cmus-socket'
+RATINGS = ['Not Rated', 'Appalling', 'Horrible', 'Very Bad', 'Bad',
+           'Average', 'Fine', 'Good', 'Very Good', 'Great', 'Masterpiece']
 
 def get_tulip_id(dir)
   tulip_files = Dir.glob(File.expand_path("*.tulip", dir))

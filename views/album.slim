@@ -15,6 +15,7 @@ ul.playlist
   - @tracks.each do |t|
     li
       a.ajax-link.track-playback-link data-track-url=(path_to(:download).with(t.id)) = t.filename
+      div class="rating rated-#{t.rating}" = RATINGS[t.rating]
       |  (
       a href=(path_to(:download).with(t.id)) Download
       '  |
