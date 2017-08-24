@@ -94,3 +94,46 @@ $(document).on('mouseleave', '.release-line', function(){
   textArea.text(textArea.data("title"));
 });
 
+// ***************************************
+// RATINGS
+// ***************************************
+
+var ratingNames = ["Not Rated","Appalling","Horrible","Very Bad","Bad","Average","Fine","Good","Very Good","Great","Masterpiece"];
+
+$(document).on('mousemove', 'div.rating', function(event){
+  var rating = getRatingFromPosition($(this), event);
+  updateRatingBlock($(this), rating);
+});
+
+$(document).on('mouseleave', 'div.rating', function(event){
+  updateRatingBlock($(this), $(this).data('rating'));
+});
+
+$(document).on('click', 'div.rating', function(event){
+  var el = $(this);
+  var rating = getRatingFromPosition(el, event);
+  $.ajax({
+    url: el.data('url'),
+    method: "POST",
+    data: {rating: rating}
+  }).done(function(data){
+    el.data('rating', data);
+    updateRatingBlock(el, data);
+  });
+});
+
+function getRatingFromPosition(el, event){
+  var offsetX = el.offset().left;
+  var width = el.width();
+  var rating = Math.round( (event.pageX - offsetX) / width * 10 );
+  return rating;
+}
+
+function updateRatingBlock(el, rating){
+  if (el.data('current-rating') != rating) {
+    el.removeClass('rated-' + el.data('current-rating'));
+    el.addClass('rated-' + rating);
+    el.data('current-rating', rating);
+    el.html(ratingNames[rating]);
+  }
+}

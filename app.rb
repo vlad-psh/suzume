@@ -36,6 +36,8 @@ paths index: '/',
     tag_remove: '/tag/remove',
     lastfm_tags: '/lastfm/artist/:id',
 
+    track_rating: '/rating/track/:id',
+
     api_index: '/api/index',
     api_artist: '/api/artist/:id',
     api_album: '/api/album/:id',
@@ -417,6 +419,14 @@ post :tag_remove do
   end
 
   return "OK"
+end
+
+post :track_rating do
+  track = Track.find(params[:id])
+  halt(500, "Error") unless track
+  track.rating = params[:rating]
+  track.save
+  halt(200, track.rating.to_s)
 end
 
 def escape_apos(text)

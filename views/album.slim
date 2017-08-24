@@ -14,13 +14,10 @@ h2 Tracks
 ul.playlist
   - @tracks.each do |t|
     li
-      a.ajax-link.track-playback-link data-track-url=(path_to(:download).with(t.id)) = t.filename
-      div class="rating rated-#{t.rating}" = RATINGS[t.rating]
-      |  (
-      a href=(path_to(:download).with(t.id)) Download
-      '  |
+      div class="rating rated-#{t.rating}" data-rating=t.rating data-current-rating=t.rating data-url=path_to(:track_rating).with(t.id) = RATINGS[t.rating]
+      a.ajax-link.track-playback-link data-track-url=(path_to(:download).with(t.id)) href=(path_to(:download).with(t.id)) = t.filename
+      '  | 
       a.ajax-link.track-add-note-link data-id=t.id Add note
-      | )
       == slim :tags_form, locals: {parent_object: t}
       == slim :notes_table, locals: {notes: @notes[t.id]}
       div.track-note-form id="note-form-#{t.id}"
@@ -39,7 +36,9 @@ javascript:
     $("#note-form-" + id).show();
   });
 
-  $(document).on('click', '.track-playback-link', function(){
+  $(document).on('click', '.track-playback-link', function(event){
+    event.preventDefault();
+
     var track_url = $(this).data('track-url');
     playlist = [];
     $('.track-playback-link').each(function(){

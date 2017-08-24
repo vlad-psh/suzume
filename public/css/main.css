@@ -30,6 +30,9 @@ a:hover {
 .ajax-button {
   cursor: pointer;
 }
+.track-playback-link {
+  text-decoration: none;
+}
 table td {
   vertical-align: top;
   padding: 0 8px 0 8px;
@@ -169,8 +172,9 @@ ul.playlist li {
   padding: 1px;
   margin: 1px 4px 1px 4px;
   text-align: center;
-  width: 90px;
+  width: 100px;
   border-radius: 5px;
+  cursor: pointer;
 }
 .rated-0 {
   background-color: #eee;
