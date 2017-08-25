@@ -10,6 +10,17 @@ h2
 
 audio#main-player preload="none" controls="controls" style="width: 500px"
 
+ruby:
+  ratings = @album.tracks.pluck(:rating).sort.delete_if{|i|i==0}
+  c = ratings.count - 1
+  median = ( ratings.count % 2 == 1 ? ratings[c/2] : (ratings[c/2] + ratings[c/2+1])/2.0 ) if ratings.count > 0
+  sum = 0
+  ratings.each {|i|sum+=i}
+  mean = (sum/ratings.count.to_f).round(1)
+
+br
+= "Median: #{median}; mean: #{mean}"
+
 h2 Tracks
 ul.playlist
   - @tracks.each do |t|
