@@ -138,6 +138,13 @@ get :search_by_tag do
 
   @artists = tag.artists
   @sorted_albums = albums_by_type(tag.albums.order(year: :desc))
+  @tracks = tag.tracks
+  @notes = {}
+  Note.where(parent_type: 't', parent_id: @tracks).each do |n|
+    @notes[n.parent_id] ||= []
+    @notes[n.parent_id] << n
+  end
+
   slim :index
 end
 

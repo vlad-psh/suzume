@@ -33,3 +33,5 @@
 - if @sorted_albums && @sorted_albums.length > 0
   == slim :albums_sorted, locals: {sorted_albums: @sorted_albums}
 
+- if @tracks && @tracks.length > 0
+  == slim :playlist, locals: {tracks: @tracks, notes: @notes}

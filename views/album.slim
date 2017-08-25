@@ -8,77 +8,9 @@ h2
   |  - 
   = "#{@album.title} [#{@album.year}]"
 
-audio#main-player preload="none" controls="controls" style="width: 500px"
-
-ruby:
-  ratings = @album.tracks.pluck(:rating).sort.delete_if{|i|i==0}
-  c = ratings.count - 1
-  median = ( ratings.count % 2 == 1 ? ratings[c/2] : (ratings[c/2] + ratings[c/2+1])/2.0 ) if ratings.count > 0
-  sum = 0
-  ratings.each {|i|sum+=i}
-  mean = (sum/ratings.count.to_f).round(1)
-
-br
-= "Median: #{median}; mean: #{mean}"
-
-h2 Tracks
-ul.playlist
-  - @tracks.each do |t|
-    li
-      div class="rating rated-#{t.rating}" data-rating=t.rating data-current-rating=t.rating data-url=path_to(:track_rating).with(t.id) = RATINGS[t.rating]
-      a.ajax-link.track-playback-link data-track-url=(path_to(:download).with(t.id)) href=(path_to(:download).with(t.id)) = t.filename
-      '  | 
-      a.ajax-link.track-add-note-link data-id=t.id Add note
-      == slim :tags_form, locals: {parent_object: t}
-      == slim :notes_table, locals: {notes: @notes[t.id]}
-      div.track-note-form id="note-form-#{t.id}"
-        == slim :note_form, locals: {note_parent: t}
+== slim :playlist, locals: {tracks: @tracks, notes: @notes}
 
 h2 Notes
 == slim :notes_table, locals: {notes: @album.notes}
 == slim :note_form, locals: {note_parent: @album}
 
-javascript:
-  var playlist = [];
-  var play_index = 0;
-
-  $(document).on('click', '.track-add-note-link', function(){
-    var id = $(this).data('id');
-    $("#note-form-" + id).show();
-  });
-
-  $(document).on('click', '.track-playback-link', function(event){
-    event.preventDefault();
-
-    var track_url = $(this).data('track-url');
-    playlist = [];
-    $('.track-playback-link').each(function(){
-      var url = $(this).data('track-url');
-      playlist.push(url);
-      console.log(url);
-      if (url == track_url) {
-        play_index = playlist.length - 1;
-      }
-    });
-
-    play();
-  });
-
-  function play(){
-    $('#main-player').attr('src', playlist[play_index]);
-    $('#main-player')[0].play();
-    $('.track-now-playing').removeClass('track-now-playing');
-    $('.track-playback-link').each(function(){
-      if ($(this).data('track-url') == playlist[play_index]) {
-        $(this).addClass('track-now-playing')
-      }
-    });
-  }
-
-  $('#main-player').on('ended', function(){
-    play_index = play_index + 1;
-    if (play_index < playlist.length) {
-      $('#main-player')[0].currentTime = 0;
-      play();
-    }
-  });
