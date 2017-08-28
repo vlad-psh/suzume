@@ -32,6 +32,7 @@ paths index: '/',
     search_by_tag: '/tag/:id',
 
     tags: '/tags', # index
+    tag: '/tag/:id', # delete tag
     tag_add: '/tag/add',
     tag_remove: '/tag/remove',
     lastfm_tags: '/lastfm/artist/:id',
@@ -398,6 +399,26 @@ get :tags do
   @tags = Tag.all.order(category: :asc, title: :asc)
 
   slim :tags, locals: {tags: @tags}
+end
+
+delete :tag do
+  tag = Tag.find(params[:id])
+  unless tag
+    flash[:error] = "Tag not found"
+  else
+    tag_title = tag.title
+    _artists = tag.artists.count
+    _albums = tag.albums.count
+    _tracks = tag.tracks.count
+    unless _artists == 0 && _albums == 0 && _tracks == 0
+     flash[:error] = "Tag '#{tag_title}' still has childs. Artists: #{_artists}, albums: #{_albums}, tracks: #{_tracks}"
+    else
+      tag.destroy
+      flash[:notice] = "Tag '#{tag_title}' successfully deleted"
+    end
+  end
+
+  redirect path_to(:tags)
 end
 
 post :tag_add do

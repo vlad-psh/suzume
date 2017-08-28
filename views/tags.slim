@@ -7,6 +7,8 @@ div style="line-height: 1.7em"
   div class="tag tag-#{t.category}"
     span.tag-category = "#{t.category}:"
     a href=path_to(:search_by_tag).with(t.id) = t.title
+    a class="ajax-button" href=path_to(:tag).with(t.id) data-method="delete" data-confirm="Delete?"
+      img src="/img/del.png"
 
 h2. Legend
 
