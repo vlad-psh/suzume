@@ -167,6 +167,13 @@ ul.playlist li {
 .notes-table .note-content {
   font-size: 0.85em;
 }
+body.hide-notes .notes-table .note-content {
+  background: #eee;
+  color: #eee;
+}
+body.hide-notes .notes-table .note-content:hover {
+  color: #ccc;
+}
 .rating {
   display: inline-block;
   padding: 1px;

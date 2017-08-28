@@ -137,3 +137,20 @@ function updateRatingBlock(el, rating){
     el.html(ratingNames[rating]);
   }
 }
+
+// ***************************************
+// HIDE NOTES
+// ***************************************
+
+$(document).on('click', '.hide-notes-checkbox', function(e){
+  $.ajax({
+    method: "POST",
+    url: "/notes/hide",
+    data: {"hide-notes": this.checked}
+  });
+  if (this.checked) {
+    $('body').addClass("hide-notes");
+  } else {
+    $('body').removeClass("hide-notes");
+  };
+});

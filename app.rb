@@ -37,6 +37,7 @@ paths index: '/',
     lastfm_tags: '/lastfm/artist/:id',
 
     track_rating: '/rating/track/:id',
+    hide_notes: '/notes/hide',
 
     api_index: '/api/index',
     api_artist: '/api/artist/:id',
@@ -434,6 +435,16 @@ post :track_rating do
   track.rating = params[:rating]
   track.save
   halt(200, track.rating.to_s)
+end
+
+post :hide_notes do
+  if params["hide-notes"] && params["hide-notes"] == "true"
+    request.session["hide-notes"] = true
+    return 200, '{"hide-notes": true}'
+  else
+    request.session["hide-notes"] = false
+    return 200, '{"hide-notes": false}'
+  end
 end
 
 def escape_apos(text)
