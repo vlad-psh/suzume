@@ -209,6 +209,8 @@ get :artist do
     @new_albums << dir if File.directory?(File.expand_path(dir, artist_dir))
   end
 
+  @tracks = Track.where(album: all_albums, rating: 8..10)
+
   @title = "#{@artist.title}"
   slim :artist
 end

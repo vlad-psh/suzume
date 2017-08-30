@@ -66,3 +66,7 @@ javascript:
 h2 Notes
 == slim :notes_table, locals: {notes: @artist.notes}
 == slim :note_form, locals: {note_parent: @artist}
+
+- if @tracks && @tracks.length > 0
+  br
+  == slim :playlist, locals: {tracks: @tracks, notes: {}}
