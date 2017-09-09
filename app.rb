@@ -6,7 +6,7 @@ require 'slim'
 
 require 'rack-flash'
 require 'yaml'
-require 'musicbrainz'
+#require 'musicbrainz'
 require 'lastfm'
 require 'fileutils'
 require 'rmagick'
@@ -15,6 +15,7 @@ require 'id3tag'
 require 'open-uri'
 require 'tempfile'
 require 'securerandom'
+require 'redcloth'
 
 paths index: '/',
     artists: '/artists',
@@ -47,7 +48,8 @@ paths index: '/',
     download: '/download/:id',
     cmus_play: '/cmus/play',
     cmus_add: '/cmus/add',
-    notes: '/notes'
+    notes: '/notes',
+    lyrics: '/lyrics'
 
 require_relative './models.rb'
 require_relative './helpers.rb'
@@ -74,11 +76,6 @@ configure do
 
   $library_path = $config['library_path']
   $covers_path = $config['covers_path']
-  MusicBrainz.configure do |c|
-    c.app_name = $config['app_name']
-    c.app_version = $config['app_version']
-    c.contact = $config['app_contact']
-  end
   $lastfm = Lastfm.new($config["lastfm_api_key"], $config["lastfm_secret"])
 
   use Rack::Flash
@@ -209,7 +206,7 @@ get :artist do
     @new_albums << dir if File.directory?(File.expand_path(dir, artist_dir))
   end
 
-  @tracks = Track.where(album: all_albums, rating: 8..10)
+  @tracks = Track.where(album: all_albums, rating: 7..10).shuffle
 
   @title = "#{@artist.title}"
   slim :artist
@@ -516,4 +513,16 @@ post :notes do
     when 't' then redirect path_to(:album).with(Track.find(params[:parent_id]).album.id)
     else "Unknown parent type: #{params[:parent_type]}"
   end
+end
+
+post :lyrics do
+  track = Track.find(params[:track_id])
+  halt(500, "Track #{params[:track_id]} not found") unless track
+
+  l = track.lyrics
+  l[params[:title]] = params[:content]
+  track.lyrics = l
+  track.save
+
+  halt(200, RedCloth.new(params[:content]).to_html)
 end

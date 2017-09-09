@@ -92,6 +92,18 @@ end
 class Track < ActiveRecord::Base
   include MusicObject
   belongs_to :album
+
+  def lyrics
+    if self.lyrics_json
+      return JSON.parse(self.lyrics_json)
+    else
+      return {}
+    end
+  end
+
+  def lyrics=(val)
+    self.lyrics_json = val.to_json
+  end
 end
 
 class Note < ActiveRecord::Base

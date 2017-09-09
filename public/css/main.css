@@ -153,7 +153,21 @@ ul.playlist li {
 .track-now-playing {
   background: #ffec83;
 }
-.track-note-form {
+.inline-img {
+  margin-bottom: -2px;
+  margin-right: 2px;
+}
+.track-note-form,
+.track-lyrics-form {
+  display: none;
+}
+.track-lyrics-block {
+  width: 300px;
+  display: inline-block;
+  vertical-align: top;
+  font-size: 0.85em;
+}
+.track-lyrics-table {
   display: none;
 }
 .notes-table td {
