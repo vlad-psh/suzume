@@ -1,8 +1,7 @@
-// locals: notes
+// locals: notes, parent_id
+- empty_table = !(notes && notes.count > 0)
 
-- if notes && notes.count > 0
-  table.notes-table
+table.notes-table id="notes-table-#{parent_id}" style=(empty_table ? 'display: none' : nil)
+  - unless empty_table
     - notes.each do |n|
-      tr
-        td.note-date = n.created_at.localtime.strftime('%-d %b %Y, %H:%M')
-        td.note-content = n.content
+      == slim :note_item, locals: {note: n}

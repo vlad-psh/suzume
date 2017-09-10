@@ -64,8 +64,9 @@ javascript:
 == slim :albums_sorted, locals: {sorted_albums: @sorted_albums}
 
 h2 Notes
-== slim :notes_table, locals: {notes: @artist.notes}
-== slim :note_form, locals: {note_parent: @artist}
+== slim :notes_table, locals: {notes: @artist.notes, parent_id: "#{@artist.simple_type}#{@artist.id}"}
+div
+  == slim :note_form, locals: {note_parent: @artist}
 
 - if @tracks && @tracks.length > 0
   br

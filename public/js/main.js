@@ -154,3 +154,24 @@ $(document).on('click', '.hide-notes-checkbox', function(e){
     $('body').removeClass("hide-notes");
   };
 });
+
+// ***************************************
+// AJAX INSERT FORMS (NOTES/LYRICS)
+// ***************************************
+
+$(document).on('ajax:beforeSend','.ajax-insert-form', function(xhr, settings){
+  $(this).find('input, textarea').attr('disabled', true);
+  return true;
+});
+
+$(document).on('ajax:success','.ajax-insert-form', function(xhr, data, status){
+  var e = $(this).data('append-to');
+  $(this).find('.clear-value').val('');
+  $(this).find('input, textarea').attr('disabled', false);
+  if ( $(this).parent().hasClass('hide-after-submit') ) {
+    $(this).parent().hide();
+  }
+  $(e).append(data);
+  $(e).show();
+});
+

@@ -1,10 +1,10 @@
 // locals: track
 
-form action=path_to(:lyrics) method="POST" data-remote="true"
+form.ajax-insert-form action=path_to(:lyrics) method="POST" data-remote="true" data-append-to="#lyrics-table-#{track.id}"
   input type="hidden" name="track_id" value=track.id
   ' Title:
-  input.title type="text" name="title"
+  input.clear-value type="text" name="title"
   br
-  textarea name="content" style="width: 400px; height: 300px;"
+  textarea.clear-value name="content" style="width: 400px; height: 300px;"
   br
   input type="submit" value="Submit"

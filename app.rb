@@ -503,16 +503,11 @@ post :cmus_add do
 end
 
 post :notes do
-  Note.create(parent_type: params[:parent_type],
+  n = Note.create(parent_type: params[:parent_type],
         parent_id: params[:parent_id],
         content: params[:content])
 
-  case params[:parent_type]
-    when 'p' then redirect path_to(:artist).with(params[:parent_id])
-    when 'r' then redirect path_to(:album).with(params[:parent_id])
-    when 't' then redirect path_to(:album).with(Track.find(params[:parent_id]).album.id)
-    else "Unknown parent type: #{params[:parent_type]}"
-  end
+  slim :note_item, layout: false, locals: {note: n}
 end
 
 post :lyrics do
@@ -524,5 +519,5 @@ post :lyrics do
   track.lyrics = l
   track.save
 
-  halt(200, RedCloth.new(params[:content]).to_html)
+  slim :lyrics_item, layout: false, locals: {title: params[:title], lyrics: params[:content]}
 end

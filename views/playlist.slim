@@ -29,16 +29,14 @@ ul.playlist
         img.inline-img src='/img/speech-bubble.png'
       '  | Tags: 
       == slim :tags_form, locals: {parent_object: t}
-      div.track-note-form id="note-form-#{t.id}"
+      div.track-note-form.hide-after-submit id="note-form-#{t.id}"
         == slim :note_form, locals: {note_parent: t}
-      div.track-lyrics-form id="lyrics-form-#{t.id}"
+      div.track-lyrics-form.hide-after-submit id="lyrics-form-#{t.id}"
         == slim :lyrics_form, locals: {track: t}
-      == slim :notes_table, locals: {notes: notes[t.id]}
+      == slim :notes_table, locals: {notes: notes[t.id], parent_id: "#{t.simple_type}#{t.id}"}
       div.track-lyrics-table id="lyrics-table-#{t.id}"
         - t.lyrics.each do |k,v|
-          div.track-lyrics-block
-            h3 = k
-            == RedCloth.new(v).to_html
+          == slim :lyrics_item, locals: {title: k, lyrics: v}
 
 javascript:
   var playlist = [];
@@ -47,26 +45,6 @@ javascript:
   $(document).on('click', '.toggle-link', function(){
     var target = $(this).data('target');
     $(target).toggle();
-  });
-
-  $(document).on('ajax:beforeSend','.track-lyrics-form form', function(xhr, settings){
-    if ($(this).find('input[name=track_id]').val() == '') { return false; }
-    $(this).find('input').attr('disabled', true);
-    $(this).find('textarea').attr('disabled', true);
-    return true;
-  });
-
-  $(document).on('ajax:success','.track-lyrics-form form', function(xhr, data, status){
-    var id = $(this).find('input[name=track_id]').val();
-    var title = $(this).find('input[name=title]').val();
-    $(this).find('input[name=title]').val('');
-    $(this).find('textarea').val('');
-    $(this).find('input').attr('disabled', false);
-    $(this).find('textarea').attr('disabled', false);
-    $(this).parent().hide();
-    $("#lyrics-table-" + id).append('<div class="track-lyrics-block"><h3>' + title + '</h3>' + data + '</div>');
-    $("#lyrics-table-" + id).show();
-    $("#track-" + id + " .toggle-lyrics-block").show();
   });
 
   $(document).on('click', '.track-playback-link', function(event){

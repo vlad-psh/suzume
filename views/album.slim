@@ -11,6 +11,7 @@ h2
 == slim :playlist, locals: {tracks: @tracks, notes: @notes}
 
 h2 Notes
-== slim :notes_table, locals: {notes: @album.notes}
-== slim :note_form, locals: {note_parent: @album}
+== slim :notes_table, locals: {notes: @album.notes, parent_id: "#{@album.simple_type}#{@album.id}"}
+div
+  == slim :note_form, locals: {note_parent: @album}
 
