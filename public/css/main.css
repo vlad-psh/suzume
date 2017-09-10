@@ -153,9 +153,12 @@ ul.playlist li {
 .track-now-playing {
   background: #ffec83;
 }
+.ajax-link:hover .inline-img {
+  background-color: #00AEEF;
+}
 .inline-img {
-  margin-bottom: -2px;
-  margin-right: 2px;
+  margin: 0 1px -4px 1px;
+  padding: 2px;
 }
 .track-note-form,
 .track-lyrics-form {
