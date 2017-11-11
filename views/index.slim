@@ -24,7 +24,7 @@
   h2. Artists
   ul
     - @artists.each do |a|
-      li
+      li class=(a.is_deleted ? 'deleted' : nil)
         a href=path_to(:artist).with(a.id) = a.title
         '  : 
         a href="https://musicbrainz.org/artist/#{a.mbid}"

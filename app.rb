@@ -204,7 +204,7 @@ get :artist do
     next if [".", ".."].include?(dir)
     next if all_albums.any? { |a| a.filename == dir }
     @new_albums << dir if File.directory?(File.expand_path(dir, artist_dir))
-  end
+  end if Dir.exist?(artist_dir)
 
   @tracks = Track.where(album: all_albums, rating: 7..10).shuffle
 

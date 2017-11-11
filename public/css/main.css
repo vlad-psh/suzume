@@ -37,6 +37,10 @@ table td {
   vertical-align: top;
   padding: 0 8px 0 8px;
 }
+li.deleted {
+  text-decoration: line-through;
+  color: red;
+}
 .releases-block .album-item{
   vertical-align: top;
 }
@@ -52,6 +56,9 @@ table td {
   height: 200px;
   text-align: left;
   margin-right: 12px;
+}
+.album-cover-block.deleted {
+  border: 5px solid red;
 }
 .album-cover-valign-helper {
   display: inline-block;

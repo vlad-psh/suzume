@@ -32,6 +32,11 @@ end
 class Artist < ActiveRecord::Base
   include MusicObject
   has_and_belongs_to_many :albums
+
+  def full_path
+    return @_full_path if @_full_path
+    @_full_path = File.join($library_path, filename)
+  end
 end
 
 class Album < ActiveRecord::Base
@@ -42,7 +47,7 @@ class Album < ActiveRecord::Base
   def full_path
     return @_full_path if @_full_path
     _artist = artists.first
-    @_full_path = File.join($library_path, _artist.filename, filename)
+    @_full_path = File.join(_artist.full_path, filename)
   end
 
   def search_tracks
@@ -55,14 +60,16 @@ class Album < ActiveRecord::Base
   end
 
   def all_tracks
-    filenames = search_tracks
+    if Dir.exist?(full_path)
+      filenames = search_tracks
 
-    tracks.each do |t|
-      filenames.delete(t.filename) if filenames.include?(t.filename)
-    end
+      tracks.each do |t|
+        filenames.delete(t.filename) if filenames.include?(t.filename)
+      end
 
-    filenames.each do |fn|
-      tracks << Track.create(album: self, filename: fn)
+      filenames.each do |fn|
+        tracks << Track.create(album: self, filename: fn)
+      end
     end
 
     return tracks.order(filename: :asc)
@@ -103,6 +110,11 @@ class Track < ActiveRecord::Base
 
   def lyrics=(val)
     self.lyrics_json = val.to_json
+  end
+
+  def full_path
+    return @_full_path if @_full_path
+    @_full_path = File.join(album.full_path, filename)
   end
 end
 

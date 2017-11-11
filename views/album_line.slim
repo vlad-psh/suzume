@@ -1,6 +1,6 @@
 // locals: album
 
-div.album-cover-block
+div.album-cover-block class=(album.is_deleted ? 'deleted' : nil)
   span.album-cover-valign-helper
   img.album-cover src=path_to(:album_cover_thumb).with(album.has_cover > 0 ? album.id : 0)
   div.album-buttons
