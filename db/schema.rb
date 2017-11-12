@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171111140816) do
+ActiveRecord::Schema.define(version: 20171112174952) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20171111140816) do
     t.integer "has_cover", default: -1
     t.integer "rating", default: 0
     t.boolean "is_deleted", default: false
+    t.boolean "is_processed", default: false
   end
 
   create_table "albums_artists", id: :serial, force: :cascade do |t|
@@ -48,6 +49,7 @@ ActiveRecord::Schema.define(version: 20171111140816) do
     t.string "aliases"
     t.integer "rating", default: 0
     t.boolean "is_deleted", default: false
+    t.boolean "is_processed", default: false
   end
 
   create_table "notes", force: :cascade do |t|
@@ -56,6 +58,37 @@ ActiveRecord::Schema.define(version: 20171111140816) do
     t.string "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "performers", force: :cascade do |t|
+    t.string "title"
+    t.string "aliases"
+    t.string "tmp_tags"
+    t.integer "old_id"
+  end
+
+  create_table "records", force: :cascade do |t|
+    t.bigint "release_id", null: false
+    t.string "original_filename"
+    t.string "filename"
+    t.string "directory"
+    t.integer "rating", default: 0
+    t.jsonb "lyrics"
+    t.string "tmp_tags"
+    t.integer "old_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["release_id"], name: "index_records_on_release_id"
+  end
+
+  create_table "releases", force: :cascade do |t|
+    t.bigint "performer_id"
+    t.string "title"
+    t.string "aliases"
+    t.string "cover"
+    t.string "tmp_tags"
+    t.integer "old_id"
+    t.index ["performer_id"], name: "index_releases_on_performer_id"
   end
 
   create_table "tag_relations", force: :cascade do |t|
@@ -84,6 +117,7 @@ ActiveRecord::Schema.define(version: 20171111140816) do
     t.integer "rating", default: 0
     t.string "lyrics_json"
     t.boolean "is_deleted", default: false
+    t.boolean "is_processed", default: false
     t.index ["album_id"], name: "index_tracks_on_album_id"
   end
 

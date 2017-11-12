@@ -128,3 +128,16 @@ class Note < ActiveRecord::Base
     end
   end
 end
+
+class Performer < ActiveRecord::Base
+  has_many :releases
+end
+
+class Release < ActiveRecord::Base
+  belongs_to :performer
+  has_many :records
+end
+
+class Record < ActiveRecord::Base
+  belongs_to :release
+end
