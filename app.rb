@@ -21,7 +21,9 @@ paths index: '/',
     performers:  '/performers',
     performer: '/performer/:id',
 
+    process_artist: '/process/artist/:id',
     process_album: '/process/album/:id',
+    process_track: '/process/track/:id',
 
     artists: '/artists',
     artist: '/artist/:id',
@@ -102,7 +104,7 @@ get :index do
   artists_per_page = 50
   @page = params[:page] ? params[:page].to_i - 1 : 0
   @total_pages = (Artist.count / artists_per_page.to_f).ceil
-  @artists = Artist.order(created_at: :desc).limit(artists_per_page).offset(@page * artists_per_page).all
+  @artists = Artist.order(is_processed: :asc, is_deleted: :asc, created_at: :desc).limit(artists_per_page).offset(@page * artists_per_page).all
 
   request.accept.each do |type|
     if type.to_s == 'text/json'
@@ -131,10 +133,33 @@ get :performers do
   slim :performers
 end
 
+get :performer do
+  @performer = Performer.find(params[:id])
+  slim :performer
+end
+
+post :process_artist do
+  artist = Artist.find(params[:id])
+  if artist.albums.where(is_processed: false).count == 0
+    artist.is_processed = true
+    artist.save
+    flash[:notice] = "#{artist.title} processed successfully"
+  else
+    flash[:error] = "Unable to 'process' artist: unprocessed albums found"
+  end
+  redirect path_to(:artist).with(artist.id)
+end
+
 post :process_album do
   album = Album.find(params[:id])
   process_album(album) if album
   redirect path_to(:artist).with(album.artists.first.id)
+end
+
+post :process_track do
+  track = Track.find(params[:id])
+  process_track(track) if track
+  redirect path_to(:album).with(track.album.id)
 end
 
 post :artists do

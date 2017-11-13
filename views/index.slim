@@ -22,9 +22,9 @@
 
 - if @artists && @artists.length > 0
   h2. Artists
-  ul
+  ul.artists-list
     - @artists.each do |a|
-      li class=(a.is_deleted ? 'deleted' : nil)
+      li class="#{a.is_deleted ? 'deleted' : nil} #{a.is_processed ? 'processed' : nil}"
         a href=path_to(:artist).with(a.id) = a.title
         '  : 
         a href="https://musicbrainz.org/artist/#{a.mbid}"

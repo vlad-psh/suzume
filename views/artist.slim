@@ -1,10 +1,12 @@
 h1
-  = "#{@artist.title} "
+  = "#{@artist.title} #{@artist.is_processed ? '[PROCESSED]' : nil}"
   span.details style="font-size: 0.4em"
     = "#{@artist.filename == @artist.title ? '' : @artist.filename} @ "
     a href=mb_artist_search_path(@artist.title) brainz
     '  |
     a href="https://last.fm/music/#{@artist.title}" lfm
+
+a data-method="POST" data-confirm="Are you sure to process this artist?" href=path_to(:process_artist).with(@artist.id) Process!
 
 form method="POST" action=path_to(:artist).with(@artist.id)
   ' Name:

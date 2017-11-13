@@ -37,12 +37,14 @@ table td {
   vertical-align: top;
   padding: 0 8px 0 8px;
 }
+ul.artists-list li.deleted,
 ul.playlist li.deleted {
   text-decoration: line-through;
   color: red;
 }
-ul.playlist li.processed,
-.album-item.processed {
+ul.artists-list li.processed,
+.album-item.processed,
+ul.playlist li.processed {
   opacity: 0.2;
 }
 .releases-block .album-item{
