@@ -13,6 +13,8 @@ html
     '  | 
     a href=path_to(:tags) Tags
     '  | 
+    a href=path_to(:performers) Performers
+    '  | 
     input.hide-notes-checkbox type="checkbox" checked=("checked" if request.session["hide-notes"] && request.session["hide-notes"] == true) Hide notes
     '  |
     form style="display: inline-block" action=path_to(:search) method="GET"

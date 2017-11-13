@@ -18,6 +18,11 @@ require 'securerandom'
 require 'redcloth'
 
 paths index: '/',
+    performers:  '/performers',
+    performer: '/performer/:id',
+
+    process_album: '/process/album/:id',
+
     artists: '/artists',
     artist: '/artist/:id',
     albums: '/albums',
@@ -119,6 +124,17 @@ get :index do
   end
 
   slim :index
+end
+
+get :performers do
+  @performers = Performer.all
+  slim :performers
+end
+
+post :process_album do
+  album = Album.find(params[:id])
+  process_album(album) if album
+  redirect path_to(:artist).with(album.artists.first.id)
 end
 
 post :artists do

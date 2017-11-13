@@ -47,4 +47,6 @@ album.tracks.where(is_processed: false).each do |t|
   t.is_processed = true
   t.save
 end
+album.is_processed = true
+album.save
 # Dir.delete(album.full_path)

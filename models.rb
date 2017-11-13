@@ -131,6 +131,7 @@ end
 
 class Performer < ActiveRecord::Base
   has_many :releases
+  has_many :records, through: :releases
 end
 
 class Release < ActiveRecord::Base
@@ -140,4 +141,5 @@ end
 
 class Record < ActiveRecord::Base
   belongs_to :release
+  has_one :performer, through: :release
 end
