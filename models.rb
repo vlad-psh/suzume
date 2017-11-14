@@ -132,6 +132,11 @@ end
 class Performer < ActiveRecord::Base
   has_many :releases
   has_many :records, through: :releases
+
+  def sorted_records
+    rr = records.includes(:release)
+    return rr.sort_by {|r| r.release.title}
+  end
 end
 
 class Release < ActiveRecord::Base

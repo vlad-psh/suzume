@@ -1,9 +1,9 @@
 h2 Releases
 ul.releases-list
-  - @performer.releases.each do |r|
+  - @performer.releases.order(title: :asc).each do |r|
     li = r.title
 
 h2 Records
 ul.records-list
-  - @performer.records.each do |r|
-    li = r.original_filename
+  - @performer.sorted_records.each do |r|
+    li = "##{r.id} #{r.original_filename} (#{r.release.title})"
