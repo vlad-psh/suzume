@@ -140,8 +140,8 @@ end
 
 post :process_artist do
   artist = Artist.find(params[:id])
-  if artist.albums.where(is_processed: false).count == 0
-    artist.is_processed = true
+  if artist.albums.where.not(status: 'processed').count == 0
+    artist.status = 'processed'
     artist.save
     flash[:notice] = "#{artist.title} processed successfully"
   else

@@ -1,5 +1,5 @@
 h1
-  = "#{@artist.title} #{@artist.is_processed ? '[PROCESSED]' : nil}"
+  = "#{@artist.title} #{@artist.status == "processed" ? '[PROCESSED]' : nil}"
   span.details style="font-size: 0.4em"
     = "#{@artist.filename == @artist.title ? '' : @artist.filename} @ "
     a href=mb_artist_search_path(@artist.title) brainz
