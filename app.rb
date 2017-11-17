@@ -25,6 +25,8 @@ paths index: '/',
     process_album: '/process/album/:id',
     process_track: '/process/track/:id',
 
+    download_record: '/rdownload/:id', # TODO: rename to 'download'
+
     artists: '/artists',
     artist: '/artist/:id',
     albums: '/albums',
@@ -518,6 +520,17 @@ get :download do
   track = Track.find(params[:id])
   while File.exist?(tmpfile = "public/lib/#{SecureRandom.hex}") do end
   File.symlink(track.full_path, tmpfile)
+
+  # Sinatra's 'redirect' function not used because it inserts host to 'Location' header
+  status 302
+  response['Location'] = tmpfile.gsub(/^public/, '')
+  return
+end
+
+get :download_record do
+  record = Record.find(params[:id])
+  while File.exist?(tmpfile = "public/lib/#{SecureRandom.hex}") do end
+  File.symlink(record.full_path, tmpfile)
 
   # Sinatra's 'redirect' function not used because it inserts host to 'Location' header
   status 302

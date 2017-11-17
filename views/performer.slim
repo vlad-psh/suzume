@@ -1,3 +1,5 @@
+audio#main-player preload="none" controls="controls" style="width: 500px"
+
 h2 Releases
 ul.releases-list
   - @performer.releases.order(title: :asc).each do |r|
@@ -10,4 +12,50 @@ h2 Records
   - if r.release_id != prev_release
     h4 = r.release.title
     - prev_release = r.release_id
-  li = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"
+  li: a.ajax-link.track-playback-link data-track-url=path_to(:download_record).with(r.id) href=path_to(:download_record).with(r.id) = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"
+
+
+javascript:
+  var playlist = [];
+  var play_index = 0;
+
+  $(document).on('click', '.toggle-link', function(){
+    var target = $(this).data('target');
+    $(target).toggle();
+  });
+
+  $(document).on('click', '.track-playback-link', function(event){
+    event.preventDefault();
+
+    var track_url = $(this).data('track-url');
+    playlist = [];
+    $('.track-playback-link').each(function(){
+      var url = $(this).data('track-url');
+      playlist.push(url);
+      console.log(url);
+      if (url == track_url) {
+        play_index = playlist.length - 1;
+      }
+    });
+    
+    play();
+  });
+
+  function play(){
+    $('#main-player').attr('src', playlist[play_index]);
+    $('#main-player')[0].play();
+    $('.track-now-playing').removeClass('track-now-playing');
+    $('.track-playback-link').each(function(){
+      if ($(this).data('track-url') == playlist[play_index]) {
+        $(this).addClass('track-now-playing')
+      }
+    });
+  }
+
+  $('#main-player').on('ended', function(){
+    play_index = play_index + 1;
+    if (play_index < playlist.length) {
+      $('#main-player')[0].currentTime = 0;
+      play();
+    }
+  });
