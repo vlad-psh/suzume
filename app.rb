@@ -104,7 +104,7 @@ get :index do
   artists_per_page = 50
   @page = params[:page] ? params[:page].to_i - 1 : 0
   @total_pages = (Artist.count / artists_per_page.to_f).ceil
-  @artists = Artist.order(is_processed: :asc, is_deleted: :asc, created_at: :desc).limit(artists_per_page).offset(@page * artists_per_page).all
+  @artists = Artist.order(status: :desc, created_at: :desc).limit(artists_per_page).offset(@page * artists_per_page).all
 
   request.accept.each do |type|
     if type.to_s == 'text/json'

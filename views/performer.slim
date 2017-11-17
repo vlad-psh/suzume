@@ -6,4 +6,4 @@ ul.releases-list
 h2 Records
 ul.records-list
   - @performer.sorted_records.each do |r|
-    li = "##{r.id} #{r.original_filename} (#{r.release.title})"
+    li = "##{r.id} (s:#{r.rating}) #{r.original_filename} (#{r.release.title})"

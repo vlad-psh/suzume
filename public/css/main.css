@@ -42,6 +42,9 @@ ul.playlist li.deleted {
   text-decoration: line-through;
   color: red;
 }
+.album-item.unknown {
+  background-color: #aaf;
+}
 ul.artists-list li.processed,
 .album-item.processed,
 ul.playlist li.processed {

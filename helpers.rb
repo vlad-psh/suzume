@@ -54,16 +54,16 @@ module TulipHelpers
       File.delete(t.full_path) rescue nil
     end
 
-    t.is_processed = true
+    t.status = "processed"
     t.save
   end
 
   def process_album(album)
     release = make_release(album)
-    album.tracks.where(is_processed: false).each do |t|
+    album.tracks.where.not(status: "processed").each do |t|
       make_record(release, t)
     end
-    album.is_processed = true
+    album.status = "processed"
     album.save
     # Dir.delete(album.full_path)
   end

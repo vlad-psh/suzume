@@ -147,4 +147,13 @@ end
 class Record < ActiveRecord::Base
   belongs_to :release
   has_one :performer, through: :release
+
+  def full_path
+    File.join($library_path, 'lib', directory, filename)
+  end
+
+  def delete_from_filesystem
+    File.delete(full_path) if File.exist?(full_path)
+    self.delete
+  end
 end

@@ -16,7 +16,7 @@ br
 h2 Tracks
 ul.playlist
   - tracks.each do |t|
-    li id="track-#{t.id}" class="#{t.is_deleted ? 'deleted' : nil} #{t.is_processed ? 'processed' : nil}"
+    li id="track-#{t.id}" class="#{t.status}"
       div class="rating rated-#{t.rating}" data-rating=t.rating data-current-rating=t.rating data-url=path_to(:track_rating).with(t.id) = RATINGS[t.rating]
       a.ajax-link.track-playback-link data-track-url=(path_to(:download).with(t.id)) href=(path_to(:download).with(t.id)) = t.filename
       '  | 
