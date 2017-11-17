@@ -4,6 +4,10 @@ ul.releases-list
     li = r.title
 
 h2 Records
-ul.records-list
-  - @performer.sorted_records.each do |r|
-    li = "##{r.id} (s:#{r.rating}) #{r.original_filename} (#{r.release.title})"
+- ratings = %w(🙂 🏵 💎)
+- prev_release = 0
+- @performer.sorted_records.reverse.each do |r|
+  - if r.release_id != prev_release
+    h4 = r.release.title
+    - prev_release = r.release_id
+  li = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"

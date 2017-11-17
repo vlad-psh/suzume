@@ -516,18 +516,12 @@ end
 
 get :download do
   track = Track.find(params[:id])
-  album = track.album
-  fullpath = File.join(album.full_path, track.filename)
-
-  begin
-    tmphex = SecureRandom.hex
-    tmpfile = "public/lib/#{tmphex}"
-  end while File.exist?("public/lib/#{tmpfile}")
-  File.symlink(fullpath, tmpfile)
+  while File.exist?(tmpfile = "public/lib/#{SecureRandom.hex}") do end
+  File.symlink(track.full_path, tmpfile)
 
   # Sinatra's 'redirect' function not used because it inserts host to 'Location' header
   status 302
-  response['Location'] = "/lib/#{tmphex}"
+  response['Location'] = tmpfile.gsub(/^public/, '')
   return
 end
 
