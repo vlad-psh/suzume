@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171117173420) do
+ActiveRecord::Schema.define(version: 20180103154657) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20171117173420) do
     t.integer "has_cover", default: -1
     t.integer "rating", default: 0
     t.string "status", default: ""
+    t.string "tagsstr"
   end
 
   create_table "albums_artists", id: :serial, force: :cascade do |t|
@@ -48,6 +49,7 @@ ActiveRecord::Schema.define(version: 20171117173420) do
     t.string "aliases"
     t.integer "rating", default: 0
     t.string "status", default: ""
+    t.string "tagsstr"
   end
 
   create_table "notes", force: :cascade do |t|
@@ -115,6 +117,7 @@ ActiveRecord::Schema.define(version: 20171117173420) do
     t.integer "rating", default: 0
     t.string "lyrics_json"
     t.string "status", default: ""
+    t.string "tagsstr"
     t.index ["album_id"], name: "index_tracks_on_album_id"
   end
 

@@ -42,6 +42,9 @@ ul.playlist li.deleted {
   text-decoration: line-through;
   color: red;
 }
+.album-item.deleted {
+  background-color: #faa;
+}
 .album-item.unknown {
   background-color: #aaf;
 }
@@ -49,6 +52,10 @@ ul.artists-list li.processed,
 .album-item.processed,
 ul.playlist li.processed {
   opacity: 0.2;
+}
+ul.artists-list li.skipped {
+  background-color: #afa;
+  text-decoration: line-through;
 }
 .releases-block .album-item{
   vertical-align: top;

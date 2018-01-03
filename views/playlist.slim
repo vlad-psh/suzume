@@ -27,8 +27,7 @@ ul.playlist
         img.inline-img src='/img/scroll_empty.png'
       a.ajax-link.toggle-link data-target="#note-form-#{t.id}"
         img.inline-img src='/img/speech-bubble.png'
-      '  | Tags: 
-      == slim :tags_form, locals: {parent_object: t}
+      = "  | #{t.tagsstr}"
       div.track-note-form.hide-after-submit id="note-form-#{t.id}"
         == slim :note_form, locals: {note_parent: t}
       div.track-lyrics-form.hide-after-submit id="lyrics-form-#{t.id}"

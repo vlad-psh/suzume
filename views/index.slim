@@ -25,10 +25,8 @@
   ul.artists-list
     - @artists.each do |a|
       li class="#{a.status}"
-        a href=path_to(:artist).with(a.id) = a.title
-        '  : 
-        a href="https://musicbrainz.org/artist/#{a.mbid}"
-        == slim :tags_form, locals: {parent_object: a}
+        a> href=path_to(:artist).with(a.id) = a.title
+        span style="opacity: 0.5" = a.tagsstr
 
 - if @sorted_albums && @sorted_albums.length > 0
   == slim :albums_sorted, locals: {sorted_albums: @sorted_albums}

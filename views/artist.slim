@@ -17,8 +17,7 @@ form method="POST" action=path_to(:artist).with(@artist.id)
   input type="text" name="aliases" value=@artist.aliases
   input type="submit"
 
-' Tags:
-== slim :tags_form, locals: {parent_object: @artist}
+= "Tags: #{@artist.tagsstr}"
 br
 
 a#lastfm-tags-link.ajax-link Show last.fm tags
