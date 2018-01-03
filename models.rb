@@ -23,10 +23,6 @@ module MusicObject
   def notes
     return Note.where(parent_type: simple_type, parent_id: id)
   end
-
-  def tags
-    return TagRelation.includes(:tag).where(parent_type: simple_type, parent_id: id).map{|i|i.tag}
-  end
 end
 
 class Artist < ActiveRecord::Base
@@ -77,23 +73,7 @@ class Album < ActiveRecord::Base
 end
 
 class Tag < ActiveRecord::Base
-  has_many :tag_relations
-
-  def artists
-    return Artist.where(id: TagRelation.where(parent_type: :p, tag_id: id).pluck(:parent_id))
-  end
-
-  def albums
-    return Album.where(id: TagRelation.where(parent_type: :r, tag_id: id).pluck(:parent_id))
-  end
-
-  def tracks
-    return Track.where(id: TagRelation.where(parent_type: :t, tag_id: id).pluck(:parent_id))
-  end
-end
-
-class TagRelation < ActiveRecord::Base
-  belongs_to :tag
+  has_and_belongs_to_many :performers
 end
 
 class Track < ActiveRecord::Base
@@ -132,6 +112,7 @@ end
 class Performer < ActiveRecord::Base
   has_many :releases
   has_many :records, through: :releases
+  has_and_belongs_to_many :tags
 
   def sorted_records
     rr = records.includes(:release)
@@ -147,6 +128,7 @@ end
 class Record < ActiveRecord::Base
   belongs_to :release
   has_one :performer, through: :release
+  has_and_belongs_to_many :playlists
 
   def full_path
     File.join($library_path, 'lib', directory, filename)
@@ -156,4 +138,8 @@ class Record < ActiveRecord::Base
     File.delete(full_path) if File.exist?(full_path)
     self.delete
   end
+end
+
+class Playlist < ActiveRecord::Base
+  has_and_belongs_to_many :records
 end

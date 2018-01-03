@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180103154657) do
+ActiveRecord::Schema.define(version: 20180103181931) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,27 @@ ActiveRecord::Schema.define(version: 20180103154657) do
     t.string "aliases"
     t.string "tmp_tags"
     t.integer "old_id"
+  end
+
+  create_table "performers_tags", force: :cascade do |t|
+    t.bigint "performer_id"
+    t.bigint "tag_id"
+    t.index ["performer_id"], name: "index_performers_tags_on_performer_id"
+    t.index ["tag_id"], name: "index_performers_tags_on_tag_id"
+  end
+
+  create_table "playlists", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "playlists_records", force: :cascade do |t|
+    t.bigint "playlist_id"
+    t.bigint "record_id"
+    t.index ["playlist_id"], name: "index_playlists_records_on_playlist_id"
+    t.index ["record_id"], name: "index_playlists_records_on_record_id"
   end
 
   create_table "records", force: :cascade do |t|

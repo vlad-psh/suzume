@@ -1,3 +1,6 @@
+h1 = @performer.title
+div style="opacity: 0.5" = Artist.find(@performer.old_id).tagsstr
+
 audio#main-player preload="none" controls="controls" style="width: 500px"
 
 h2 Releases
@@ -12,11 +15,11 @@ h2 Records
   - if r.release_id != prev_release
     h4
       = r.release.title
-      span< style="font-weight: normal" = Album.find(r.release.old_id).tags.map{|t|"#{t.category}:#{t.title}"}.join(', ')
+      span< style="font-weight: normal; opacity: 0.5" = Album.find(r.release.old_id).tagsstr
     - prev_release = r.release_id
   li
     a.ajax-link.track-playback-link data-track-url=path_to(:download_record).with(r.id) href=path_to(:download_record).with(r.id) = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"
-    span< = Track.find(r.old_id).tags.map{|t|"#{t.category}:#{t.title}"}.join(', ')
+    span< style="opacity: 0.5" = Track.find(r.old_id).tagsstr
 
 
 javascript:
