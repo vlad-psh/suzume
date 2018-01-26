@@ -1,5 +1,7 @@
 h1 = @performer.title
 div style="opacity: 0.5" = Artist.find(@performer.old_id).tagsstr
+== slim :tags_form, locals: {performer: @performer}
+br
 
 audio#main-player preload="none" controls="controls" style="width: 500px"
 

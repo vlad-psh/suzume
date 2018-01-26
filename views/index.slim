@@ -22,11 +22,10 @@
 
 - if @artists && @artists.length > 0
   h2. Artists
-  ul.artists-list
+  div.artists-list
     - @artists.each do |a|
-      li class="#{a.status}"
+      span class="#{a.status}"
         a> href=path_to(:artist).with(a.id) = a.title
-        span style="opacity: 0.5" = a.tagsstr
 
 - if @sorted_albums && @sorted_albums.length > 0
   == slim :albums_sorted, locals: {sorted_albums: @sorted_albums}

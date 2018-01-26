@@ -9,13 +9,12 @@ require 'yaml'
 #require 'musicbrainz'
 require 'lastfm'
 require 'fileutils'
-require 'rmagick'
-include Magick
 require 'id3tag'
 require 'open-uri'
 require 'tempfile'
 require 'securerandom'
 require 'redcloth'
+require 'mini_magick'
 
 paths index: '/',
     performers:  '/performers',
@@ -103,10 +102,7 @@ def get_tulip_id(dir)
 end
 
 get :index do
-  artists_per_page = 50
-  @page = params[:page] ? params[:page].to_i - 1 : 0
-  @total_pages = (Artist.count / artists_per_page.to_f).ceil
-  @artists = Artist.order(status: :asc, created_at: :desc).limit(artists_per_page).offset(@page * artists_per_page).all
+  @artists = Artist.order(status: :asc, created_at: :desc).all
 
   request.accept.each do |type|
     if type.to_s == 'text/json'
@@ -352,19 +348,20 @@ def get_album_cover_file(path)
 end
 
 def process_album_cover(album_id, cover_path)
-  img = ImageList.new(cover_path)
-  ext = MIME_EXT[img.format] || 'jpg'
+  img = MiniMagick::Image.open(cover_path)
+  ext = MIME_EXT[img.mime_type] || 'jpg'
   orig_cover_path = File.expand_path("orig/#{album_id}.#{ext}", $covers_path)
   thumb_cover_path = File.expand_path("thumb/#{album_id}.#{ext}", $covers_path)
 
   FileUtils.copy(cover_path, orig_cover_path)
 
-  if [img.rows, img.columns].max > 400
-    thumb = img.resize_to_fit(400, 400)
-    thumb.write(thumb_cover_path) { self.quality = 94 }
+  if [img.width, img.height].max > 400
+    img.resize("400x400>")
+    img.write(thumb_cover_path)
   else
     FileUtils.copy(cover_path, thumb_cover_path)
   end
+  img.destroy! # remove temp file
 
   FileUtils.chmod(0644, orig_cover_path)
   FileUtils.chmod(0644, thumb_cover_path)
@@ -464,21 +461,17 @@ delete :tag do
 end
 
 post :tag_add do
-  parent_obj = MusicObject.find(params[:obj_type], params[:obj_id])
+  performer = Performer.includes(:tags).find(params[:performer_id])
 
-  t = params[:tag_name]
-  tag_category, tag_name = t.downcase.split(":")
+  tag_category, tag_title = params[:tag_name].downcase.split(":")
   unless tag_category.length != 1
-    tag = Tag.find_or_create_by(category: tag_category.strip, title: tag_name.strip)
-    TagRelation.find_or_create_by(
-            parent_type: parent_obj.simple_type,
-            parent_id: parent_obj.id,
-            tag_id: tag.id)
+    tag = Tag.find_or_create_by(title: tag_title, category: tag_category)
+    performer.tags << tag unless performer.tags.include?(tag)
   else
-    return 'Error'
+    halt 400, "Specify category!"
   end
 
-  slim :tag_item, layout: false, locals: {tag: tag, parent_object: parent_obj}
+  slim :tag_item, layout: false, locals: {tag: tag, performer: performer}
 end
 
 post :tag_remove do

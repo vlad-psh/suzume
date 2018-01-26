@@ -1,10 +1,9 @@
-// locals: parent_object
+// locals: performer
 
 div class="tags-block"
   form class="add-tag-form" method="POST" action=path_to(:tag_add)
-    input type="hidden" name="obj_type" value=parent_object.simple_type
-    input type="hidden" name="obj_id" value=parent_object.id
-    - parent_object.tags.each do |t|
-      == slim :tag_item, locals: {tag: t, parent_object: parent_object}
+    input type="hidden" name="performer_id" value=performer.id
+    - performer.tags.each do |t|
+      == slim :tag_item, locals: {tag: t, performer: performer}
     input class="new-tag-input" type="text" name="tag_name" autocomplete="off" placeholder="Add new tag..."
 

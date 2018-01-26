@@ -11,7 +11,7 @@ module TulipHelpers
     performer.update_attributes(
       title: artist.title,
       aliases: "#{artist.romaji}, #{artist.aliases}",
-      tmp_tags: artist.tags.map{|t|"#{t.category}:#{t.title}"}.join(", ")
+      tmp_tags: artist.tagsstr
     )
 
     release = Release.find_or_initialize_by(old_id: album.id)    
@@ -19,7 +19,7 @@ module TulipHelpers
       performer: performer,
       title: "#{album.year} #{album.title}",
       aliases: album.romaji,
-      tmp_tags: album.tags.map{|t|"#{t.category}:#{t.title}"}.join(", "),
+      tmp_tags: album.tagsstr,
       old_id: album.id
     )
     # TODO: move cover/write property/etc
@@ -47,7 +47,7 @@ module TulipHelpers
         directory: File.join(yearmonth, release.id.to_s),
         rating: (t.rating - 7),
         lyrics: t.lyrics,
-        tmp_tags: t.tags.map{|t|"#{t.category}:#{t.title}"}.join(", "),
+        tmp_tags: t.tagsstr,
         old_id: t.id
       )
     else

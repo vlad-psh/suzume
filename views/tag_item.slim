@@ -1,7 +1,7 @@
-// locals: tag, parent_object
+// locals: tag, performer
 
 div class="tag tag-#{tag.category}"
   span.tag-category = "#{tag.category}:"
   = tag.title
-  a class="ajax-button remove-tag-link" data-parent-type=parent_object.simple_type data-parent-id=parent_object.id data-tag-id=tag.id
+  a class="ajax-button remove-tag-link" data-performer-id=performer.id data-tag-id=tag.id
     img src="/img/del.png"

@@ -37,7 +37,10 @@ table td {
   vertical-align: top;
   padding: 0 8px 0 8px;
 }
-ul.artists-list li.deleted,
+div.artists-list span {
+  margin: 0.5em 1em;
+}
+div.artists-list span.deleted,
 ul.playlist li.deleted {
   text-decoration: line-through;
   color: red;
@@ -48,12 +51,12 @@ ul.playlist li.deleted {
 .album-item.unknown {
   background-color: #aaf;
 }
-ul.artists-list li.processed,
+div.artists-list span.processed,
 .album-item.processed,
 ul.playlist li.processed {
   opacity: 0.2;
 }
-ul.artists-list li.skipped {
+div.artists-list span.skipped {
   background-color: #afa;
   text-decoration: line-through;
 }
