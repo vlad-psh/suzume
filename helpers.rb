@@ -38,6 +38,7 @@ module TulipHelpers
       extension = t.filename.downcase.gsub(/.*\.([^\.]*)/, "\\1")
       # create unique newfilename
       while File.exist?(File.join(release_path, newfilename = "#{SecureRandom.hex(4)}.#{extension}")) do end
+      `id3 -2 -rAPIC -rGEOB -s 0 -R '#{t.full_path}'`
       File.rename(t.full_path, File.join(release_path, newfilename))
   
       record = Record.create(
