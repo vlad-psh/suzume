@@ -22,7 +22,7 @@ h2 Records
   li
     a.ajax-link.track-playback-link data-track-url=path_to(:download_record).with(r.id) href=path_to(:download_record).with(r.id) = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"
     span< style="opacity: 0.5" = Track.find(r.old_id).tagsstr
-    span< = "| #{mediainfo(r.mediainfo)}"
+    span< == "| #{mediainfo(r.mediainfo)}"
 
 
 javascript:

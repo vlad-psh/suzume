@@ -236,3 +236,16 @@ body.hide-notes .notes-table .note-content:hover {
 .rated-8  {background-color: #00AEEF; color: #00384d}
 .rated-9  {background-color: #A64686; color: #36172b}
 .rated-10 {background-color: #EC008C; color: #4d002e}
+
+.mediainfo {
+  color: #aaa;
+  font-size: 0.8em;
+}
+.mediainfo .duration {
+  color: #777;
+  font-style: italic;
+}
+.mediainfo .attention {
+  background-color: #fff4b5;
+  color: #555;
+}
