@@ -15,6 +15,7 @@ require 'tempfile'
 require 'securerandom'
 require 'redcloth'
 require 'mini_magick'
+require 'mediainfo-native'
 
 paths index: '/',
     performers:  '/performers',

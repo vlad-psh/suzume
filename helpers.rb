@@ -48,7 +48,8 @@ module TulipHelpers
         rating: (t.rating - 7),
         lyrics: t.lyrics,
         tmp_tags: t.tagsstr,
-        old_id: t.id
+        old_id: t.id,
+        mediainfo: t.mediainfo
       )
     else
       File.delete(t.full_path) rescue nil
@@ -71,5 +72,27 @@ module TulipHelpers
   def process_track(track)
     release = make_release(track.album)
     record = make_record(release, track)
+  end
+
+  def ms2ts(time)
+    ms   = time % 1000
+    time = time / 1000
+    s    = time % 60
+    time = time / 60
+    m    = time % 60
+    time = time / 60
+    h    = time
+    if h != 0
+      return "#{h}:#{'%02d' % m}:#{'%02d' % s}.#{ms/100}"
+    elsif m != 0
+      return "#{m}:#{'%02d' % s}.#{ms/100}"
+    else
+      return "0:#{'%02d' % s}.#{ms/100}"
+    end
+  end
+
+  def mediainfo(info)
+    return nil unless info
+    return "#{ms2ts(info['dur'])} [#{info['br'].to_i/1000}#{info['brm']} @ #{(info['sr'].to_i/1000.0).round(3)}kHz]"
   end
 end

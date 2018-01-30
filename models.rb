@@ -79,6 +79,7 @@ end
 class Track < ActiveRecord::Base
   include MusicObject
   belongs_to :album
+  before_create :update_mediainfo
 
   def lyrics
     if self.lyrics_json
@@ -95,6 +96,25 @@ class Track < ActiveRecord::Base
   def full_path
     return @_full_path if @_full_path
     @_full_path = File.join(album.full_path, filename)
+  end
+
+  def update_mediainfo
+    return unless File.exist?(self.full_path)
+    m = MediaInfoNative::MediaInfo.new()
+    m.open_file(self.full_path)
+    self.mediainfo = {
+      dur: m.audio.duration,
+      br:  m.audio.bit_rate,
+      brm: m.audio.bit_rate_mode,
+      sr:  m.audio.sample_rate,
+      ch:  m.audio.channels
+    }
+    m.close
+  end
+
+  def update_mediainfo!
+    self.update_mediainfo
+    self.save
   end
 end
 

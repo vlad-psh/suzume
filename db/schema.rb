@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180103181931) do
+ActiveRecord::Schema.define(version: 20180130171955) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,6 +99,7 @@ ActiveRecord::Schema.define(version: 20180103181931) do
     t.integer "old_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "mediainfo"
     t.index ["release_id"], name: "index_records_on_release_id"
   end
 
@@ -139,6 +140,7 @@ ActiveRecord::Schema.define(version: 20180103181931) do
     t.string "lyrics_json"
     t.string "status", default: ""
     t.string "tagsstr"
+    t.jsonb "mediainfo"
     t.index ["album_id"], name: "index_tracks_on_album_id"
   end
 
