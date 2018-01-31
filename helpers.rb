@@ -24,6 +24,11 @@ module TulipHelpers
     )
     # TODO: move cover/write property/etc
 
+    # Following should be executed after 'release' object will get ID
+    release.update_attributes(
+      directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s)
+    )
+
     return release
   end
 
@@ -65,15 +70,21 @@ module TulipHelpers
     album.tracks.where.not(status: "processed").each do |t|
       make_record(release, t)
     end
+    if release.full_path && album.cover_path # also checks for existence of new path
+      cover_ext = album.cover_path.gsub(/.*\./, '')
+      FileUtils.move(album.cover_path, File.expand_path("cover.#{cover_ext}", release.full_path))
+      FileUtils.move(album.thumb_path, File.expand_path("thumb.#{cover_ext}", release.full_path))
+    end
+
     album.status = "processed"
     album.save
     # Dir.delete(album.full_path)
   end
 
-  def process_track(track)
-    release = make_release(track.album)
-    record = make_record(release, track)
-  end
+#  def process_track(track)
+#    release = make_release(track.album)
+#    record = make_record(release, track)
+#  end
 
   def ms2ts(time)
     ms   = time % 1000
