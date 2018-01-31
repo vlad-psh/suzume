@@ -53,8 +53,6 @@ paths index: '/',
     api_album: '/api/album/:id',
 
     download: '/download/:id',
-    cmus_play: '/cmus/play',
-    cmus_add: '/cmus/add',
     notes: '/notes',
     lyrics: '/lyrics'
 
@@ -89,7 +87,6 @@ configure do
 end
 
 MIME_EXT = {"JPEG" => "jpg", "image/jpeg" => "jpg", "PNG" => "png", "image/png" => "png"}
-CMUS_COMMAND = 'cmus-remote --server /run/user/1000/cmus-socket'
 RATINGS = ['Not Rated', 'Appalling', 'Horrible', 'Very Bad', 'Bad',
            'Average', 'Fine', 'Good', 'Very Good', 'Great', 'Masterpiece']
 
@@ -517,18 +514,6 @@ get :download do
   status 302
   response['Location'] = tmpfile.gsub(/^public/, '')
   return
-end
-
-post :cmus_play do
-   album = Album.find(params[:id])
-  `#{CMUS_COMMAND} -C 'player-stop' 'clear' 'set play_library=false' 'add #{escape_apos(album.full_path)}'`
-   sleep 1
-  `#{CMUS_COMMAND} -C 'player-next' 'player-play'`
-end
-
-post :cmus_add do
-   album = Album.find(params[:id].to_i)
-  `#{CMUS_COMMAND} -C 'add #{escape_apos(album.full_path)}'`
 end
 
 post :notes do

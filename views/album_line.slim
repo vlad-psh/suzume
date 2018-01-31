@@ -5,13 +5,9 @@ div.album-cover-block
   img.album-cover src=path_to(:album_cover_thumb).with(album.has_cover > 0 ? album.id : 0)
   div.album-buttons
     div
-      img.cmus-link data-album-id=album.id data-url=path_to(:cmus_play) src="/img/play.png"
-    div
-      img.cmus-link data-album-id=album.id data-url=path_to(:cmus_add) src="/img/add.png"
-    div
       a.cover-link href=path_to(:album_cover_orig).with(album.has_cover > 0 ? album.id : 0) &#128444
     div
-      img.release-edit-button data-release-id=album.id data-url=path_to(:album_form).with(album.id) src="/img/edit.png"
+      a.release-edit-button data-release-id=album.id data-url=path_to(:album_form).with(album.id) &#128221
     div
       a href=path_to(:album).with(album.id) tracks
 div.album-info-block

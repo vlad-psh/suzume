@@ -160,7 +160,7 @@ img.album-cover {
 }
 .album-buttons div {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(0,0,0,0.9);
   padding: 4px;
   margin-right: 1px;
 }
