@@ -7,6 +7,7 @@ h2
     - i += 1
   |  - 
   = "#{@album.title} [#{@album.year}]"
+  a.cover-link< href=path_to(:album_cover_orig).with(@album.has_cover > 0 ? @album.id : 0) &#128444
 
 a data-method="POST" data-confirm="Are you sure to process this album?" href=path_to(:process_album).with(@album.id) Process!
 br
