@@ -256,3 +256,27 @@ body.hide-notes .notes-table .note-content:hover {
   background-color: #ffec83;
   color: #555;
 }
+
+#fullscreen-cover-container {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.8);
+  z-index: 500;
+}
+#fullscreen-cover-flexbox {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+#fullscreen-cover-flexbox img {
+  max-height: 100%;
+}

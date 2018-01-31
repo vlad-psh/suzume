@@ -175,3 +175,19 @@ $(document).on('ajax:success','.ajax-insert-form', function(xhr, data, status){
   $(e).show();
 });
 
+// ***************************************
+// FULLSCREEN COVER
+// ***************************************
+
+$(document).on('click', '.cover-link', function(event){
+  event.preventDefault();
+  var link = $(this).attr('href');
+  $('#fullscreen-cover-container img').attr('src', link);
+  $('#fullscreen-cover-container').show();
+});
+    
+$(document).on('click', '#fullscreen-cover-container', function(){
+  $(this).hide();
+  $('#fullscreen-cover-container img').attr('src', '');
+});
+

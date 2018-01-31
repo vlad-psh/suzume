@@ -9,8 +9,7 @@ div.album-cover-block
     div
       img.cmus-link data-album-id=album.id data-url=path_to(:cmus_add) src="/img/add.png"
     div
-      a href=path_to(:album_cover_orig).with(album.has_cover > 0 ? album.id : 0)
-        img src="/img/zoom.png"
+      a.cover-link href=path_to(:album_cover_orig).with(album.has_cover > 0 ? album.id : 0) &#128444
     div
       img.release-edit-button data-release-id=album.id data-url=path_to(:album_form).with(album.id) src="/img/edit.png"
     div

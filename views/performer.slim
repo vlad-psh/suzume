@@ -13,7 +13,7 @@ h2 Records
     h4
       = r.release.title
       - if r.release.download_cover
-        a< href=r.release.download_cover cover
+        a< class="cover-link" href=r.release.download_cover &#128444
       span< style="font-weight: normal; opacity: 0.5" = Album.find(r.release.old_id).tagsstr
     - prev_release = r.release_id
   li
