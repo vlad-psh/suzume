@@ -39,7 +39,7 @@ module TulipHelpers
       # create unique newfilename
       while File.exist?(File.join(release_path, newfilename = "#{SecureRandom.hex(4)}.#{extension}")) do end
       `id3 -2 -rAPIC -rGEOB -s 0 -R '#{t.full_path}'`
-      File.rename(t.full_path, File.join(release_path, newfilename))
+      FileUtils.move(t.full_path, File.join(release_path, newfilename))
   
       record = Record.create(
         release: release,
@@ -83,12 +83,13 @@ module TulipHelpers
     m    = time % 60
     time = time / 60
     h    = time
+    msblock = "<span class='msec'>.#{ms/100}</span>"
     if h != 0
-      return "#{h}:#{'%02d' % m}:#{'%02d' % s}.#{ms/100}"
+      return "#{h}:#{'%02d' % m}:#{'%02d' % s}#{msblock}"
     elsif m != 0
-      return "#{m}:#{'%02d' % s}.#{ms/100}"
+      return "#{m}:#{'%02d' % s}#{msblock}"
     else
-      return "0:#{'%02d' % s}.#{ms/100}"
+      return "0:#{'%02d' % s}#{msblock}"
     end
   end
 
@@ -104,6 +105,6 @@ module TulipHelpers
     sr_value = (info['sr'].to_i/1000.0).round(3)
     samplerate = "<span class='samplerate' #{sr_value < 44.1 ? 'attention' : nil}>#{sr_value}kHz</span>"
 
-    return "<span class='mediainfo'>#{duration} [#{bitrate} @ #{samplerate}]</span>"
+    return "<span class='mediainfo'>#{duration} | #{bitrate} @ #{samplerate}</span>"
   end
 end

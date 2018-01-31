@@ -70,6 +70,26 @@ class Album < ActiveRecord::Base
 
     return tracks.order(filename: :asc)
   end
+
+  def cover_path
+    jpg_path = File.expand_path("orig/#{self.id}.jpg", $covers_path)
+    return jpg_path if File.exist?(jpg_path)
+
+    png_path = File.expand_path("orig/#{self.id}.png", $covers_path)
+    return png_path if File.exist?(png_path)
+
+    return nil
+  end
+
+  def thumb_path
+    jpg_path = File.expand_path("thumb/#{self.id}.jpg", $covers_path)
+    return jpg_path if File.exist?(jpg_path)
+    
+    png_path = File.expand_path("thumb/#{self.id}.png", $covers_path)
+    return png_path if File.exist?(png_path)
+
+    return nil
+  end
 end
 
 class Tag < ActiveRecord::Base
@@ -143,6 +163,12 @@ end
 class Release < ActiveRecord::Base
   belongs_to :performer
   has_many :records
+
+  def full_path
+    return nil unless self.directory
+    path = File.join($library_path, 'lib', self.directory)
+    return File.exist?(path) ? path : nil
+  end
 end
 
 class Record < ActiveRecord::Base

@@ -27,8 +27,10 @@ ul.playlist
         img.inline-img src='/img/scroll_empty.png'
       a.ajax-link.toggle-link data-target="#note-form-#{t.id}"
         img.inline-img src='/img/speech-bubble.png'
-      = "  | #{t.tagsstr}"
-      == "  | #{mediainfo(t.mediainfo)}"
+      - if t.tagsstr.present?
+        = " | #{t.tagsstr}"
+      - if t.mediainfo.present?
+        == " | #{mediainfo(t.mediainfo)}"
       div.track-note-form.hide-after-submit id="note-form-#{t.id}"
         == slim :note_form, locals: {note_parent: t}
       div.track-lyrics-form.hide-after-submit id="lyrics-form-#{t.id}"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180130171955) do
+ActiveRecord::Schema.define(version: 20180131141621) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,6 +110,7 @@ ActiveRecord::Schema.define(version: 20180130171955) do
     t.string "cover"
     t.string "tmp_tags"
     t.integer "old_id"
+    t.string "directory"
     t.index ["performer_id"], name: "index_releases_on_performer_id"
   end
 

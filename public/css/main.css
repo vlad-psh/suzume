@@ -1,7 +1,8 @@
 body {
 /*  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;*/
-  font-family: Cambria, myfont2, serif;
+  font-family: myfont, Cambria, serif;
   font-weight: 300;
+  font-size: 11pt;
 }
 h1 {
   font-weight: 600;
@@ -242,10 +243,16 @@ body.hide-notes .notes-table .note-content:hover {
   font-size: 0.8em;
 }
 .mediainfo .duration {
+  color: #555;
+/*  background-color: #eee;
+  padding: 0.1em 0.3em 0.01em 0.3em;
+  border-radius: 0.3em; */
+}
+.mediainfo .duration .msec {
+  font-size: 0.7em;
   color: #777;
-  font-style: italic;
 }
 .mediainfo .attention {
-  background-color: #fff4b5;
+  background-color: #ffec83;
   color: #555;
 }
