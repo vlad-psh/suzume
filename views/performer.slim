@@ -12,11 +12,13 @@ h2 Records
 - prev_release = 0
 - @performer.sorted_records.reverse.each do |r|
   - if r.release_id != prev_release
-    h4
-      = r.release.title
-      - if r.release.download_cover
-        a< class="cover-link" href=r.release.download_cover &#128444
-      span< style="font-weight: normal; opacity: 0.5" = Album.find(r.release.old_id).tagsstr
+    div.hr-title
+      span
+        - if r.release.download_cover
+          a class="cover-link" href=r.release.download_cover = r.release.title
+        - else
+          = r.release.title
+    span< style="font-weight: normal; opacity: 0.5" = Album.find(r.release.old_id).tagsstr
     - prev_release = r.release_id
   li
     a.ajax-link.track-playback-link data-track-url=r.download_path href=r.download_path = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"

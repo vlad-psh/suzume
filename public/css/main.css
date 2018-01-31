@@ -148,29 +148,6 @@ img.album-cover {
 .tag-p a {
   color: #ffc000;
 }
-.album-cover-block:hover .album-buttons {
-  visibility: visible;
-}
-.album-buttons {
-  visibility: hidden;
-  position: relative;
-  bottom: 24px;
-  color: white;
-  cursor: pointer;
-}
-.album-buttons div {
-  display: inline-block;
-  background: rgba(0,0,0,0.9);
-  padding: 4px;
-  margin-right: 1px;
-}
-.album-buttons div:hover {
-  background: #80dbe1;
-}
-.album-buttons img {
-  display: block;
-  vertical-align: bottom;
-}
 ul.playlist li {
   line-height: 1.7em;
 }
@@ -237,7 +214,9 @@ body.hide-notes .notes-table .note-content:hover {
 .rated-8  {background-color: #00AEEF; color: #00384d}
 .rated-9  {background-color: #A64686; color: #36172b}
 .rated-10 {background-color: #EC008C; color: #4d002e}
-
+/* --------------------------
+   mediainfo block
+   -------------------------- */
 .mediainfo {
   color: #aaa;
   font-size: 0.8em;
@@ -256,7 +235,9 @@ body.hide-notes .notes-table .note-content:hover {
   background-color: #ffec83;
   color: #555;
 }
-
+/* --------------------------
+   fullscreen album cover art
+   -------------------------- */
 #fullscreen-cover-container {
   display: none;
   position: fixed;
@@ -280,3 +261,36 @@ body.hide-notes .notes-table .note-content:hover {
 #fullscreen-cover-flexbox img {
   max-height: 100%;
 }
+/* --------------------------
+   title with horizontal line
+   -------------------------- */
+.hr-title {
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #bbb;
+  font-size: 0.8em;
+}
+.hr-title > span {
+  position: relative;
+  display: inline-block;
+}
+.hr-title > span:before,
+.hr-title > span:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: rgba(128,128,128,0.2);
+}
+.hr-title > span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+.hr-title > span:after {
+  left: 100%;
+  margin-left: 15px;
+}
+
