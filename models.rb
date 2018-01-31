@@ -180,6 +180,10 @@ class Record < ActiveRecord::Base
     File.join($library_path, 'lib', directory, filename)
   end
 
+  def download_path
+    File.join('/rdownload', directory, filename)
+  end
+
   def delete_from_filesystem
     File.delete(full_path) if File.exist?(full_path)
     self.delete

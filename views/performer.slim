@@ -5,11 +5,6 @@ br
 
 audio#main-player preload="none" controls="controls" style="width: 500px"
 
-h2 Releases
-ul.releases-list
-  - @performer.releases.order(title: :asc).each do |r|
-    li = r.title
-
 h2 Records
 - ratings = %w(🙂 🏵 💎)
 - prev_release = 0
@@ -20,10 +15,14 @@ h2 Records
       span< style="font-weight: normal; opacity: 0.5" = Album.find(r.release.old_id).tagsstr
     - prev_release = r.release_id
   li
-    a.ajax-link.track-playback-link data-track-url=path_to(:download_record).with(r.id) href=path_to(:download_record).with(r.id) = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"
+    a.ajax-link.track-playback-link data-track-url=r.download_path href=r.download_path = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"
     span< style="opacity: 0.5" = Track.find(r.old_id).tagsstr
     span< == "| #{mediainfo(r.mediainfo)}"
 
+h2 Releases
+ul.releases-list
+  - @performer.releases.order(title: :asc).each do |r|
+    li = r.title
 
 javascript:
   var playlist = [];
