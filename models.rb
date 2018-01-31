@@ -169,6 +169,26 @@ class Release < ActiveRecord::Base
     path = File.join($library_path, 'lib', self.directory)
     return File.exist?(path) ? path : nil
   end
+
+  def download_cover
+    return nil unless path = self.full_path
+
+    %w(jpg png).each do |ext|
+      return File.join('/rdownload', self.directory, "cover.#{ext}") if File.exist?(File.join(path, "cover.#{ext}"))
+    end
+
+    return nil
+  end
+
+  def download_thumb
+    return nil unless path = self.full_path
+
+    %w(jpg png).each do |ext|
+      return File.join('/rdownload', self.directory, "thumb.#{ext}") if File.exist?(File.join(path, "thumb.#{ext}"))
+    end
+
+    return nil
+  end
 end
 
 class Record < ActiveRecord::Base
