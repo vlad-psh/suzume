@@ -293,4 +293,28 @@ body.hide-notes .notes-table .note-content:hover {
   left: 100%;
   margin-left: 15px;
 }
-
+/* --------------------------
+   tulip-player
+   -------------------------- */
+#tulip-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #111;
+}
+#progress-bar {
+  height: 20px;
+  width: 100%;
+  background-color: #555;
+}
+#progress-bar-current {
+  background-color: #ffec83;
+  height: 100%;
+  width: 0%;
+  transition: width 500ms;
+}
+#tulip-player a {
+  cursor: pointer;
+}
