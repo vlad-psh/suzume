@@ -1,11 +1,10 @@
 h1
   = @performer.title
-  span< style="font-size: 0.5em": a href=path_to(:artist).with(@performer.old_id) orig
-div style="opacity: 0.5" = Artist.find(@performer.old_id).tagsstr
-== slim :tags_form, locals: {performer: @performer}
-br
+  span< style="font-size: 0.5em"
+    a href=path_to(:artist).with(@performer.old_id) orig
+    span< style="opacity: 0.5" = Artist.find(@performer.old_id).tagsstr
+    == slim :tags_form, locals: {performer: @performer}
 
-h2 Records
 - ratings = %w(🙂 🏵 💎)
 - prev_release = 0
 - @performer.sorted_records.reverse.each do |r|
@@ -18,7 +17,7 @@ h2 Records
           = r.release.title
     span< style="font-weight: normal; opacity: 0.5" = Album.find(r.release.old_id).tagsstr
     - prev_release = r.release_id
-  li
+  div
     a.ajax-link.track-playback-link data-track-url=r.download_path href=r.download_path = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"
     span< style="opacity: 0.5" = Track.find(r.old_id).tagsstr
     span< == "| #{mediainfo(r.mediainfo)}"
