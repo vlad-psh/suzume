@@ -12,16 +12,23 @@ html
     div#fullscreen-cover-container
       div#fullscreen-cover-flexbox
         img
-    a href=path_to(:index) Index
-    '  | 
-    a href=path_to(:tags) Tags
-    '  | 
-    a href=path_to(:performers) Performers
-    '  | 
-    input.hide-notes-checkbox type="checkbox" checked=("checked" if request.session["hide-notes"] && request.session["hide-notes"] == true) Hide notes
-    '  |
-    form style="display: inline-block" action=path_to(:search) method="GET"
-      input type="text" name="query" placeholder="Search..."
+    div#main-menu
+      a href=path_to(:index) Index
+      '  | 
+      a href=path_to(:tags) Tags
+      '  | 
+      a href=path_to(:performers) Performers
+      '  | 
+      input.hide-notes-checkbox type="checkbox" checked=("checked" if request.session["hide-notes"] && request.session["hide-notes"] == true) Hide notes
+      '  |
+      form style="display: inline-block" action=path_to(:search) method="GET"
+        input type="text" name="query" placeholder="Search..."
+      div#tulip-player
+        div#progress-bar
+          div#progress-bar-current
+        a#pause-button pause
+        audio#main-player preload="none" controls="controls" style="width: 500px"
+
     div#container
       == slim :flashes
       == yield

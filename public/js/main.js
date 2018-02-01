@@ -191,3 +191,128 @@ $(document).on('click', '#fullscreen-cover-container', function(){
   $('#fullscreen-cover-container img').attr('src', '');
 });
 
+// ***************************************
+// AUDIO PLAYER
+// ***************************************
+
+$(document).ready(function(){
+  var playlist = [];
+  var playIndex = 0;
+  var player = $('#main-player')[0];
+  var progressUpdateInterval;
+
+  function startUpdateProgress(){
+    if (!progressUpdateInterval){
+      progressUpdateInterval = setInterval(updateProgress, 500);
+    }
+  };
+
+  function stopUpdateProgress(){
+    if (progressUpdateInterval){
+      clearInterval(progressUpdateInterval);
+      progressUpdateInterval = undefined;
+    }
+  };
+
+  function updateProgress(){
+    var hPercent = (player.currentTime / player.duration * 100).toFixed(4);
+    $('#progress-bar-current').css('width', hPercent + '%');
+    //console.log(percent);
+  };
+
+  function progressBarPercents(event){
+    var percent = (event.pageX - $('#progress-bar').offset().left) / $('#progress-bar').width();
+    if (percent > 100){
+      percent = 100;
+    } else if (percent < 0){
+      percent = 0;
+    }
+    return percent;
+  };
+
+  var seekProgressMove = function(event){
+    $('#progress-bar-current').css('width', progressBarPercents(event) * 100 + '%');
+    //console.log("mousemove: " + event.pageX);
+  };
+
+  var seekProgressMouseUp = function(event){
+    event.preventDefault();
+    //console.log("mouseup: " + event.screenX);
+
+    $(document).off('mouseup', seekProgressMouseUp);
+    $(document).off('mousemove', seekProgressMove);
+
+    $('#progress-bar').removeClass('seeking');
+    player.currentTime = progressBarPercents(event) * player.duration;
+
+    startUpdateProgress();
+  };
+
+  $(document).on('mousedown', '#progress-bar', function(event){
+    if (!player.paused){
+      event.preventDefault();
+      //console.log("mousedown: " + event.pageX);
+
+      stopUpdateProgress();
+      $('#progress-bar').addClass('seeking');
+      $('#progress-bar-current').css('width', progressBarPercents(event) * 100 + '%');
+
+      $(document).on('mouseup', '', seekProgressMouseUp);
+      $(document).on('mousemove', seekProgressMove);
+    }
+  });
+
+  $(document).on('click', '#pause-button', function(){
+    if (player.paused){
+      player.play();
+      startUpdateProgress();
+    } else {
+      player.pause();
+      stopUpdateProgress();
+    }
+  });
+
+  $(document).on('click', '.toggle-link', function(){
+    var target = $(this).data('target');
+    $(target).toggle();
+  });
+
+  $(document).on('click', '.track-playback-link', function(event){
+    event.preventDefault();
+
+    var track_url = $(this).data('track-url');
+    playlist = [];
+    $('.track-playback-link').each(function(){
+      var url = $(this).data('track-url');
+      playlist.push(url);
+      console.log(url);
+      if (url == track_url) {
+        playIndex = playlist.length - 1;
+      }
+    });
+
+    play();
+  });
+
+  function play(){
+    $(player).attr('src', playlist[playIndex]);
+    player.play();
+    startUpdateProgress();
+    $('.track-now-playing').removeClass('track-now-playing');
+    $('.track-playback-link').each(function(){
+      if ($(this).data('track-url') == playlist[playIndex]) {
+        $(this).addClass('track-now-playing')
+      }
+    });
+  }
+
+  $('#main-player').on('ended', function(){
+    playIndex = playIndex + 1;
+    if (playIndex < playlist.length) {
+      player.currentTime = 0;
+      play();
+    } else {
+      stopUpdateProgress();
+    }
+  });
+});
