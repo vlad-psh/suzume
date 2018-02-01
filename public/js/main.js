@@ -200,6 +200,7 @@ $(document).ready(function(){
   var playIndex = 0;
   var player = $('#main-player')[0];
   var progressUpdateInterval;
+  $('#volumebar .slider-value').css('width', player.volume * 100 + '%');
 
   function startUpdateProgress(){
     if (!progressUpdateInterval){
@@ -216,51 +217,85 @@ $(document).ready(function(){
 
   function updateProgress(){
     var hPercent = (player.currentTime / player.duration * 100).toFixed(4);
-    $('#progress-bar-current').css('width', hPercent + '%');
+    $('#progressbar .slider-value').css('width', hPercent + '%');
     //console.log(percent);
   };
 
-  function progressBarPercents(event){
-    var percent = (event.pageX - $('#progress-bar').offset().left) / $('#progress-bar').width();
-    if (percent > 100){
-      percent = 100;
+  function offsetPercents(el, event){
+    var percent = (event.pageX - el.offset().left) / el.width();
+    if (percent > 1){
+      percent = 1;
     } else if (percent < 0){
       percent = 0;
     }
     return percent;
   };
 
+// progressbar seeking
+
   var seekProgressMove = function(event){
-    $('#progress-bar-current').css('width', progressBarPercents(event) * 100 + '%');
-    //console.log("mousemove: " + event.pageX);
+    $('#progressbar .slider-value').css('width', offsetPercents($('#progressbar'), event) * 100 + '%');
+    
   };
 
   var seekProgressMouseUp = function(event){
     event.preventDefault();
-    //console.log("mouseup: " + event.screenX);
 
     $(document).off('mouseup', seekProgressMouseUp);
     $(document).off('mousemove', seekProgressMove);
 
-    $('#progress-bar').removeClass('seeking');
-    player.currentTime = progressBarPercents(event) * player.duration;
+    $('#progressbar').removeClass('seeking');
+    player.currentTime = offsetPercents($('#progressbar'), event) * player.duration;
 
     startUpdateProgress();
   };
 
-  $(document).on('mousedown', '#progress-bar', function(event){
-    if (!player.paused){
+  $(document).on('mousedown', '#progressbar', function(event){
+    if (event.which == 1 && !player.paused){ // left mouse button only
       event.preventDefault();
-      //console.log("mousedown: " + event.pageX);
 
       stopUpdateProgress();
-      $('#progress-bar').addClass('seeking');
-      $('#progress-bar-current').css('width', progressBarPercents(event) * 100 + '%');
+      $(this).addClass('seeking');
+      $(this).find('.slider-value').css('width', offsetPercents($('#progressbar'), event) * 100 + '%');
 
-      $(document).on('mouseup', '', seekProgressMouseUp);
+      $(document).on('mouseup', seekProgressMouseUp);
       $(document).on('mousemove', seekProgressMove);
     }
   });
+
+// volume slider
+
+  var seekVolumeMove = function(event){
+    $('#volumebar .slider-value').css('width', offsetPercents($('#volumebar'), event) * 100 + '%');
+    player.volume = offsetPercents($('#volumebar'), event);
+  };
+
+  var seekVolumeMouseUp = function(event){
+    event.preventDefault();
+
+    $(document).off('mouseup', seekVolumeMouseUp);
+    $(document).off('mousemove', seekVolumeMove);
+
+    $('#volumebar').removeClass('seeking');
+    player.volume = offsetPercents($('#volumebar'), event);
+    
+    startUpdateProgress();
+  };
+
+  $(document).on('mousedown', '#volumebar', function(event){
+    if (event.which == 1){ // left mouse button only
+      event.preventDefault();
+      
+      stopUpdateProgress();
+      $(this).addClass('seeking');
+      $(this).find('.slider-value').css('width', offsetPercents($('#volumebar'), event) * 100 + '%');
+
+      $(document).on('mouseup', seekVolumeMouseUp);
+      $(document).on('mousemove', seekVolumeMove);
+    }
+  });
+
+// other actions
 
   $(document).on('click', '#pause-button', function(){
     if (player.paused){

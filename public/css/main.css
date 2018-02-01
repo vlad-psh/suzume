@@ -310,31 +310,49 @@ body.hide-notes .notes-table .note-content:hover {
   left: 0;
   width: 100%;
   z-index: 100;
-  padding: 0 1em;
+  padding: 0.2em 1em 0.4em 1em;
+}
+#main-menu input {
+  background: #333;
+  border: none;
+  color: #eee;
+  padding: 0.2em 0.4em;
 }
 /* --------------------------
    tulip-player
    -------------------------- */
 #tulip-player {
   display: inline-block;
-  background-color: #111;
   vertical-align: middle;
   margin-left: 0.8em;
 }
-#progress-bar {
+.slider {
+  display: inline-block;
   height: 16px;
-  width: 100%;
-  min-width: 300px;
-  background-color: #555;
+  width: 400px;
+  background-color: #222;
 }
-#progress-bar-current {
-  background-color: #ffec83;
+.slider-value {
+  background-color: #00AEEF;
   height: 100%;
   width: 0%;
   transition: width 500ms;
 }
-#progress-bar.seeking #progress-bar-current {
-  background-color: red;
+.slider:hover {
+  background-color: #333;
+}
+.slider.seeking {
+  opacity: 0.85;
+}
+.slider.seeking .slider-value {
+  transition: none !important;
+}
+#volumebar {
+  width: 100px;
+  margin-left: 0.5em;
+}
+#volumebar .slider-value {
+  background-color: #00A651;
 }
 #tulip-player a {
   cursor: pointer;

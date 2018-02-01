@@ -24,10 +24,12 @@ html
       form style="display: inline-block" action=path_to(:search) method="GET"
         input type="text" name="query" placeholder="Search..."
       div#tulip-player
-        div#progress-bar
-          div#progress-bar-current
+        div id="progressbar" class="slider"
+          div.slider-value
+        div id="volumebar" class="slider"
+          div.slider-value
         a#pause-button pause
-        audio#main-player preload="none" controls="controls" style="width: 500px"
+        audio#main-player preload="none"
 
     div#container
       == slim :flashes
