@@ -5,8 +5,7 @@ h1
     a href=mb_artist_search_path(@artist.title) brainz
     '  |
     a href="https://last.fm/music/#{@artist.title}" lfm
-    - perf = Performer.where(old_id: @artist.id).first
-    - if perf
+    - if perf = Performer.where(old_id: @artist.id).first
       '  | 
       a href=path_to(:performer).with(perf.id) perf
 

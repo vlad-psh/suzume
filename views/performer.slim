@@ -18,12 +18,14 @@ h1
     span< style="font-weight: normal; opacity: 0.5" = Album.find(r.release.old_id).tagsstr
     - prev_release = r.release_id
   div
-    a.ajax-link.track-playback-link data-track-url=r.download_path href=r.download_path = "##{r.id} #{ratings[r.rating]} #{r.original_filename}"
+    a.ajax-link.track-playback-link data-track-url=r.download_path href=r.download_path = "#{ratings[r.rating]} #{strip_filename(r.original_filename)}"
     span< style="opacity: 0.5" = Track.find(r.old_id).tagsstr
     span< == "| #{mediainfo(r.mediainfo)}"
+    span< style="font-size: 0.65em; opacity: 0.4" = "##{r.id}"
 
 h2 Releases
 ul.releases-list
   - @performer.releases.order(title: :asc).each do |r|
-    li = r.title
-
+    li
+      = r.title
+      span< style="font-size: 0.8em; opacity: 0.5": a href=path_to(:album).with(r.old_id) = "##{r.id}"

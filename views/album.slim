@@ -4,6 +4,8 @@ h2
     - if i > 0
       ' /
     a href=path_to(:artist).with(a.id) = a.title
+    - if perf = Performer.where(old_id: a.id).first
+      a< style="font-size: 0.5em" href=path_to(:performer).with(perf.id) perf
     - i += 1
   |  - 
   = "#{@album.title} [#{@album.year}]"

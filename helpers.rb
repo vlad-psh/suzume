@@ -57,6 +57,7 @@ module TulipHelpers
         old_id: t.id,
         mediainfo: t.mediainfo
       )
+      record.update_mediainfo! if record.mediainfo.blank?
     else
       File.delete(t.full_path) rescue nil
     end
@@ -117,5 +118,9 @@ module TulipHelpers
     samplerate = "<span class='samplerate' #{sr_value < 44.1 ? 'attention' : nil}>#{sr_value}kHz</span>"
 
     return "<span class='mediainfo'>#{duration} | #{bitrate} @ #{samplerate}</span>"
+  end
+
+  def strip_filename(fln)
+    return fln.gsub(/\.mp3$/i, '').gsub(/\.m4a$/i, '').gsub(/^[0-9\-\.]* (- )?/, '')
   end
 end
