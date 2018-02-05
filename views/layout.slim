@@ -13,6 +13,10 @@ html
       div#fullscreen-cover-flexbox
         img
     div#main-menu
+      - if admin? || guest?
+        a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: #{admin? ? 'red' : 'green'}" ●
+      - else
+        a href=path_to(:login) style="text-decoration: none" ●
       a href=path_to(:index) Index
       '  | 
       a href=path_to(:tags) Tags

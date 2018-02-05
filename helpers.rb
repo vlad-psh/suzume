@@ -123,4 +123,22 @@ module TulipHelpers
   def strip_filename(fln)
     return fln.gsub(/\.mp3$/i, '').gsub(/\.m4a$/i, '').gsub(/^[0-9\-\.]* (- )?/, '')
   end
+
+  def admin?
+    session['role'] == 'admin'
+  end
+
+  def guest?
+    session['role'] == 'guest'
+  end
+
+  def protect!
+    return if admin?
+    halt 401, "Unauthorized"
+  end
+
+  def hide!
+    return if admin? || guest?
+    halt 401, "Unauthorized"
+  end
 end

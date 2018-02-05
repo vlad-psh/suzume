@@ -54,7 +54,10 @@ paths index: '/',
 
     download: '/download/:id',
     notes: '/notes',
-    lyrics: '/lyrics'
+    lyrics: '/lyrics',
+
+    login: '/login',
+    logout: '/logout'
 
 require_relative './models.rb'
 require_relative './helpers.rb'
@@ -98,6 +101,8 @@ def get_tulip_id(dir)
 end
 
 get :index do
+  protect!
+
   @artists = Artist.order(status: :asc, created_at: :desc).all
 
   request.accept.each do |type|
@@ -123,16 +128,22 @@ get :index do
 end
 
 get :performers do
+  protect!
+
   @performers = Performer.all
   slim :performers
 end
 
 get :performer do
+  protect!
+
   @performer = Performer.find(params[:id])
   slim :performer
 end
 
 post :process_artist do
+  protect!
+
   artist = Artist.find(params[:id])
   if artist.albums.where.not(status: 'processed').count == 0
     artist.status = 'processed'
@@ -145,24 +156,32 @@ post :process_artist do
 end
 
 post :process_album do
+  protect!
+
   album = Album.find(params[:id])
   process_album(album) if album
   redirect path_to(:artist).with(album.artists.first.id)
 end
 
 post :process_track do
+  protect!
+
   track = Track.find(params[:id])
   process_track(track) if track
   redirect path_to(:album).with(track.album.id)
 end
 
 post :artists do
+  protect!
+
   a = Artist.create(filename: params[:filename],
                        title: params[:filename])
   redirect path_to(:artist).with(a.id)
 end
 
 get :search_by_tag do
+  protect!
+
   tag = Tag.find(params[:id].to_i)
 
   unless tag
@@ -213,6 +232,8 @@ def albums_by_type(all_albums)
 end
 
 get :artist do
+  protect!
+
   @artist = Artist.find(params[:id])
 
   request.accept.each do |type|
@@ -248,6 +269,8 @@ get :artist do
 end
 
 post :artist do
+  protect!
+
   a = Artist.find(params[:id].to_i)
   a.title = params[:title]
   a.romaji = params[:romaji]
@@ -258,17 +281,23 @@ post :artist do
 end
 
 get :album_form do
+  protect!
+
   @album = Album.find(params[:id].to_i)
 
   slim :album_form, layout: false
 end
 
 get :album_line do
+  protect!
+
   album = Album.find(params[:id].to_i)
   slim :album_line, layout: false, locals: {album: album}
 end
 
 get :album do
+  protect!
+
   @album = Album.find(params[:id])
   @tracks = @album.all_tracks
   @notes = {}
@@ -282,6 +311,8 @@ get :album do
 end
 
 post :album do
+  protect!
+
   album = Album.find(params[:id].to_i)
   album.year = params[:year].to_i
   album.primary_type = params[:type]
@@ -293,6 +324,8 @@ post :album do
 end
 
 post :albums do
+  protect!
+
   artist = Artist.find(params[:artist_id].to_i)
   album = Album.create(
         filename: params[:filename],
@@ -387,6 +420,8 @@ def get_album_cover(album)
 end
 
 post :set_album_cover_from_url do
+  protect!
+
   album = Album.find(params[:id].to_i)
 
   if params[:url].empty?
@@ -411,12 +446,16 @@ post :set_album_cover_from_url do
 end
 
 get :lastfm_tags do
+  protect!
+
   artist = Artist.find(params[:id].to_i)
   tags = $lastfm.artist.get_top_tags(artist: artist.title)
   slim :tags_list, layout: false, locals: {tags_array: tags}
 end
 
 get :search do
+  protect!
+
   q = "%#{params[:query]}%"
   @artists = Artist.where('title ILIKE ? OR romaji ILIKE ? OR aliases ILIKE ?', q, q, q)
   all_albums = Album.where('title ILIKE ? OR romaji ILIKE ?', q, q).order(year: :desc)
@@ -431,12 +470,16 @@ get :search do
 end
 
 get :tags do
+  protect!
+
   @tags = Tag.all.order(category: :asc, title: :asc)
 
   slim :tags, locals: {tags: @tags}
 end
 
 delete :tag do
+  protect!
+
   tag = Tag.find(params[:id])
   unless tag
     flash[:error] = "Tag not found"
@@ -457,6 +500,8 @@ delete :tag do
 end
 
 post :tag_add do
+  protect!
+
   performer = Performer.includes(:tags).find(params[:performer_id])
 
   tag_category, tag_title = params[:tag_name].downcase.split(":")
@@ -471,6 +516,8 @@ post :tag_add do
 end
 
 post :tag_remove do
+  protect!
+
   TagRelation.where(
         parent_type: params[:obj_type],
         parent_id: params[:obj_id],
@@ -482,6 +529,8 @@ post :tag_remove do
 end
 
 post :track_rating do
+  protect!
+
   track = Track.find(params[:id])
   halt(500, "Error") unless track
   track.rating = params[:rating]
@@ -490,6 +539,8 @@ post :track_rating do
 end
 
 post :hide_notes do
+  protect!
+
   if params["hide-notes"] && params["hide-notes"] == "true"
     request.session["hide-notes"] = true
     return 200, '{"hide-notes": true}'
@@ -506,6 +557,8 @@ def escape_apos(text)
 end
 
 get :download do
+  protect!
+
   track = Track.find(params[:id])
   while File.exist?(tmpfile = "public/lib/#{SecureRandom.hex}") do end
   File.symlink(track.full_path, tmpfile)
@@ -517,6 +570,8 @@ get :download do
 end
 
 post :notes do
+  protect!
+
   n = Note.create(parent_type: params[:parent_type],
         parent_id: params[:parent_id],
         content: params[:content])
@@ -525,6 +580,8 @@ post :notes do
 end
 
 post :lyrics do
+  protect!
+
   track = Track.find(params[:track_id])
   halt(500, "Track #{params[:track_id]} not found") unless track
 
@@ -535,3 +592,37 @@ post :lyrics do
 
   slim :lyrics_item, layout: false, locals: {title: params[:title], lyrics: params[:content]}
 end
+
+get :login do
+  if admin? || guest?
+    flash[:notice] = "Already logged in"
+    redirect path_to(:index)
+  else
+    slim :login
+  end
+end
+
+post :login do
+  if params['username'].blank? || params['password'].blank?
+    flash[:error] = "Incorrect username or password :("
+    redirect path_to(:login)
+  elsif $config['admins'] && $config['admins'][params['username']] == params['password']
+    flash[:notice] = "Successfully logged in as admin!"
+    session['role'] = 'admin'
+    redirect path_to(:index)
+  elsif $config['guests'] && $config['guests'][params['username']] == params['password']
+    flash[:notice] = "Successfully logged in as spectator!"
+    session['role'] = 'guest'
+    redirect path_to(:index)
+  else
+    flash[:error] = "Incorrect username or password :("
+    redirect path_to(:login)
+  end
+end
+
+delete :logout do
+  session.delete('role')
+  flash[:notice] = "Successfully logged out"
+  redirect path_to(:index)
+end
+
