@@ -8,32 +8,34 @@ html
     script src="/js/jquery-rails.js"
     script src="/js/main.js"
     link rel="stylesheet" type="text/css" href="/css/main.css"
+    meta content="width=device-width, initial-scale=1" name="viewport"
   body class=("hide-notes" if request.session["hide-notes"] && request.session["hide-notes"] == true)
     div#fullscreen-cover-container
       div#fullscreen-cover-flexbox
         img
     div#main-menu
-      - if admin? || guest?
-        a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: #{admin? ? 'red' : 'green'}" ●
-      - else
-        a href=path_to(:login) style="text-decoration: none" ●
-      a href=path_to(:index) Index
-      '  | 
-      a href=path_to(:tags) Tags
-      '  | 
-      a href=path_to(:performers) Performers
-      '  | 
-      input.hide-notes-checkbox type="checkbox" checked=("checked" if request.session["hide-notes"] && request.session["hide-notes"] == true) Hide notes
-      '  |
-      form style="display: inline-block" action=path_to(:search) method="GET"
-        input type="text" name="query" placeholder="Search..."
+      div.menu-block
+        - if admin? || guest?
+          a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: #{admin? ? 'red' : 'green'}" ●
+        - else
+          a href=path_to(:login) style="text-decoration: none" ●
+        a< href=path_to(:index) Index
+        '  | 
+        a href=path_to(:tags) Tags
+        '  | 
+        a href=path_to(:performers) Performers
+      div.menu-block
+        input.hide-notes-checkbox type="checkbox" checked=("checked" if request.session["hide-notes"] && request.session["hide-notes"] == true) Hide notes
+        '  |
+        form style="display: inline-block" action=path_to(:search) method="GET"
+          input type="text" name="query" placeholder="Search..."
       div#tulip-player
-        a#pause-button &#9654;&#9208;
+        a#pause-button &#9208;
         div id="progressbar" class="slider"
           div.slider-value-wrapper: div.slider-value
         div id="volumebar" class="slider"
           div.slider-value-wrapper: div.slider-value
-        audio#main-player preload="none" style="display: none"
+        audio#main-player preload="none" style="display: none" controls="controls"
 
     div#container
       == slim :flashes

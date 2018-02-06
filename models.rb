@@ -155,8 +155,16 @@ class Performer < ActiveRecord::Base
   has_and_belongs_to_many :tags
 
   def sorted_records
+    result = {}
     rr = records.includes(:release)
-    return rr.sort_by {|r| r.release.title}
+
+    prev_release = nil
+    rr.sort_by {|rec| rec.release.title}.each do |r|
+      result[r.release] ||= []
+      result[r.release] << r
+    end
+
+    return result
   end
 end
 

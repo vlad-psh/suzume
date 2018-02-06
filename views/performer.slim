@@ -6,22 +6,22 @@ h1
     == slim :tags_form, locals: {performer: @performer}
 
 - ratings = %w(🙂 🏵 💎)
-- prev_release = 0
-- @performer.sorted_records.reverse.each do |r|
-  - if r.release_id != prev_release
-    div.hr-title
-      span
-        - if r.release.download_cover
-          a class="cover-link" href=r.release.download_cover = r.release.title
-        - else
-          = r.release.title
-    span< style="font-weight: normal; opacity: 0.5" = Album.find(r.release.old_id).tagsstr
-    - prev_release = r.release_id
-  div
-    a.ajax-link.track-playback-link data-track-url=r.download_path href=r.download_path = "#{ratings[r.rating]} #{strip_filename(r.original_filename)}"
-    span< style="opacity: 0.5" = Track.find(r.old_id).tagsstr
-    span< == "| #{mediainfo(r.mediainfo)}"
-    span< style="font-size: 0.65em; opacity: 0.4" = "##{r.id}"
+- sorted_records = @performer.sorted_records
+- sorted_records.keys.reverse.each do |release|
+  div.release-container
+    div.release-cover
+      a.cover-link href=release.download_cover
+        div.thumbnail: img src=release.download_thumb
+    div.release-content
+      span.release-title = release.title
+      span.aux-info<: a href=path_to(:album).with(release.old_id) = "##{release.id}"
+      span< style="font-weight: normal; opacity: 0.5" = Album.find(release.old_id).tagsstr
+      - sorted_records[release].each do |record|
+        div
+          a.ajax-link.track-playback-link data-track-url=record.download_path href=record.download_path = "#{ratings[record.rating]} #{strip_filename(record.original_filename)}"
+          span< style="opacity: 0.5" = Track.find(record.old_id).tagsstr
+          span< == "| #{mediainfo(record.mediainfo)}"
+          span< style="font-size: 0.65em; opacity: 0.4" = "##{record.id}"
 
 h2 Releases
 ul.releases-list
