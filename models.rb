@@ -33,6 +33,15 @@ class Artist < ActiveRecord::Base
     return @_full_path if @_full_path
     @_full_path = File.join($library_path, filename)
   end
+
+  def xdestroy!
+    throw StandardError.new("Linked Performer found") if Performer.find_by(old_id: self.id)
+
+    self.albums.each {|a| a.xdestroy!}
+    self.notes.destroy_all
+
+    self.destroy
+  end
 end
 
 class Album < ActiveRecord::Base
@@ -90,6 +99,21 @@ class Album < ActiveRecord::Base
 
     return nil
   end
+
+  def xdestroy!
+    throw StandardError.new("Linked to Release") if Release.find_by(old_id: self.id)
+
+    self.tracks.each {|t| t.xdestroy!}
+    self.notes.destroy_all
+
+    if File.exists?(self.full_path)
+      dst_dir = File.join($library_path, 'removed', self.artists.first.filename)
+      FileUtils.mkdir(dst_dir) unless File.exists?(dst_dir)
+      FileUtils.mv(self.full_path, dst_dir)
+    end
+
+    self.destroy
+  end
 end
 
 class Tag < ActiveRecord::Base
@@ -135,6 +159,11 @@ class Track < ActiveRecord::Base
   def update_mediainfo!
     self.update_mediainfo
     self.save
+  end
+
+  def xdestroy!
+    self.notes.destroy_all
+    self.destroy
   end
 end
 
