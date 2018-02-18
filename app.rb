@@ -130,7 +130,7 @@ end
 get :performers do
   protect!
 
-  @performers = Performer.all
+  @performers = Performer.all.order(title: :asc)
   slim :performers
 end
 

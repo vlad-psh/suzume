@@ -43,7 +43,14 @@ module TulipHelpers
       extension = t.filename.downcase.gsub(/.*\.([^\.]*)/, "\\1")
       # create unique newfilename
       while File.exist?(File.join(release_path, newfilename = "#{SecureRandom.hex(4)}.#{extension}")) do end
-      `id3 -2 -rAPIC -rGEOB -s 0 -R '#{t.full_path}'`
+
+      if extension == 'mp3'
+        `id3 -2 -rAPIC -rGEOB -s 0 -R '#{t.full_path}'`
+      elsif extension == 'm4a'
+        `mp4art --remove '#{t.full_path}'`
+        `mp4file --optimize '#{t.full_path}'`
+      end
+
       FileUtils.move(t.full_path, File.join(release_path, newfilename))
   
       record = Record.create(
@@ -54,10 +61,9 @@ module TulipHelpers
         rating: (t.rating - 7),
         lyrics: t.lyrics,
         tmp_tags: t.tagsstr,
-        old_id: t.id,
-        mediainfo: t.mediainfo
+        old_id: t.id
       )
-      record.update_mediainfo! if record.mediainfo.blank?
+      record.update_mediainfo!
     else
       File.delete(t.full_path) rescue nil
     end
