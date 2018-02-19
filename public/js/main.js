@@ -200,11 +200,14 @@ $(document).ready(function(){
   var playIndex = 0;
   var player = $('#main-player')[0];
   var progressUpdateInterval;
+  var progressUpdateIntervalValue = null;
   $('#volumebar .slider-value').css('width', player.volume * 100 + '%');
 
   function startUpdateProgress(){
     if (!progressUpdateInterval){
+      // 500ms is default value; it will be changed in updateProgress() function
       progressUpdateInterval = setInterval(updateProgress, 500);
+      updateProgress(); // execute function immediately
     }
   };
 
@@ -212,13 +215,29 @@ $(document).ready(function(){
     if (progressUpdateInterval){
       clearInterval(progressUpdateInterval);
       progressUpdateInterval = undefined;
+      progressUpdateIntervalValue = null;
     }
   };
 
   function updateProgress(){
-    var hPercent = (player.currentTime / player.duration * 100).toFixed(4);
-    $('#progressbar .slider-value').css('width', hPercent + '%');
-    //console.log(percent);
+    var width = 0;
+
+    if (progressUpdateIntervalValue == null) {
+      if (player.duration) {
+        progressUpdateIntervalValue = (player.duration / $('#progressbar').width() * 1000).toFixed(0)
+        console.log("interval: " + progressUpdateIntervalValue);
+        // recreate interval(timer) with correct interval value
+        clearInterval(progressUpdateInterval);
+        progressUpdateInterval = setInterval(updateProgress, progressUpdateIntervalValue);
+      }
+    }
+
+    if (player.duration) {
+      var hPercent = (player.currentTime / player.duration).toFixed(4);
+      width = ($('#progressbar').width() * hPercent).toFixed(0);
+    }
+    $('#progressbar .slider-value').css('width', width + 'px');
+    //console.log('width: ' + width);
   };
 
   function offsetPercents(el, event){
@@ -320,13 +339,15 @@ $(document).ready(function(){
     $('.track-playback-link').each(function(){
       var url = $(this).data('track-url');
       playlist.push(url);
-      console.log(url);
+      //console.log(url);
       if (url == track_url) {
         playIndex = playlist.length - 1;
       }
     });
 
+    stopUpdateProgress();
     play();
+    startUpdateProgress();
   });
 
   function play(){
@@ -342,12 +363,11 @@ $(document).ready(function(){
   }
 
   $('#main-player').on('ended', function(){
+    stopUpdateProgress();
     playIndex = playIndex + 1;
     if (playIndex < playlist.length) {
       player.currentTime = 0;
       play();
-    } else {
-      stopUpdateProgress();
     }
   });
 });

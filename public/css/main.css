@@ -387,7 +387,7 @@ body.hide-notes .notes-table .note-content:hover {
   background-color: #00AEEF;
   height: 7px;
   width: 7px;
-  transition: width 500ms;
+/*  transition: width 500ms;*/
   vertical-align: middle;
   border-radius: 10px;
 }
