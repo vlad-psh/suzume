@@ -114,6 +114,12 @@ class Album < ActiveRecord::Base
 
     self.destroy
   end
+
+  def update_mediainfo!
+    all_tracks.each do |t|
+      t.update_mediainfo!
+    end
+  end
 end
 
 class Tag < ActiveRecord::Base

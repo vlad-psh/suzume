@@ -428,6 +428,10 @@ post :set_album_cover_from_url do
     album.has_cover = (get_album_cover(album) == 0 ? 0 : 1)
     album.save
   else
+    if params[:url] =~ /redacted\.ch/
+      params[:url] = URI.decode(params[:url].gsub(/.*i=/, '').gsub(/&.*/, ''))
+    end
+
     saved_file = Tempfile.new('tulip')
     open(params[:url]) do |read_file|
       saved_file.write(read_file.read)
