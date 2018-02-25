@@ -35,12 +35,17 @@ class Artist < ActiveRecord::Base
   end
 
   def xdestroy!
-    throw StandardError.new("Linked Performer found") if Performer.find_by(old_id: self.id)
+    if Performer.find_by(old_id: self.id)
+      self.albums.each do |a|
+        # destroy only 'not processed' albums
+        a.xdestroy! unless Release.find_by(old_id: a.id)
+      end
+    else
+      self.albums.each {|a| a.xdestroy!}
+      self.notes.destroy_all
 
-    self.albums.each {|a| a.xdestroy!}
-    self.notes.destroy_all
-
-    self.destroy
+      self.destroy
+    end
   end
 end
 
@@ -107,9 +112,15 @@ class Album < ActiveRecord::Base
     self.notes.destroy_all
 
     if File.exists?(self.full_path)
-      dst_dir = File.join($library_path, 'removed', self.artists.first.filename)
-      FileUtils.mkdir(dst_dir) unless File.exists?(dst_dir)
-      FileUtils.mv(self.full_path, dst_dir)
+      removed_artist_path = File.join($library_path, 'removed', self.artists.first.filename)
+      FileUtils.mkdir(removed_artist_path) unless File.exists?(removed_artist_path)
+
+      FileUtils.mv(self.full_path, removed_artist_path) # move
+
+      removed_album_path = File.join($library_path, 'removed',
+                self.artists.first.filename,
+                "#{self.year} #{self.title} [#{self.primary_type}]".gsub(/\//, '_'))
+      FileUtils.mv(File.join(removed_artist_path, self.filename), removed_album_path) # rename to "year title [type]"
     end
 
     self.destroy
@@ -119,6 +130,10 @@ class Album < ActiveRecord::Base
     all_tracks.each do |t|
       t.update_mediainfo!
     end
+  end
+
+  def create_folder!
+    FileUtils.mkdir_p(self.full_path) unless File.exist?(self.full_path)
   end
 end
 

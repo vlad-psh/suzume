@@ -112,7 +112,7 @@ get :index do
   end
 
   db_artists = Artist.all.pluck(:filename)
-  db_artists << "." << ".."
+  db_artists << "." << ".." << 'conserve' << 'removed' << 'drop' << 'lib'
 
   @new_artists = []
   Dir.entries($library_path).each do |dir|

@@ -21,7 +21,7 @@
   == slim :tags_index, locals: {tags: @tags}
 
 - if @artists && @artists.length > 0
-  h2. Artists
+  h2 = "Artists (#{@artists.length})"
   div.artists-list
     - @artists.each do |a|
       span class="#{a.status}"
