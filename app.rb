@@ -24,6 +24,7 @@ paths index: '/',
     process_artist: '/process/artist/:id',
     process_album: '/process/album/:id',
     process_track: '/process/track/:id',
+    xdestroy_artist: '/xdestroy/artist/:id',
 
     artists: '/artists',
     artist: '/artist/:id',
@@ -169,6 +170,20 @@ post :process_track do
   track = Track.find(params[:id])
   process_track(track) if track
   redirect path_to(:album).with(track.album.id)
+end
+
+post :xdestroy_artist do
+  protect!
+
+  artist = Artist.find(params[:id])
+  artist.xdestroy!
+  if Artist.find_by(id: params[:id])
+    flash[:notice] = '"Not procesed" albums was destroyed'
+  else
+    flash[:notice] = "Artist #{artist.title} was completely destroyed!"
+  end
+
+  redirect path_to(:index)
 end
 
 post :artists do

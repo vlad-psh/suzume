@@ -10,6 +10,8 @@ h1
       a href=path_to(:performer).with(perf.id) perf
 
 a data-method="POST" data-confirm="Are you sure to process this artist?" href=path_to(:process_artist).with(@artist.id) Process!
+'  | 
+a data-method="POST" data-confirm="Are you sure to xdestroy this artist?" href=path_to(:xdestroy_artist).with(@artist.id) Xdestroy!
 
 form method="POST" action=path_to(:artist).with(@artist.id)
   ' Name:

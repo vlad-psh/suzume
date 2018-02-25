@@ -40,6 +40,8 @@ class Artist < ActiveRecord::Base
         # destroy only 'not processed' albums
         a.xdestroy! unless Release.find_by(old_id: a.id)
       end
+      self.status = 'processed'
+      self.save
     else
       self.albums.each {|a| a.xdestroy!}
       self.notes.destroy_all
