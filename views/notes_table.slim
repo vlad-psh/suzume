@@ -1,5 +1,5 @@
 // locals: notes, parent_id
-- empty_table = !(notes && notes.count > 0)
+- empty_table = !(notes.present? && notes.count > 0)
 
 table.notes-table id="notes-table-#{parent_id}" style=(empty_table ? 'display: none' : nil)
   - unless empty_table

@@ -1,5 +1,5 @@
 // locals: note
 
 tr
-  td.note-date = note.created_at.localtime.strftime('%-d %b %Y, %H:%M')
-  td.note-content = note.content
+  td.note-date = DateTime.parse(note['d']).localtime.strftime('%-d %b %Y, %H:%M')
+  td.note-content = note['c']

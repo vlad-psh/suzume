@@ -19,9 +19,9 @@ h1
       - sorted_records[release].each do |record|
         div
           a.ajax-link.track-playback-link data-track-url=record.download_path href=record.download_path = "#{ratings[record.rating]} #{strip_filename(record.original_filename)}"
-          span< style="opacity: 0.5" = Track.find(record.old_id).tagsstr
           span< == "| #{mediainfo(record.mediainfo)}"
           span< style="font-size: 0.65em; opacity: 0.4" = "##{record.id}"
+          == slim :notes_table, locals: {notes: record.notes, parent_id: "record-#{record.id}"}
 
 h2 Releases
 ul.releases-list
