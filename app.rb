@@ -178,9 +178,9 @@ post :xdestroy_artist do
   artist = Artist.find(params[:id])
   artist.xdestroy!
   if Artist.find_by(id: params[:id])
-    flash[:notice] = '"Not procesed" albums was destroyed'
+    flash[:notice] = "\"Not procesed\" albums of \"#{artist.title}\" were xdestroyed"
   else
-    flash[:notice] = "Artist #{artist.title} was completely destroyed!"
+    flash[:notice] = "Artist #{artist.title} was completely xdestroyed!"
   end
 
   redirect path_to(:index)

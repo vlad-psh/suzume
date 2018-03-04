@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180131141621) do
+ActiveRecord::Schema.define(version: 20180304090257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 20180131141621) do
     t.string "aliases"
     t.string "tmp_tags"
     t.integer "old_id"
+    t.jsonb "notes"
   end
 
   create_table "performers_tags", force: :cascade do |t|
@@ -100,6 +101,7 @@ ActiveRecord::Schema.define(version: 20180131141621) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "mediainfo"
+    t.jsonb "notes"
     t.index ["release_id"], name: "index_records_on_release_id"
   end
 
@@ -111,6 +113,7 @@ ActiveRecord::Schema.define(version: 20180131141621) do
     t.string "tmp_tags"
     t.integer "old_id"
     t.string "directory"
+    t.jsonb "notes"
     t.index ["performer_id"], name: "index_releases_on_performer_id"
   end
 
