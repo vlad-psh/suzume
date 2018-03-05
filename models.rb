@@ -211,7 +211,7 @@ class Performer < ActiveRecord::Base
     rr = records.includes(:release)
 
     prev_release = nil
-    rr.sort_by {|rec| rec.release.title}.each do |r|
+    rr.sort_by {|rec| "#{rec.release.year}#{rec.release.title}"}.each do |r|
       result[r.release] ||= []
       result[r.release] << r
     end

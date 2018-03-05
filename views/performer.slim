@@ -1,7 +1,6 @@
 h1
   = @performer.title
   span< style="font-size: 0.5em"
-    a href=path_to(:artist).with(@performer.old_id) orig
     span< style="opacity: 0.5" = @performer.tmp_tags
     == slim :tags_form, locals: {performer: @performer}
 p = "Romaji: #{@performer.romaji}; Aliases: #{@performer.aliases}"
@@ -15,8 +14,7 @@ p = "Romaji: #{@performer.romaji}; Aliases: #{@performer.aliases}"
       a.cover-link href=release.download_cover
         div.thumbnail: img src=release.download_thumb
     div.release-content
-      span.release-title = release.title
-      span.aux-info<: a href=path_to(:album).with(release.old_id) = "##{release.id}"
+      span.release-title = "#{release.year} #{release.title}"
       span< style="font-weight: normal; opacity: 0.5" = release.tmp_tags
       - sorted_records[release].each do |record|
         div
@@ -31,5 +29,4 @@ ul.releases-list
   - @performer.releases.order(title: :asc).each do |r|
     li
       = r.title
-      span< style="font-size: 0.8em; opacity: 0.5": a href=path_to(:album).with(r.old_id) = "##{r.id}"
       == slim :notes_table, locals: {notes: r.notes, parent_id: "release-#{r.id}"}

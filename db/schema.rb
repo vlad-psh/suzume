@@ -10,25 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180305080016) do
+ActiveRecord::Schema.define(version: 20180305081143) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "albums", id: :serial, force: :cascade do |t|
-    t.string "mbid"
-    t.string "filename"
-    t.string "title"
-    t.string "primary_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "romaji"
-    t.integer "year"
-    t.integer "has_cover", default: -1
-    t.integer "rating", default: 0
-    t.string "status", default: ""
-    t.string "tagsstr"
-  end
 
   create_table "albums_artists", id: :serial, force: :cascade do |t|
     t.integer "artist_id"
@@ -39,32 +24,10 @@ ActiveRecord::Schema.define(version: 20180305080016) do
     t.index ["artist_id"], name: "index_albums_artists_on_artist_id"
   end
 
-  create_table "artists", id: :serial, force: :cascade do |t|
-    t.string "mbid"
-    t.string "filename"
-    t.string "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "romaji"
-    t.string "aliases"
-    t.integer "rating", default: 0
-    t.string "status", default: ""
-    t.string "tagsstr"
-  end
-
-  create_table "notes", force: :cascade do |t|
-    t.string "parent_type", null: false
-    t.integer "parent_id", null: false
-    t.string "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "performers", force: :cascade do |t|
     t.string "title"
     t.string "aliases"
     t.string "tmp_tags"
-    t.integer "old_id"
     t.jsonb "notes"
     t.string "romaji"
   end
@@ -98,7 +61,6 @@ ActiveRecord::Schema.define(version: 20180305080016) do
     t.integer "rating", default: 0
     t.jsonb "lyrics"
     t.string "tmp_tags"
-    t.integer "old_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "mediainfo"
@@ -110,9 +72,7 @@ ActiveRecord::Schema.define(version: 20180305080016) do
     t.bigint "performer_id"
     t.string "title"
     t.string "aliases"
-    t.string "cover"
     t.string "tmp_tags"
-    t.integer "old_id"
     t.string "directory"
     t.jsonb "notes"
     t.integer "year"
@@ -137,19 +97,6 @@ ActiveRecord::Schema.define(version: 20180305080016) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "category"
-  end
-
-  create_table "tracks", force: :cascade do |t|
-    t.bigint "album_id"
-    t.string "filename"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "rating", default: 0
-    t.string "lyrics_json"
-    t.string "status", default: ""
-    t.string "tagsstr"
-    t.jsonb "mediainfo"
-    t.index ["album_id"], name: "index_tracks_on_album_id"
   end
 
 end

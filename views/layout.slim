@@ -22,8 +22,6 @@ html
         a< href=path_to(:index) Index
         '  | 
         a href=path_to(:tags) Tags
-        '  | 
-        a href=path_to(:performers) Performers
       div.menu-block
         input.hide-notes-checkbox type="checkbox" checked=("checked" if request.session["hide-notes"] && request.session["hide-notes"] == true) Hide notes
         '  |
