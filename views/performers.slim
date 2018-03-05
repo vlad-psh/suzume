@@ -2,4 +2,3 @@ ul.performers-list
   - @performers.each do |p|
     li
       a href=path_to(:performer).with(p.id) = p.title
-      span< style="opacity: 0.5" = Artist.find(p.old_id).tagsstr

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180304090257) do
+ActiveRecord::Schema.define(version: 20180305074400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -114,6 +114,9 @@ ActiveRecord::Schema.define(version: 20180304090257) do
     t.integer "old_id"
     t.string "directory"
     t.jsonb "notes"
+    t.integer "year"
+    t.string "romaji"
+    t.string "release_type"
     t.index ["performer_id"], name: "index_releases_on_performer_id"
   end
 

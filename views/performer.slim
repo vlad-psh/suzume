@@ -15,10 +15,11 @@ h1
     div.release-content
       span.release-title = release.title
       span.aux-info<: a href=path_to(:album).with(release.old_id) = "##{release.id}"
-      span< style="font-weight: normal; opacity: 0.5" = Album.find(release.old_id).tagsstr
+      span< style="font-weight: normal; opacity: 0.5" = release.tmp_tags
       - sorted_records[release].each do |record|
         div
           a.ajax-link.track-playback-link data-track-url=record.download_path href=record.download_path = "#{ratings[record.rating]} #{strip_filename(record.original_filename)}"
+          span< style="font-weight: normal; opacity: 0.5" = record.tmp_tags
           span< == "| #{mediainfo(record.mediainfo)}"
           span< style="font-size: 0.65em; opacity: 0.4" = "##{record.id}"
           == slim :notes_table, locals: {notes: record.notes, parent_id: "record-#{record.id}"}
@@ -29,3 +30,4 @@ ul.releases-list
     li
       = r.title
       span< style="font-size: 0.8em; opacity: 0.5": a href=path_to(:album).with(r.old_id) = "##{r.id}"
+      == slim :notes_table, locals: {notes: r.notes, parent_id: "release-#{r.id}"}

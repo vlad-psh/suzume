@@ -226,7 +226,7 @@ class Release < ActiveRecord::Base
 
   def full_path
     return nil unless self.directory
-    path = File.join($library_path, 'lib', self.directory)
+    path = File.join($library_path, self.directory)
     return File.exist?(path) ? path : nil
   end
 
@@ -257,7 +257,7 @@ class Record < ActiveRecord::Base
   has_and_belongs_to_many :playlists
 
   def full_path
-    File.join($library_path, 'lib', directory, filename)
+    File.join($library_path, directory, filename)
   end
 
   def download_path

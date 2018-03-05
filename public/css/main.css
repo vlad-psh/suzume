@@ -220,7 +220,7 @@ body.hide-notes .notes-table .note-content:hover {
 .rated-8  {background-color: #00AEEF; color: #00384d}
 .rated-9  {background-color: #A64686; color: #36172b}
 .rated-10 {background-color: #EC008C; color: #4d002e}
-.performers-list {column-width: 330px}
+.performers-list {column-width: 250px}
 /* --------------------------
    mediainfo block
    -------------------------- */
