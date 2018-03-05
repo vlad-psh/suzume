@@ -2,8 +2,10 @@ h1
   = @performer.title
   span< style="font-size: 0.5em"
     a href=path_to(:artist).with(@performer.old_id) orig
-    span< style="opacity: 0.5" = Artist.find(@performer.old_id).tagsstr
+    span< style="opacity: 0.5" = @performer.tmp_tags
     == slim :tags_form, locals: {performer: @performer}
+p = "Romaji: #{@performer.romaji}; Aliases: #{@performer.aliases}"
+== slim :notes_table, locals: {notes: @performer.notes, parent_id: "performer-#{@performer.id}"}
 
 - ratings = %w(🙂 🏵 💎)
 - sorted_records = @performer.sorted_records

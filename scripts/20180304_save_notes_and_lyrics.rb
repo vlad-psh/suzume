@@ -45,4 +45,26 @@ while (albums = Album.order(id: :asc).limit(100)).length > 0
   end
 end; nil
 
+while (artists = Artist.order(id: :asc).limit(100)).length > 0
+  artists.each do |artist|
+    perf = Performer.find_by(old_id: artist.id)
+
+    if perf
+      perf.title = artist.title
+      perf.romaji = artist.romaji
+      perf.aliases = artist.aliases
+
+      unless artist.notes.empty?
+        notes = []
+        artist.notes.each {|n| notes << {c: n.content, d: n.created_at} }
+        perf.notes = notes
+      end
+
+      perf.save
+    end
+
+    artist.destroy!
+  end
+end; nil
+
 
