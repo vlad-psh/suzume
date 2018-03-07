@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180305081143) do
+ActiveRecord::Schema.define(version: 20180307130150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,12 @@ ActiveRecord::Schema.define(version: 20180305081143) do
     t.datetime "updated_at", null: false
     t.index ["album_id"], name: "index_albums_artists_on_album_id"
     t.index ["artist_id"], name: "index_albums_artists_on_artist_id"
+  end
+
+  create_table "folders", force: :cascade do |t|
+    t.string "path"
+    t.bigint "folder_id"
+    t.index ["folder_id"], name: "index_folders_on_folder_id"
   end
 
   create_table "performers", force: :cascade do |t|

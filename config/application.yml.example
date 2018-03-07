@@ -1,9 +1,8 @@
 ---
 secret: xxx
-app_name: Tulip
-app_version: 0.1
-app_contact: user@example.com
 lastfm_api_key: xxx
 lastfm_secret: xxx
 library_path: /mnt/pool/MUSICLIB
-covers_path: /srv/tulip/cover
+abyss_path: /mnt/pool/MUSICUNSORT
+admins:
+  adminUsername: veryStrongPassword

@@ -292,3 +292,33 @@ end
 class Playlist < ActiveRecord::Base
   has_and_belongs_to_many :records
 end
+
+class Folder < ActiveRecord::Base
+  def self.root
+    return Folder.find_or_create_by(path: '')
+  end
+
+  def full_path
+    return File.join($abyss_path, path)
+  end
+
+  def name
+    File.basename(self.path)
+  end
+
+  def subfolders
+    skip_folders = Folder.where(folder_id: self.id).pluck(:path).map {|p| File.basename(p)}
+
+    Dir.children(self.full_path).each do |c|
+      next if skip_folders.include?(c)
+      next unless File.directory?( File.join(self.full_path, c) )
+
+      f = Folder.create(
+          path: self.path == '' ? c : File.join(self.path, c),
+          folder_id: self.id
+      )
+    end
+
+    return Folder.where(folder_id: self.id).order(path: :asc)
+  end
+end

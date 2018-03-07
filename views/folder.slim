@@ -1,0 +1,6 @@
+
+h1 = File.join("abyss://", @folder.path)
+
+ul
+  - @folder.subfolders.each do |f|
+    li: a href=path_to(:folder).with(f.id) = f.name

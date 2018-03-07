@@ -19,6 +19,7 @@ require 'mediainfo-native'
 
 paths index: '/',
     performer: '/performer/:id',
+    folder: '/folder/:id',
 
     search: '/search',
     search_by_tag: '/tag/:id',
@@ -64,7 +65,7 @@ configure do
         secret: $config['secret']
 
   $library_path = $config['library_path']
-  $covers_path = $config['covers_path']
+  $abyss_path = $config['abyss_path']
   $lastfm = Lastfm.new($config["lastfm_api_key"], $config["lastfm_secret"])
 
   use Rack::Flash
@@ -100,6 +101,12 @@ get :performer do
 
   @performer = Performer.find(params[:id])
   slim :performer
+end
+
+get :folder do
+  @folder = Folder.find_by(id: params[:id]) || Folder.root
+
+  slim :folder
 end
 
 get :search_by_tag do

@@ -28,5 +28,5 @@ h2 Releases
 ul.releases-list
   - @performer.releases.order(title: :asc).each do |r|
     li
-      = r.title
+      = "#{r.year} #{r.title} (#{r.release_type})"
       == slim :notes_table, locals: {notes: r.notes, parent_id: "release-#{r.id}"}
