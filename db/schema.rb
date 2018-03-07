@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20180307130150) do
   create_table "folders", force: :cascade do |t|
     t.string "path"
     t.bigint "folder_id"
+    t.jsonb "parent_ids"
     t.index ["folder_id"], name: "index_folders_on_folder_id"
   end
 

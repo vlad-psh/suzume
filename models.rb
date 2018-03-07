@@ -295,7 +295,7 @@ end
 
 class Folder < ActiveRecord::Base
   def self.root
-    return Folder.find_or_create_by(path: '')
+    return Folder.find_or_create_by(path: '', parent_ids: [])
   end
 
   def full_path
@@ -315,7 +315,8 @@ class Folder < ActiveRecord::Base
 
       f = Folder.create(
           path: self.path == '' ? c : File.join(self.path, c),
-          folder_id: self.id
+          folder_id: self.id,
+          parent_ids: [self.parent_ids, self.id].flatten
       )
     end
 
