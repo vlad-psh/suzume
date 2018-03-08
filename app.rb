@@ -20,6 +20,7 @@ require 'mediainfo-native'
 paths index: '/',
     performer: '/performer/:id',
     folder: '/folder/:id',
+    download_file: '/file/:folder_id/:file_index',
 
     search: '/search',
     search_by_tag: '/tag/:id',
@@ -107,6 +108,13 @@ get :folder do
   @folder = Folder.find_by(id: params[:id]) || Folder.root
 
   slim :folder
+end
+
+get :download_file do
+  folder = Folder.find(params[:folder_id])
+  file_path = folder.tulip_yml[:files].keys[params[:file_index].to_i]
+  file_fullpath = File.join(folder.full_path, file_path)
+  send_file file_fullpath
 end
 
 get :search_by_tag do

@@ -23,7 +23,9 @@ ruby:
       - details = @folder.tulip_yml[:files][path]
       - if details[:type] == 'audio'
         li
-          = "#{path} | "
+          - download_path = path_to(:download_file).with(@folder.id, @folder.tulip_yml[:files].keys.index(path))
+          a.ajax-link.track-playback-link data-track-url=download_path href=download_path = path
+          '  | 
           == mediainfo(details)
       - else
         li = path
