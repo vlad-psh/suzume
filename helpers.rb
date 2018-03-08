@@ -114,13 +114,13 @@ module TulipHelpers
   def mediainfo(info)
     return nil unless info
 
-    duration = "<span class='duration'>#{ms2ts(info['dur'])}</span>"
+    duration = "<span class='duration'>#{ms2ts(info['dur'] || info[:dur])}</span>"
 
-    br_limit = info['brm'] == 'CBR' ? 256 : 220 # Highlight if less than 256CBR or 220VBR
-    br_value = info['br'].to_i/1000
-    bitrate = "<span class='bitrate #{br_value < br_limit ? 'attention': nil}'>#{br_value}#{info['brm']}</span>"
+    br_limit = (info['brm'] || info[:brm]) == 'CBR' ? 256 : 220 # Highlight if less than 256CBR or 220VBR
+    br_value = (info['br'] || info[:br]).to_i/1000
+    bitrate = "<span class='bitrate #{br_value < br_limit ? 'attention': nil}'>#{br_value}#{info['brm'] || info[:brm]}</span>"
 
-    sr_value = (info['sr'].to_i/1000.0).round(3)
+    sr_value = ((info['sr'] || info[:sr]).to_i/1000.0).round(3)
     samplerate = "<span class='samplerate' #{sr_value < 44.1 ? 'attention' : nil}>#{sr_value}kHz</span>"
 
     return "<span class='mediainfo'>#{duration} | #{bitrate} @ #{samplerate}</span>"

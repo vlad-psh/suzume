@@ -20,5 +20,11 @@ ruby:
   h2 Files
   ul
     - filepaths.each do |path|
-      li = path
+      - details = @folder.tulip_yml[:files][path]
+      - if details[:type] == 'audio'
+        li
+          = "#{path} | "
+          == mediainfo(details)
+      - else
+        li = path
 
