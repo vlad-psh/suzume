@@ -11,3 +11,14 @@ h1
 ul
   - @folder.subfolders.each do |f|
     li: a href=path_to(:folder).with(f.id) = f.name
+
+ruby:
+  @folder.get_files
+  filepaths = @folder.tulip_yml[:files].map{|path,details|path}.sort
+
+- unless filepaths.empty?
+  h2 Files
+  ul
+    - filepaths.each do |path|
+      li = path
+
