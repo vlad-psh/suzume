@@ -13,6 +13,7 @@ ul
     li: a href=path_to(:folder).with(f.id) = f.name
 
 ruby:
+  ratings = %w(&#x1f525 &#x1f331 &#x1f33b &#x1f337)
   @folder.get_files
   filepaths = @folder.tulip_yml[:files].map{|path,details|path}.sort
 
@@ -23,10 +24,41 @@ ruby:
       - details = @folder.tulip_yml[:files][path]
       - if details[:type] == 'audio'
         li
-          - download_path = path_to(:download_file).with(@folder.id, @folder.tulip_yml[:files].keys.index(path))
+          - file_index = @folder.tulip_yml[:files].keys.index(path)
+          span.rating-choose-button> data-url=path_to(:abyss_set_rating).with(@folder.id, file_index) == details[:rating] ? ratings[details[:rating] + 1] : '&#x2754'
+          - download_path = path_to(:download_file).with(@folder.id, file_index)
           a.ajax-link.track-playback-link data-track-url=download_path href=download_path = path
           '  | 
           == mediainfo(details)
       - else
         li = path
 
+div id='title-tip' style="display: none"
+  - ratings.each do |r|
+    div.rating-set-button data-value=(ratings.index(r) - 1) == r
+
+javascript:
+ $(document).on('click', '.rating-choose-button', function(event){
+    var p = $(this).offset();
+    var tip = $('#title-tip');
+
+    tip.data('url', $(this).data('url'));
+    tip.show();
+
+    var pleft = p.left + $(this).outerWidth()/2 - tip.outerWidth()/2;
+    var ptop = p.top - tip.outerHeight() - 8;
+    tip.attr("style", "left: " + pleft + "px; top: " + ptop + "px");
+ });
+ $(document).on('click', '.rating-set-button', function(event){
+  var rating = $(this).data('value');
+  var url = $('#title-tip').data('url');
+
+  $.ajax({
+    url: url,
+    method: "POST",
+    data: {rating: rating}
+  }).done(function(data){
+    $("[data-url='" + url + "']").html(#{{ratings}}[rating+1]);
+    $('#title-tip').hide();
+  });
+ });

@@ -19,8 +19,6 @@ require 'mediainfo-native'
 
 paths index: '/',
     performer: '/performer/:id',
-    folder: '/folder/:id',
-    download_file: '/file/:folder_id/:file_index',
 
     search: '/search',
     search_by_tag: '/tag/:id',
@@ -38,6 +36,10 @@ paths index: '/',
 
     notes: '/notes',
     lyrics: '/lyrics',
+
+    folder: '/abyss/:id',
+    download_file: '/abyss/:folder_id/:file_index',
+    abyss_set_rating: '/abyss/rating/:folder_id/:file_index',
 
     login: '/login',
     logout: '/logout'
@@ -283,3 +285,12 @@ delete :logout do
   redirect path_to(:index)
 end
 
+post :abyss_set_rating do
+  folder = Folder.find(params[:folder_id])
+  filename = folder.tulip_yml[:files].keys[params[:file_index].to_i]
+  throw StandardError.new("Wrong file index: #{params[:file_index]}") unless filename
+  folder.tulip_yml[:files][filename][:rating] = params[:rating].to_i
+  folder.save_tulip_yml!
+
+  return 'ok'
+end
