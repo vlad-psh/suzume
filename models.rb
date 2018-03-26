@@ -114,11 +114,13 @@ class Folder < ActiveRecord::Base
   end
 
   def update_content!
-    skip_folders = Folder.where(folder_id: self.id).pluck(:path).map {|p| File.basename(p)}
+    skip_folders = Folder.where(folder_id: self.id, is_removed: false).pluck(:path)
 
     Dir.children(self.full_path).each do |c|
-      if skip_folders.include?(c)
-        skip_folders.delete(c)
+      c_path = self.path == '' ? c : File.join(self.path, c)
+
+      if skip_folders.include?(c_path)
+        skip_folders.delete(c_path)
         next
       end
 
@@ -130,9 +132,10 @@ class Folder < ActiveRecord::Base
         f = Folder.find_by(id: c_id)
         if f.present?
           # update parents
-          f.path = self.path == '' ? c : File.join(self.path, c)
+          f.path = c_path
           f.folder_id = self.id
           f.parent_ids = [self.parent_ids, self.id].flatten
+          f.is_removed = false
           f.save if f.changed?
           next
         else
@@ -141,15 +144,25 @@ class Folder < ActiveRecord::Base
       end
 
       Folder.create(
-          path: self.path == '' ? c : File.join(self.path, c),
+          path: c_path,
           folder_id: self.id,
           parent_ids: [self.parent_ids, self.id].flatten
       )
     end
 
-    # TODO: remove Folder objects, that are still in skip_folders array; RECURSIVELY!
+    skip_folders.each do |c|
+      Folder.find_by(folder_id: self.id, is_removed: false, path: c).try(:mark_as_removed)
+    end
 
-    @_subfolders = Folder.where(folder_id: self.id).order(path: :asc)
+    @_subfolders = Folder.where(folder_id: self.id, is_removed: false).order(path: :asc)
+  end
+
+  def mark_as_removed
+    Folder.where(folder_id: self.id, is_removed: false).each do |f|
+      f.mark_as_removed
+    end
+    self.is_removed = true
+    self.save
   end
 
   def mediainfo(fullpath)
