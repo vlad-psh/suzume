@@ -15,17 +15,17 @@ ul
 ruby:
   ratings = %w(&#x1f525 &#x1f331 &#x1f33b &#x1f337)
   @folder.get_files
-  filepaths = @folder.tulip_yml[:files].map{|path,details|path}.sort
+  filepaths = @folder.get_files.map{|path,details|path}.sort
 
 - unless filepaths.empty?
   h2 Files
   ul
     - filepaths.each do |path|
-      - details = @folder.tulip_yml[:files][path]
-      - if details[:type] == 'audio'
+      - details = @folder.get_files[path]
+      - if details['type'] == 'audio'
         li
-          - file_index = @folder.tulip_yml[:files].keys.index(path)
-          span.rating-choose-button> data-url=path_to(:abyss_set_rating).with(@folder.id, file_index) == details[:rating] ? ratings[details[:rating] + 1] : '&#x2754'
+          - file_index = @folder.get_files.keys.index(path)
+          span.rating-choose-button> data-url=path_to(:abyss_set_rating).with(@folder.id, file_index) == details['rating'] ? ratings[details['rating'] + 1] : '&#x2754'
           - download_path = path_to(:download_file).with(@folder.id, file_index)
           a.ajax-link.track-playback-link data-track-url=download_path href=download_path = path
           '  | 

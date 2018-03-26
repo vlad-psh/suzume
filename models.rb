@@ -136,65 +136,48 @@ class Folder < ActiveRecord::Base
     @_subfolders = Folder.where(folder_id: self.id).order(path: :asc)
   end
 
-  def tulip_yml_path
-    File.join(self.full_path, 'tulip.yml')
-  end
+  def mediainfo(fullpath)
+    @mediainfo ||= {}
 
-  def tulip_yml
-    return @_tulip_yml || self.get_tulip_yml
-  end
-
-  def get_tulip_yml
-    @_tulip_yml = File.exist?(self.tulip_yml_path) ?
-                    YAML.load(File.open(self.tulip_yml_path)) :
-                    {notes: [], files: {}}
-    return @_tulip_yml
-  end
-
-  def save_tulip_yml!
-    return unless tulip_yml.present?
-
-    File.open(self.tulip_yml_path, 'w') do |f|
-      f.write(tulip_yml.to_yaml)
+    unless @mediainfo[fullpath].present?
+      m = MediaInfoNative::MediaInfo.new()
+      m.open_file(fullpath)
+      @mediainfo[fullpath] = m
     end
+
+    return @mediainfo[fullpath]
   end
 
   def get_files
-    files = tulip_yml[:files].map {|path,details| path}
+    file_list = self.files.map {|path,details| path}
 
     Dir.children(self.full_path).each do |c|
       c_fullpath = File.join(self.full_path, c)
       next if File.directory?(c_fullpath)
-      next if c =~ /.*tulip\.yml$/
+      file_list.delete(c) if file_list.include?(c)
 
-      if files.include?(c)
-        files.delete(c)
-        next
-      end
+      self.files[c] ||= {}
+      self.files[c]['size'] ||= File.size(c_fullpath)
 
       if c =~ /\.(mp3|m4a)/i
-        m = MediaInfoNative::MediaInfo.new()
-        m.open_file(c_fullpath)
-        info = {
-          type: 'audio',
-          rating: nil,
-          dur: m.audio.duration,
-          br:  m.audio.bit_rate,
-          brm: m.audio.bit_rate_mode,
-          sr:  m.audio.sample_rate,
-          ch:  m.audio.channels
-        }
+        self.files[c]['type'] ||= 'audio'
+        self.files[c]['rating'] ||= nil
+        self.files[c]['dur'] ||= mediainfo(c_fullpath).audio.duration
+        self.files[c]['br']  ||= mediainfo(c_fullpath).audio.bit_rate
+        self.files[c]['brm'] ||= mediainfo(c_fullpath).audio.bit_rate_mode
+        self.files[c]['sr']  ||= mediainfo(c_fullpath).audio.sample_rate
+        self.files[c]['ch']  ||= mediainfo(c_fullpath).audio.channels
+        # mediainfo() method will be executed only if there is not enough information about audio
       elsif c=~ /\.(png|jpg|jpeg)/i
-        info = {
-          type: 'image'
-        }
+        self.files[c]['type'] ||= 'image'
       end
-      info ||= {}
-      info[:size] = File.size(c_fullpath)
-
-      tulip_yml[:files][c] = info
     end
 
-    self.save_tulip_yml!
+    # Files, which were not found during current folder lookup
+    file_list.each {|f| self.files.delete(f)}
+
+    self.save if self.changed?
+
+    return self.files
   end
 end

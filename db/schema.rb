@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180307130150) do
+ActiveRecord::Schema.define(version: 20180326142404) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,9 @@ ActiveRecord::Schema.define(version: 20180307130150) do
     t.string "path"
     t.bigint "folder_id"
     t.jsonb "parent_ids"
+    t.jsonb "notes", default: []
+    t.jsonb "files", default: {}
+    t.boolean "is_processed", default: false
     t.index ["folder_id"], name: "index_folders_on_folder_id"
   end
 

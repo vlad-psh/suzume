@@ -114,7 +114,7 @@ end
 
 get :download_file do
   folder = Folder.find(params[:folder_id])
-  file_path = folder.tulip_yml[:files].keys[params[:file_index].to_i]
+  file_path = folder.files.keys[params[:file_index].to_i]
   file_fullpath = File.join(folder.full_path, file_path)
   send_file file_fullpath
 end
@@ -287,10 +287,10 @@ end
 
 post :abyss_set_rating do
   folder = Folder.find(params[:folder_id])
-  filename = folder.tulip_yml[:files].keys[params[:file_index].to_i]
+  filename = folder.files.keys[params[:file_index].to_i]
   throw StandardError.new("Wrong file index: #{params[:file_index]}") unless filename
-  folder.tulip_yml[:files][filename][:rating] = params[:rating].to_i
-  folder.save_tulip_yml!
+  folder.files[filename]['rating'] = params[:rating].to_i
+  folder.save if folder.changed?
 
   return 'ok'
 end
