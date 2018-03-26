@@ -38,8 +38,8 @@ paths index: '/',
     lyrics: '/lyrics',
 
     folder: '/abyss/:id',
-    download_file: '/abyss/:folder_id/:file_index',
-    abyss_set_rating: '/abyss/rating/:folder_id/:file_index',
+    download_file: '/abyss/:folder_id/:md5',
+    abyss_set_rating: '/abyss/rating/:folder_id/:md5',
 
     login: '/login',
     logout: '/logout'
@@ -114,7 +114,8 @@ end
 
 get :download_file do
   folder = Folder.find(params[:folder_id])
-  file_path = folder.files.keys[params[:file_index].to_i]
+  file_path = folder.files[params[:md5]].try(:[], 'fln')
+  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless file_path
   file_fullpath = File.join(folder.full_path, file_path)
   send_file file_fullpath
 end
@@ -287,8 +288,8 @@ end
 
 post :abyss_set_rating do
   folder = Folder.find(params[:folder_id])
-  filename = folder.files.keys[params[:file_index].to_i]
-  throw StandardError.new("Wrong file index: #{params[:file_index]}") unless filename
+  filename = folder.files[params[:md5]].try(:[], 'fln')
+  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
   folder.files[filename]['rating'] = params[:rating].to_i
   folder.save if folder.changed?
 

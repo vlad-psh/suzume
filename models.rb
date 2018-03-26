@@ -177,34 +177,42 @@ class Folder < ActiveRecord::Base
     return @mediainfo[fullpath]
   end
 
-  def get_files
-    file_list = self.files.map {|path,details| path}
+  def md5_of_filename(filename)
+    @files_md5s ||= self.files.map{|md5,details| {details['fln'] => md5} }.reduce({}, :merge)
+    return @files_md5s[filename]
+  end
+
+  def get_files!
+    file_list = self.files.map {|md5,details| details['fln']}
 
     Dir.children(self.full_path).each do |c|
+      md5 = Digest::MD5.hexdigest(c)[0..6] # first 7 chars (as in github)
       c_fullpath = File.join(self.full_path, c)
+
       next if File.directory?(c_fullpath)
       next if c =~ /\.tulip\.id\./
       file_list.delete(c) if file_list.include?(c)
 
-      self.files[c] ||= {}
-      self.files[c]['size'] ||= File.size(c_fullpath)
+      self.files[md5] ||= {}
+      self.files[md5]['fln']  ||= c
+      self.files[md5]['size'] ||= File.size(c_fullpath)
 
       if c =~ /\.(mp3|m4a)/i
-        self.files[c]['type'] ||= 'audio'
-        self.files[c]['rating'] ||= nil
-        self.files[c]['dur'] ||= mediainfo(c_fullpath).audio.duration
-        self.files[c]['br']  ||= mediainfo(c_fullpath).audio.bit_rate
-        self.files[c]['brm'] ||= mediainfo(c_fullpath).audio.bit_rate_mode
-        self.files[c]['sr']  ||= mediainfo(c_fullpath).audio.sample_rate
-        self.files[c]['ch']  ||= mediainfo(c_fullpath).audio.channels
+        self.files[md5]['type'] ||= 'audio'
+        self.files[md5]['rating'] ||= nil
+        self.files[md5]['dur'] ||= mediainfo(c_fullpath).audio.duration
+        self.files[md5]['br']  ||= mediainfo(c_fullpath).audio.bit_rate
+        self.files[md5]['brm'] ||= mediainfo(c_fullpath).audio.bit_rate_mode
+        self.files[md5]['sr']  ||= mediainfo(c_fullpath).audio.sample_rate
+        self.files[md5]['ch']  ||= mediainfo(c_fullpath).audio.channels
         # mediainfo() method will be executed only if there is not enough information about audio
       elsif c=~ /\.(png|jpg|jpeg)/i
-        self.files[c]['type'] ||= 'image'
+        self.files[md5]['type'] ||= 'image'
       end
     end
 
     # Files, which were not found during current folder lookup
-    file_list.each {|f| self.files.delete(f)}
+    file_list.each {|f| self.files.delete(md5_of_filename(c))}
 
     self.save if self.changed?
 
