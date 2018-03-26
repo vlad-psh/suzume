@@ -33,6 +33,7 @@ a:hover {
 .ajax-link {
   cursor: pointer;
   border-bottom: 1px dashed #1c79cb;
+  text-decoration: none;
 }
 .ajax-button {
   cursor: pointer;

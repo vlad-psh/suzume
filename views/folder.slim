@@ -30,7 +30,9 @@ ruby:
           '  | 
           == mediainfo(details)
       - else
-        li = fln
+        li
+          ' &#x1f5bc
+          a.cover-link.ajax-link href=path_to(:download_file).with(@folder.id, md5) = fln
 
 div id='title-tip' style="display: none"
   - ratings.each do |r|
