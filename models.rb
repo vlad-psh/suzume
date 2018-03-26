@@ -217,7 +217,8 @@ class Folder < ActiveRecord::Base
     self.save if self.changed?
 
     tulip_id_filepath = File.join(self.full_path, ".tulip.id.#{self.id}")
-    FileUtils.touch(tulip_id_filepath) unless File.exist?(tulip_id_filepath)
+    # Do not save .tulip.id in root folder (and do not save if already exists)
+    FileUtils.touch(tulip_id_filepath) unless File.exist?(tulip_id_filepath) || self.folder_id == nil
 
     return self.files
   end

@@ -290,7 +290,7 @@ post :abyss_set_rating do
   folder = Folder.find(params[:folder_id])
   filename = folder.files[params[:md5]].try(:[], 'fln')
   throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
-  folder.files[filename]['rating'] = params[:rating].to_i
+  folder.files[params[:md5]]['rating'] = params[:rating].to_i
   folder.save if folder.changed?
 
   return 'ok'

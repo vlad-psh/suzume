@@ -2,7 +2,7 @@
 h1
   a href=path_to(:folder).with(0) abyss
   | ://
-  - Folder.where(id: @folder.parent_ids).each do |p|
+  - Folder.where(id: @folder.parent_ids).order(path: :asc).each do |p|
     - next if p.name.empty? # skip root
     a href=path_to(:folder).with(p.id) = p.name
     | /
