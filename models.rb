@@ -96,7 +96,7 @@ end
 
 class Folder < ActiveRecord::Base
   def self.root
-    return Folder.find_or_create_by(path: '', parent_ids: [])
+    return Folder.find_or_create_by(path: '', folder_id: nil)
   end
 
   def full_path
@@ -124,7 +124,23 @@ class Folder < ActiveRecord::Base
 
       next unless File.directory?( File.join(self.full_path, c) )
 
-      f = Folder.create(
+      tulip_id_files = Dir.glob(File.join(self.full_path, c, ".tulip.id.*"))
+      if tulip_id_files.count == 1 # should be only one file
+        c_id = tulip_id_files[0].gsub(/.*\.tulip\.id\.([0-9]*)/, '\1').to_i # get only numbers
+        f = Folder.find_by(id: c_id)
+        if f.present?
+          # update parents
+          f.path = self.path == '' ? c : File.join(self.path, c)
+          f.folder_id = self.id
+          f.parent_ids = [self.parent_ids, self.id].flatten
+          f.save if f.changed?
+          next
+        else
+          File.delete(tulip_id_files[0]) unless f.present?
+        end
+      end
+
+      Folder.create(
           path: self.path == '' ? c : File.join(self.path, c),
           folder_id: self.id,
           parent_ids: [self.parent_ids, self.id].flatten
@@ -154,6 +170,7 @@ class Folder < ActiveRecord::Base
     Dir.children(self.full_path).each do |c|
       c_fullpath = File.join(self.full_path, c)
       next if File.directory?(c_fullpath)
+      next if c =~ /\.tulip\.id\./
       file_list.delete(c) if file_list.include?(c)
 
       self.files[c] ||= {}
@@ -177,6 +194,9 @@ class Folder < ActiveRecord::Base
     file_list.each {|f| self.files.delete(f)}
 
     self.save if self.changed?
+
+    tulip_id_filepath = File.join(self.full_path, ".tulip.id.#{self.id}")
+    FileUtils.touch(tulip_id_filepath) unless File.exist?(tulip_id_filepath)
 
     return self.files
   end
