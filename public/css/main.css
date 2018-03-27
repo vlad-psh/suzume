@@ -463,6 +463,9 @@ body.hide-notes .notes-table .note-content:hover {
 /* ==============================
    ABYSS
    ============================== */
+a.processed-folder {
+  opacity: 0.3;
+}
 .process-folder-form table td {
   vertical-align: middle;
 }

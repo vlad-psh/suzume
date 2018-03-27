@@ -70,6 +70,7 @@ post :process_folder do
         rating: details['rating']
       )
       record.update_mediainfo!
+    end
   end
 
   folder.files.each do |md5,details|
