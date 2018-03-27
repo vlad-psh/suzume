@@ -15,6 +15,7 @@ require 'securerandom'
 require 'redcloth'
 require 'mini_magick'
 require 'mediainfo-native'
+require 'shellwords'
 
 paths index: '/',
     performer: '/performer/:id',
@@ -46,7 +47,8 @@ paths index: '/',
     download_cover: '/download_cover',
     abyss_set_cover: '/abyss/cover/:folder_id/:md5',
     abyss_extract_cover: '/abyss/extract_cover/:folder_id/:md5',
-    abyss_set_rating: '/abyss/rating/:folder_id/:md5'
+    abyss_set_rating: '/abyss/rating/:folder_id/:md5',
+    abyss_mediainfo: '/abyss/mediainfo/:folder_id/:md5'
 
 %w(models.rb helpers.rb api.rb tag.rb abyss.rb).each do |file|
   require_relative "./#{file}"

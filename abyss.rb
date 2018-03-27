@@ -162,6 +162,15 @@ get :abyss_extract_cover do
   redirect path_to(:folder).with(folder.id)
 end
 
+get :abyss_mediainfo do
+  folder = Folder.find(params[:folder_id])
+  filename = folder.files[params[:md5]].try(:[], 'fln')
+  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
+
+  cmd = "mediainfo %s" % Shellwords.escape(File.join(folder.full_path, filename))
+  return `#{cmd}`
+end
+
 post :download_cover do
   folder = Folder.find(params[:folder_id])
 

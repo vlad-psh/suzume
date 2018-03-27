@@ -40,6 +40,8 @@ ruby:
           span style="opacity: 0.3"
             '  | 
             a href=path_to(:abyss_extract_cover).with(@folder.id, md5) Extract cover
+            '  | 
+            a.ajax-link.mediainfo-link data-url=path_to(:abyss_mediainfo).with(@folder.id, md5) Mediainfo
       - elsif details['type'] == 'image'
         li class=(details['cover'] == true ? 'is-cover' : nil)
           ' &#x1f5bc
@@ -100,6 +102,8 @@ form method="POST" action=path_to(:download_cover)
   input type="text" name="url"
   input type="hidden" name="folder_id" value=@folder.id
   input type="submit" value="Download"
+
+pre#mediainfo
 
 javascript:
  $(function(){
@@ -173,5 +177,14 @@ javascript:
   }).done(function(data){
     $('.is-cover').removeClass('is-cover');
     li.addClass('is-cover');
+  });
+ });
+
+ $(document).on('click', '.mediainfo-link', function(event){
+  $.ajax({
+    url: $(this).data('url'),
+    method: "GET"
+  }).done(function(data){
+    $('#mediainfo').html(data);
   });
  });
