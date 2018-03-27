@@ -27,8 +27,7 @@ class Release < ActiveRecord::Base
 
   def full_path
     return nil unless self.directory
-    path = File.join($library_path, self.directory)
-    return File.exist?(path) ? path : nil
+    return File.join($library_path, self.directory)
   end
 
   def download_cover
@@ -212,7 +211,7 @@ class Folder < ActiveRecord::Base
     end
 
     # Files, which were not found during current folder lookup
-    file_list.each {|f| self.files.delete(md5_of_filename(c))}
+    file_list.each {|f| self.files.delete(md5_of_filename(f))}
 
     self.save if self.changed?
 

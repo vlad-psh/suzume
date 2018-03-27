@@ -18,6 +18,7 @@ require 'mediainfo-native'
 
 paths index: '/',
     performer: '/performer/:id',
+    autocomplete_performer: '/autocomplete/performer',
 
     search: '/search',
 
@@ -39,6 +40,7 @@ paths index: '/',
     api_album: '/api/album/:id',
 # ----------- abyss.rb
     folder: '/abyss/:id',
+    process_folder: '/abyss_process/:id',
     download_file: '/abyss/:folder_id/:md5',
     abyss_set_rating: '/abyss/rating/:folder_id/:md5'
 
@@ -98,6 +100,12 @@ get :performer do
 
   @performer = Performer.find(params[:id])
   slim :performer
+end
+
+get :autocomplete_performer do
+  q = "%#{params[:term]}%"
+  performers = Performer.where('title ILIKE ? OR romaji ILIKE ? OR aliases ILIKE ?', q, q, q)
+  performers.map{|p| {id: p.id, value: p.title, romaji: p.romaji, aliases: p.aliases} }.to_json
 end
 
 get :search do
