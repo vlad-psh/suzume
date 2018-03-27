@@ -21,37 +21,32 @@ paths index: '/',
     performer: '/performer/:id',
 
     search: '/search',
-    search_by_tag: '/tag/:id',
 
+    notes: '/notes',
+    lyrics: '/lyrics',
+    hide_notes: '/notes/hide',
+
+    login: '/login',
+    logout: '/logout',
+# ----------- tag.rb
     tags: '/tags', # index
     tag: '/tag/:id', # delete tag
     tag_add: '/tag/add',
     tag_remove: '/tag/remove',
-
-    hide_notes: '/notes/hide',
-
+    search_by_tag: '/tag/:id',
+# ----------- api.rb
     api_index: '/api/index',
     api_artist: '/api/artist/:id',
     api_album: '/api/album/:id',
-
-    notes: '/notes',
-    lyrics: '/lyrics',
-
+# ----------- abyss.rb
     folder: '/abyss/:id',
     download_file: '/abyss/:folder_id/:md5',
-    abyss_set_rating: '/abyss/rating/:folder_id/:md5',
+    abyss_set_rating: '/abyss/rating/:folder_id/:md5'
 
-    login: '/login',
-    logout: '/logout'
-
-require_relative './models.rb'
-require_relative './helpers.rb'
-require_relative './api.rb'
-
-also_reload './models.rb'
-also_reload './helpers.rb'
-also_reload './api.rb'
-
+%w(models.rb helpers.rb api.rb tag.rb abyss.rb).each do |file|
+  require_relative "./#{file}"
+  also_reload "./#{file}"
+end
 
 helpers TulipHelpers
 
@@ -106,42 +101,6 @@ get :performer do
   slim :performer
 end
 
-get :folder do
-  @folder = Folder.find_by(id: params[:id]) || Folder.root
-
-  slim :folder
-end
-
-get :download_file do
-  folder = Folder.find(params[:folder_id])
-  file_path = folder.files[params[:md5]].try(:[], 'fln')
-  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless file_path
-  file_fullpath = File.join(folder.full_path, file_path)
-  send_file file_fullpath
-end
-
-get :search_by_tag do
-  protect!
-
-  tag = Tag.find(params[:id].to_i)
-
-  unless tag
-    flash[:error] = "Tag with ID=#{params[:id]} was not found"
-    redirect_to :index
-  end
-
-  @artists = tag.artists
-  @sorted_albums = albums_by_type(tag.albums.order(year: :desc))
-  @tracks = tag.tracks
-  @notes = {}
-  Note.where(parent_type: 't', parent_id: @tracks).each do |n|
-    @notes[n.parent_id] ||= []
-    @notes[n.parent_id] << n
-  end
-
-  slim :index
-end
-
 get :search do
   protect!
 
@@ -156,65 +115,6 @@ get :search do
     @title = "#{params[:query]} - Search"
     slim :index
   end
-end
-
-get :tags do
-  protect!
-
-  @tags = Tag.all.order(category: :asc, title: :asc)
-
-  slim :tags, locals: {tags: @tags}
-end
-
-delete :tag do
-  protect!
-
-  tag = Tag.find(params[:id])
-  unless tag
-    flash[:error] = "Tag not found"
-  else
-    tag_title = tag.title
-    _artists = tag.artists.count
-    _albums = tag.albums.count
-    _tracks = tag.tracks.count
-    unless _artists == 0 && _albums == 0 && _tracks == 0
-     flash[:error] = "Tag '#{tag_title}' still has childs. Artists: #{_artists}, albums: #{_albums}, tracks: #{_tracks}"
-    else
-      tag.destroy
-      flash[:notice] = "Tag '#{tag_title}' successfully deleted"
-    end
-  end
-
-  redirect path_to(:tags)
-end
-
-post :tag_add do
-  protect!
-
-  performer = Performer.includes(:tags).find(params[:performer_id])
-
-  tag_category, tag_title = params[:tag_name].downcase.split(":")
-  unless tag_category.length != 1
-    tag = Tag.find_or_create_by(title: tag_title, category: tag_category)
-    performer.tags << tag unless performer.tags.include?(tag)
-  else
-    halt 400, "Specify category!"
-  end
-
-  slim :tag_item, layout: false, locals: {tag: tag, performer: performer}
-end
-
-post :tag_remove do
-  protect!
-
-  TagRelation.where(
-        parent_type: params[:obj_type],
-        parent_id: params[:obj_id],
-        tag_id: params[:tag_id]).each do |tr|
-    tr.delete
-  end
-
-  return "OK"
 end
 
 post :hide_notes do
@@ -286,12 +186,3 @@ delete :logout do
   redirect path_to(:index)
 end
 
-post :abyss_set_rating do
-  folder = Folder.find(params[:folder_id])
-  filename = folder.files[params[:md5]].try(:[], 'fln')
-  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
-  folder.files[params[:md5]]['rating'] = params[:rating].to_i
-  folder.save if folder.changed?
-
-  return 'ok'
-end
