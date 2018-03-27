@@ -33,9 +33,12 @@ ruby:
           '  | 
           == mediainfo(details)
       - else
-        li
+        li class=(details['cover'] == true ? 'is-cover' : nil)
           ' &#x1f5bc
           a.cover-link.ajax-link href=path_to(:download_file).with(@folder.id, md5) = fln
+          '  | 
+          span.is-cover-text COVER
+          a.set-cover-link.ajax-link data-url=path_to(:abyss_set_cover).with(@folder.id, md5) Set cover
 
 div id='title-tip' style="display: none"
   - ratings.each do |r|
@@ -150,4 +153,15 @@ javascript:
     $('#title-tip').hide();
     event.stopPropagation();
   }
+ });
+
+ $(document).on('click', '.set-cover-link', function(event){
+  var li = $(this).parents('li');
+  $.ajax({
+    url: $(this).data('url'),
+    method: "POST"
+  }).done(function(data){
+    $('.is-cover').removeClass('is-cover');
+    li.addClass('is-cover');
+  });
  });

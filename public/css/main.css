@@ -466,6 +466,13 @@ body.hide-notes .notes-table .note-content:hover {
 a.processed-folder {
   opacity: 0.3;
 }
+.is-cover-text,
+li.is-cover .set-cover-link {
+  display: none;
+}
+li.is-cover .is-cover-text {
+  display: inline-block;
+}
 .process-folder-form table td {
   vertical-align: middle;
 }

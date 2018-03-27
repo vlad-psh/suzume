@@ -43,6 +43,7 @@ paths index: '/',
     process_folder: '/abyss_process/:id',
     download_file: '/abyss/:folder_id/:md5',
     download_cover: '/download_cover',
+    abyss_set_cover: '/abyss/cover/:folder_id/:md5',
     abyss_set_rating: '/abyss/rating/:folder_id/:md5'
 
 %w(models.rb helpers.rb api.rb tag.rb abyss.rb).each do |file|

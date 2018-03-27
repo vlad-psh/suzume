@@ -109,6 +109,22 @@ post :abyss_set_rating do
   return 'ok'
 end
 
+post :abyss_set_cover do
+  folder = Folder.find(params[:folder_id])
+  filename = folder.files[params[:md5]].try(:[], 'fln')
+  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
+
+  folder.files.each do |md5,details|
+    # clear cover status for all images
+    details.delete('cover') if details['type'] == 'image'
+  end
+
+  folder.files[params[:md5]]['cover'] = true
+  folder.save if folder.changed?
+
+  return 'ok'
+end
+
 post :download_cover do
   folder = Folder.find(params[:folder_id])
 
