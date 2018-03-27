@@ -96,7 +96,20 @@ post :process_folder do
 
   folder.update_attributes(is_processed: true)
 
+  flash[:notice] = "Folder \"#{folder.path}\" processed successfully"
+
   redirect path_to(:folder).with(folder.id)
+end
+
+delete :abyss_remove_folder do
+  folder = Folder.find(params[:id])
+  throw StandardError.new("Already removed") if folder.is_removed
+  FileUtils.remove_dir(folder.full_path)
+  folder.update_attributes(is_removed: true)
+
+  flash[:notice] = "Folder \"#{folder.path}\" was removed"
+
+  redirect path_to(:folder).with(folder.folder_id)
 end
 
 post :abyss_set_rating do

@@ -6,10 +6,15 @@ h1
     a href=path_to(:folder).with(p.id) = p.name
     | /
   = @folder.name
+  span< style="font-size: 0.5em; font-weight: normal"
+    a href=path_to(:abyss_remove_folder).with(@folder.id) data-method="delete" data-confirm="Delete?" Delete
 
 ul
   - @folder.subfolders.each do |f|
-    li: a class=(f.is_processed ? 'processed-folder' : nil) href=path_to(:folder).with(f.id) = f.name
+    li
+      a class=(f.is_processed ? 'processed-folder' : nil) href=path_to(:folder).with(f.id) = f.name
+      '  | 
+      a href=path_to(:abyss_remove_folder).with(f.id) data-method="delete" data-confirm="Delete?" Delete
 
 ruby:
   ratings = %w(&#x1f525 &#x1f331 &#x1f33b &#x1f337)
@@ -35,13 +40,15 @@ ruby:
           span style="opacity: 0.3"
             '  | 
             a href=path_to(:abyss_extract_cover).with(@folder.id, md5) Extract cover
-      - else
+      - elsif details['type'] == 'image'
         li class=(details['cover'] == true ? 'is-cover' : nil)
           ' &#x1f5bc
           a.cover-link.ajax-link href=path_to(:download_file).with(@folder.id, md5) = fln
           '  | 
           span.is-cover-text COVER
           a.set-cover-link.ajax-link data-url=path_to(:abyss_set_cover).with(@folder.id, md5) Set cover
+      - else
+        li = fln
 
 div id='title-tip' style="display: none"
   - ratings.each do |r|
@@ -80,7 +87,7 @@ div id='title-tip' style="display: none"
         th Release Type
       tr
         td: input type="text" name="release_year" style="width: 3em"
-        td: input type="text" name="release_title"
+        td: input type="text" name="release_title" value=@folder.name
         td: input type="text" name="release_romaji"
         td: input type="text" name="release_type" style="width: 7em"
 

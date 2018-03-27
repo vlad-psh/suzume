@@ -41,6 +41,7 @@ paths index: '/',
 # ----------- abyss.rb
     folder: '/abyss/:id',
     process_folder: '/abyss_process/:id',
+    abyss_remove_folder: '/abyss_remove/:id',
     download_file: '/abyss/:folder_id/:md5',
     download_cover: '/download_cover',
     abyss_set_cover: '/abyss/cover/:folder_id/:md5',
