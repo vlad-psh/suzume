@@ -81,6 +81,13 @@ div id='title-tip' style="display: none"
     br
     input type="submit"
 
+br
+form method="POST" action=path_to(:download_cover)
+  ' Cover URL:
+  input type="text" name="url"
+  input type="hidden" name="folder_id" value=@folder.id
+  input type="submit" value="Download"
+
 javascript:
  $(function(){
   $('.autocomplete').each(function(){

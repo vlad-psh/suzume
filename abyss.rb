@@ -109,3 +109,28 @@ post :abyss_set_rating do
   return 'ok'
 end
 
+post :download_cover do
+  folder = Folder.find(params[:folder_id])
+
+  if params[:url] =~ /redacted\.ch/
+    params[:url] = URI.decode(params[:url].gsub(/.*i=/, '').gsub(/&.*/, ''))
+  end
+
+  saved_file = Tempfile.new('tulip')
+  open(params[:url]) do |read_file|
+    saved_file.write(read_file.read)
+  end
+  saved_file.close
+
+  img = MiniMagick::Image.open(saved_file.path)
+  extension = MIME_EXT[img.mime_type] || 'jpg'
+  img.destroy!
+
+  newfilepath = File.join(folder.full_path, "#{DateTime.now.strftime('%Y%m%d_%H%M%S')}.#{extension}")
+  FileUtils.copy(saved_file.path, newfilepath)
+  FileUtils.chmod(0644, newfilepath)
+
+  saved_file.unlink
+
+  redirect path_to(:folder).with(folder.id)
+end
