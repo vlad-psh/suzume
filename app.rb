@@ -6,7 +6,6 @@ require 'slim'
 
 require 'rack-flash'
 require 'yaml'
-#require 'musicbrainz'
 require 'lastfm'
 require 'fileutils'
 require 'id3tag'

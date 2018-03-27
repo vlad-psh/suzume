@@ -49,7 +49,10 @@ javascript:
     var pleft = p.left + $(this).outerWidth()/2 - tip.outerWidth()/2;
     var ptop = p.top - tip.outerHeight() - 8;
     tip.attr("style", "left: " + pleft + "px; top: " + ptop + "px");
+
+    event.stopPropagation();
  });
+
  $(document).on('click', '.rating-set-button', function(event){
   var rating = $(this).data('value');
   var url = $('#title-tip').data('url');
@@ -62,4 +65,13 @@ javascript:
     $("[data-url='" + url + "']").html(#{{ratings}}[rating+1]);
     $('#title-tip').hide();
   });
+
+  event.stopPropagation();
+ });
+
+ $(document).on('click', null, function(event){
+  if ($('#title-tip').is(":visible")) {
+    $('#title-tip').hide();
+    event.stopPropagation();
+  }
  });
