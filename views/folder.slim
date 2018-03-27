@@ -32,6 +32,9 @@ ruby:
           a.ajax-link.track-playback-link data-track-url=download_path href=download_path = fln
           '  | 
           == mediainfo(details)
+          span style="opacity: 0.3"
+            '  | 
+            a href=path_to(:abyss_extract_cover).with(@folder.id, md5) Extract cover
       - else
         li class=(details['cover'] == true ? 'is-cover' : nil)
           ' &#x1f5bc

@@ -125,6 +125,30 @@ post :abyss_set_cover do
   return 'ok'
 end
 
+get :abyss_extract_cover do
+  folder = Folder.find(params[:folder_id])
+  filename = folder.files[params[:md5]].try(:[], 'fln')
+  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
+
+  filepath = File.join(folder.full_path, filename)
+
+  iter = 0
+  ID3Tag.read(File.open(filepath, "rb")).all_frames_by_id(:APIC).each do |pic|
+    if MIME_EXT.include?(pic.mime_type)
+      type = MIME_EXT[pic.mime_type]
+      cover_filename = "#{DateTime.now.strftime('%Y%m%d_%H%M%S')}_#{iter}.#{type}"
+
+      cover_file = File.open(File.join(folder.full_path, cover_filename), 'w')
+      cover_file.write(pic.content)
+      cover_file.close
+
+      iter += 1
+    end
+  end
+
+  redirect path_to(:folder).with(folder.id)
+end
+
 post :download_cover do
   folder = Folder.find(params[:folder_id])
 
