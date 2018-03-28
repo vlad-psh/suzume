@@ -13,8 +13,9 @@ ul
   - @folder.subfolders.each do |f|
     li
       a class=(f.is_processed ? 'processed-folder' : nil) href=path_to(:folder).with(f.id) = f.name
-      '  | 
-      a href=path_to(:abyss_remove_folder).with(f.id) data-method="delete" data-confirm="Delete?" Delete
+      span.li-autohide
+        '  | 
+        a href=path_to(:abyss_remove_folder).with(f.id) data-method="delete" data-confirm="Delete?" Delete
 
 ruby:
   ratings = %w(&#x1f525 &#x1f331 &#x1f33b &#x1f337)
@@ -37,7 +38,7 @@ ruby:
           a.ajax-link.track-playback-link data-track-url=download_path href=download_path = fln
           '  | 
           == mediainfo(details)
-          span style="opacity: 0.3"
+          span.li-autohide
             '  | 
             a href=path_to(:abyss_extract_cover).with(@folder.id, md5) Extract cover
             '  | 
@@ -48,7 +49,8 @@ ruby:
           a.cover-link.ajax-link href=path_to(:download_file).with(@folder.id, md5) = fln
           '  | 
           span.is-cover-text COVER
-          a.set-cover-link.ajax-link data-url=path_to(:abyss_set_cover).with(@folder.id, md5) Set cover
+          span.li-autohide
+            a.set-cover-link.ajax-link data-url=path_to(:abyss_set_cover).with(@folder.id, md5) Set cover
       - else
         li = fln
 
@@ -87,21 +89,19 @@ div id='title-tip' style="display: none"
         th Release Title
         th Romaji
         th Release Type
+        th
       tr
         td: input type="text" name="release_year" style="width: 3em"
         td: input type="text" name="release_title" value=@folder.name
         td: input type="text" name="release_romaji"
         td: input type="text" name="release_type" style="width: 7em"
+        td: input type="submit"
 
-    br
-    input type="submit"
-
-br
-form method="POST" action=path_to(:download_cover)
-  ' Cover URL:
-  input type="text" name="url"
-  input type="hidden" name="folder_id" value=@folder.id
-  input type="submit" value="Download"
+  br
+  form method="POST" action=path_to(:download_cover)
+    input type="text" name="url" placeholder="Cover URL"
+    input type="hidden" name="folder_id" value=@folder.id
+    input< type="submit" value="Download"
 
 pre#mediainfo
 

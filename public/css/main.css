@@ -473,14 +473,26 @@ li.is-cover .set-cover-link {
 li.is-cover .is-cover-text {
   display: inline-block;
 }
+li .li-autohide {
+  display: none
+}
+li:hover .li-autohide {
+  display: inline
+}
 .process-folder-form table td {
   vertical-align: middle;
 }
-.process-folder-form table input {
+input[type="text"] {
   padding: 0.1em 0.2em;
   border: 1px solid #ddd;
   background-color: white;
   color: #333;
+}
+input[type="submit"] {
+  padding: 0.1em 0.5em;
+  border: 1px solid #1c79cb;
+  background-color: #afc8dd;
+  color: #194a75;
 }
 .process-folder-form table input.autocomplete {
   border: 1px solid #70cef9;
