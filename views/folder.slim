@@ -3,8 +3,10 @@ h1
   | ://
   - Folder.where(id: @folder.parent_ids).order(path: :asc).each do |p|
     - next if p.name.empty? # skip root
+    == p.is_symlink ? '&#x1f517' : nil
     a href=path_to(:folder).with(p.id) = p.name
     | /
+  == @folder.is_symlink ? '&#x1f517' : nil
   = @folder.name
   span< style="font-size: 0.5em; font-weight: normal"
     a href=path_to(:abyss_remove_folder).with(@folder.id) data-method="delete" data-confirm="Delete?" Delete
@@ -12,6 +14,7 @@ h1
 ul
   - @folder.subfolders.each do |f|
     li
+      == f.is_symlink ? '&#x1f517' : nil
       a class=(f.is_processed ? 'processed-folder' : nil) href=path_to(:folder).with(f.id) = f.name
       span.li-autohide
         '  | 

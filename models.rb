@@ -117,16 +117,17 @@ class Folder < ActiveRecord::Base
 
     Dir.children(self.full_path).each do |c|
       c_path = self.path == '' ? c : File.join(self.path, c)
+      c_fullpath = File.join(self.full_path, c)
 
       if skip_folders.include?(c_path)
         skip_folders.delete(c_path)
         next
       end
 
-      next unless File.directory?( File.join(self.full_path, c) )
+      next unless File.directory?(c_fullpath)
 
-      tulip_id_files = Dir.glob(File.join(self.full_path, c, ".tulip.id.*"))
-      if tulip_id_files.count == 1 # should be only one file
+      tulip_id_files = Dir.glob(File.join(c_fullpath, ".tulip.id.*"))
+      if tulip_id_files.count == 1 # should be only one file; TODO: review this condition
         c_id = tulip_id_files[0].gsub(/.*\.tulip\.id\.([0-9]*)/, '\1').to_i # get only numbers
         f = Folder.find_by(id: c_id)
         if f.present?
@@ -135,6 +136,7 @@ class Folder < ActiveRecord::Base
           f.folder_id = self.id
           f.parent_ids = [self.parent_ids, self.id].flatten
           f.is_removed = false
+          f.is_symlink = File.symlink?(c_fullpath)
           f.save if f.changed?
           next
         else
@@ -145,7 +147,8 @@ class Folder < ActiveRecord::Base
       Folder.create(
           path: c_path,
           folder_id: self.id,
-          parent_ids: [self.parent_ids, self.id].flatten
+          parent_ids: [self.parent_ids, self.id].flatten,
+          is_symlink: File.symlink?(c_fullpath)
       )
     end
 
