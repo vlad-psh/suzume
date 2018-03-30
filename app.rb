@@ -145,11 +145,25 @@ end
 post :notes do
   protect!
 
-  n = Note.create(parent_type: params[:parent_type],
-        parent_id: params[:parent_id],
-        content: params[:content])
+  parent = case params[:parent_type]
+    when 'performer'
+      Performer.find(params[:parent_id])
+    when 'release'
+      Release.find(params[:parent_id])
+    when 'record'
+      Record.find(params[:parent_id])
+    when 'folder'
+      Folder.find(params[:parent_id])
+    else
+      raise StandardError.new("Unknown type: #{params[:parent_type]}")
+    end
 
-  slim :note_item, layout: false, locals: {note: n}
+  parent.notes ||= []
+  note = {'c' => params[:content], 'd' => DateTime.now}
+  parent.notes << note
+  parent.save
+
+  slim :note_item, layout: false, locals: {note: note}
 end
 
 post :lyrics do

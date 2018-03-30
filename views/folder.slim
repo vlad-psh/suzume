@@ -3,10 +3,10 @@ h1
   | ://
   - Folder.where(id: @folder.parent_ids).order(path: :asc).each do |p|
     - next if p.name.empty? # skip root
-    == p.is_symlink ? '&#x1f517' : nil
+    == p.is_symlink ? '&#x1f517;' : nil
     a href=path_to(:folder).with(p.id) = p.name
     | /
-  == @folder.is_symlink ? '&#x1f517' : nil
+  == @folder.is_symlink ? '&#x1f517;' : nil
   = @folder.name
   span< style="font-size: 0.5em; font-weight: normal"
     a href=path_to(:abyss_remove_folder).with(@folder.id) data-method="delete" data-confirm="Delete?" Delete
@@ -14,14 +14,14 @@ h1
 ul
   - @folder.subfolders.each do |f|
     li
-      == f.is_symlink ? '&#x1f517' : nil
+      == f.is_symlink ? '&#x1f517;' : nil
       a class=(f.is_processed ? 'processed-folder' : nil) href=path_to(:folder).with(f.id) = f.name
       span.li-autohide
         '  | 
         a href=path_to(:abyss_remove_folder).with(f.id) data-method="delete" data-confirm="Delete?" Delete
 
 ruby:
-  ratings = %w(&#x1f525 &#x1f331 &#x1f33b &#x1f337)
+  ratings = %w(&#x1f525; &#x1f331; &#x1f33b; &#x1f337;)
   @folder.get_files!
 
 - audio_count = 0
@@ -36,7 +36,7 @@ ruby:
         li
           - unless @folder.is_processed
             span.rating-choose-button> data-url=path_to(:abyss_set_rating).with(@folder.id, md5)
-              == details['rating'] ? ratings[details['rating'] + 1] : '&#x2754'
+              == details['rating'] ? ratings[details['rating'] + 1] : '&#x2754;'
           - download_path = path_to(:download_file).with(@folder.id, md5)
           a.ajax-link.track-playback-link data-track-url=download_path href=download_path = fln
           '  | 
@@ -48,7 +48,7 @@ ruby:
             a.ajax-link.mediainfo-link data-url=path_to(:abyss_mediainfo).with(@folder.id, md5) Mediainfo
       - elsif details['type'] == 'image'
         li class=(details['cover'] == true ? 'is-cover' : nil)
-          ' &#x1f5bc
+          ' &#x1f5bc;
           a.cover-link.ajax-link href=path_to(:download_file).with(@folder.id, md5) = fln
           '  | 
           span.is-cover-text COVER
@@ -105,6 +105,11 @@ div id='title-tip' style="display: none"
     input type="text" name="url" placeholder="Cover URL"
     input type="hidden" name="folder_id" value=@folder.id
     input< type="submit" value="Download"
+
+  br
+  h2 Notes
+  == slim :notes_table, locals: {notes: @folder.notes, parent_id: "#{@folder.model_name.singular}-#{@folder.id}"}
+  == slim :note_form, locals: {note_parent: @folder}
 
 pre#mediainfo
 

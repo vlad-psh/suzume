@@ -37,7 +37,8 @@ post :process_folder do
     title: params[:release_title],
     year: value_or_nil(params[:release_year]),
     romaji: value_or_nil(params[:release_romaji]),
-    release_type: value_or_nil(params[:release_type])
+    release_type: value_or_nil(params[:release_type]),
+    notes: folder.notes.present? ? folder.notes : nil
   )
 
   release.update_attributes(
