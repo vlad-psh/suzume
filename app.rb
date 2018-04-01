@@ -39,6 +39,10 @@ paths index: '/',
     api_index: '/api/index',
     api_artist: '/api/artist/:id',
     api_album: '/api/album/:id',
+    # these methods are here for compatibility and should be rewritten
+    api_cover_orig: '/cover/orig/:id',
+    api_cover_thumb: '/cover/thumb/:id',
+    api_download_track: '/download/:id',
 # ----------- abyss.rb
     folder: '/abyss/:id',
     process_folder: '/abyss_process/:id',
