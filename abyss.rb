@@ -1,15 +1,36 @@
-get :folder do
+get :abyss_folder do
   @folder = Folder.find_by(id: params[:id]) || Folder.root
 
   slim :folder
 end
 
-get :download_file do
+delete :abyss_folder do
+  folder = Folder.find(params[:id])
+  throw StandardError.new("Already removed") if folder.is_removed
+  FileUtils.remove_dir(folder.full_path)
+  folder.update_attributes(is_removed: true)
+
+  flash[:notice] = "Folder \"#{folder.path}\" was removed"
+
+  redirect path_to(:folder).with(folder.folder_id)
+end
+
+get :abyss_file do
   folder = Folder.find(params[:folder_id])
   file_path = folder.files[params[:md5]].try(:[], 'fln')
   throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless file_path
   file_fullpath = File.join(folder.full_path, file_path)
   send_file file_fullpath
+end
+
+patch :abyss_file do # currently only rating update
+  folder = Folder.find(params[:folder_id])
+  filename = folder.files[params[:md5]].try(:[], 'fln')
+  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
+  folder.files[params[:md5]]['rating'] = params[:rating].to_i
+  folder.save if folder.changed?
+
+  return folder.files[params[:md5]].to_json
 end
 
 def value_or_nil(v)
@@ -102,27 +123,6 @@ post :process_folder do
   redirect path_to(:folder).with(folder.id)
 end
 
-delete :abyss_remove_folder do
-  folder = Folder.find(params[:id])
-  throw StandardError.new("Already removed") if folder.is_removed
-  FileUtils.remove_dir(folder.full_path)
-  folder.update_attributes(is_removed: true)
-
-  flash[:notice] = "Folder \"#{folder.path}\" was removed"
-
-  redirect path_to(:folder).with(folder.folder_id)
-end
-
-post :abyss_set_rating do
-  folder = Folder.find(params[:folder_id])
-  filename = folder.files[params[:md5]].try(:[], 'fln')
-  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
-  folder.files[params[:md5]]['rating'] = params[:rating].to_i
-  folder.save if folder.changed?
-
-  return 'ok'
-end
-
 post :abyss_set_cover do
   folder = Folder.find(params[:folder_id])
   filename = folder.files[params[:md5]].try(:[], 'fln')
@@ -139,7 +139,7 @@ post :abyss_set_cover do
   return 'ok'
 end
 
-get :abyss_extract_cover do
+post :abyss_extract_cover do
   folder = Folder.find(params[:folder_id])
   filename = folder.files[params[:md5]].try(:[], 'fln')
   throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename

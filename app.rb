@@ -20,6 +20,7 @@ require 'shellwords'
 paths index: '/',
     performer: '/performer/:id',
     autocomplete_performer: '/autocomplete/performer',
+    record: '/record/:id', # PATCH (update some properties)
 
     search: '/search',
 
@@ -44,15 +45,15 @@ paths index: '/',
     api_cover_thumb: '/cover/thumb/:id',
     api_download_track: '/download/:id',
 # ----------- abyss.rb
-    folder: '/abyss/:id',
-    process_folder: '/abyss_process/:id',
-    abyss_remove_folder: '/abyss_remove/:id',
-    download_file: '/abyss/:folder_id/:md5',
-    download_cover: '/download_cover',
-    abyss_set_cover: '/abyss/cover/:folder_id/:md5',
-    abyss_extract_cover: '/abyss/extract_cover/:folder_id/:md5',
-    abyss_set_rating: '/abyss/rating/:folder_id/:md5',
-    abyss_mediainfo: '/abyss/mediainfo/:folder_id/:md5'
+    abyss_folder: '/abyss/:id', # get, delete
+    process_folder: '/abyss/:id/process', # post
+
+    abyss_file: '/abyss/:folder_id/file/:md5', # get (download file), patch (set rating, ...?)
+    abyss_set_cover: '/abyss/:folder_id/set_cover/:md5', # post
+    abyss_extract_cover: '/abyss/:folder_id/extract_cover/:md5', # post
+    abyss_mediainfo: '/abyss/:folder_id/mediainfo/:md5', # get
+
+    download_cover: '/download_cover' # post
 
 %w(models.rb helpers.rb api.rb tag.rb abyss.rb).each do |file|
   require_relative "./#{file}"
@@ -215,5 +216,24 @@ delete :logout do
   session.delete('role')
   flash[:notice] = "Successfully logged out"
   redirect path_to(:index)
+end
+
+def get_object_or_error(type, id)
+  if type == :record
+    object = Record.find_by(id: id)
+  else
+    throw StandardError.new("Unknown object type: #{type}")
+  end
+
+  if object.present?
+    return object
+  else
+    halt 404, "#{type.to_s.capitalize} with id #{id} was not found"
+  end
+end
+
+patch :record do
+  record = get_object_or_error(:record, params['id'])
+  return params.inspect
 end
 
