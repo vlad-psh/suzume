@@ -191,6 +191,7 @@ class Folder < ActiveRecord::Base
       md5 = Digest::MD5.hexdigest(c)[0..6] # first 7 chars (as in github)
       c_fullpath = File.join(self.full_path, c)
 
+      next unless File.exist?(c_fullpath) # broken symbolic links
       next if File.directory?(c_fullpath)
       next if c =~ /\.tulip\.id\./
       file_list.delete(c) if file_list.include?(c)
@@ -199,7 +200,7 @@ class Folder < ActiveRecord::Base
       self.files[md5]['fln']  ||= c
       self.files[md5]['size'] ||= File.size(c_fullpath)
 
-      if c =~ /\.(mp3|m4a)/i
+      if c =~ /\.(mp3|m4a)$/i
         self.files[md5]['type'] ||= 'audio'
         self.files[md5]['rating'] ||= nil
         self.files[md5]['dur'] ||= mediainfo(c_fullpath).audio.duration
@@ -208,7 +209,7 @@ class Folder < ActiveRecord::Base
         self.files[md5]['sr']  ||= mediainfo(c_fullpath).audio.sample_rate
         self.files[md5]['ch']  ||= mediainfo(c_fullpath).audio.channels
         # mediainfo() method will be executed only if there is not enough information about audio
-      elsif c=~ /\.(png|jpg|jpeg)/i
+      elsif c=~ /\.(png|jpg|jpeg)$/i
         self.files[md5]['type'] ||= 'image'
       end
     end

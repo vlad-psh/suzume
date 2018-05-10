@@ -12,7 +12,7 @@ delete :abyss_folder do
 
   flash[:notice] = "Folder \"#{folder.path}\" was removed"
 
-  redirect path_to(:folder).with(folder.folder_id)
+  redirect path_to(:abyss_folder).with(folder.folder_id)
 end
 
 get :abyss_file do
@@ -120,7 +120,7 @@ post :process_folder do
 
   flash[:notice] = "Folder \"#{folder.path}\" processed successfully"
 
-  redirect path_to(:folder).with(folder.id)
+  redirect path_to(:abyss_folder).with(folder.id)
 end
 
 post :abyss_set_cover do
@@ -160,7 +160,7 @@ post :abyss_extract_cover do
     end
   end
 
-  redirect path_to(:folder).with(folder.id)
+  redirect path_to(:abyss_folder).with(folder.id)
 end
 
 get :abyss_mediainfo do
@@ -195,5 +195,5 @@ post :download_cover do
 
   saved_file.unlink
 
-  redirect path_to(:folder).with(folder.id)
+  redirect path_to(:abyss_folder).with(folder.id)
 end

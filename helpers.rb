@@ -5,6 +5,7 @@ module TulipHelpers
   end
 
   def ms2ts(time)
+    return "NULL" unless time
     ms   = time % 1000
     time = time / 1000
     s    = time % 60

@@ -1,10 +1,10 @@
 h1
-  a href=path_to(:folder).with(0) abyss
+  a href=path_to(:abyss_folder).with(0) abyss
   | ://
   - Folder.where(id: @folder.parent_ids).order(path: :asc).each do |p|
     - next if p.name.empty? # skip root
     == p.is_symlink ? '&#x1f517;' : nil
-    a href=path_to(:folder).with(p.id) = p.name
+    a href=path_to(:abyss_folder).with(p.id) = p.name
     | /
   == @folder.is_symlink ? '&#x1f517;' : nil
   = @folder.name
@@ -15,10 +15,10 @@ ul
   - @folder.subfolders.each do |f|
     li
       == f.is_symlink ? '&#x1f517;' : nil
-      a class=(f.is_processed ? 'processed-folder' : nil) href=path_to(:folder).with(f.id) = f.name
+      a class=(f.is_processed ? 'processed-folder' : nil) href=path_to(:abyss_folder).with(f.id) = f.name
       span.li-autohide
         '  | 
-        a href=path_to(:abyss_remove_folder).with(f.id) data-method="delete" data-confirm="Delete?" Delete
+        a href=path_to(:abyss_folder).with(f.id) data-method="delete" data-confirm="Delete?" Delete
 
 ruby:
   ratings = %w(&#x1f525; &#x1f331; &#x1f33b; &#x1f337;)

@@ -23,7 +23,7 @@ html
         '  | 
         a href=path_to(:tags) Tags
         '  | 
-        a href=path_to(:folder).with(0) Browse
+        a href=path_to(:abyss_folder).with(0) Browse
       div.menu-block
         input.hide-notes-checkbox type="checkbox" checked=("checked" if request.session["hide-notes"] && request.session["hide-notes"] == true) Hide notes
         '  |
