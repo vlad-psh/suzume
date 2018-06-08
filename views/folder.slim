@@ -55,7 +55,8 @@ ruby:
           span.li-autohide
             a.set-cover-link.ajax-link data-url=path_to(:abyss_set_cover).with(@folder.id, md5) Set cover
       - else
-        li = fln
+        li
+          a href=path_to(:abyss_file).with(@folder.id, md5) = fln
 
 div id='title-tip' style="display: none"
   - ratings.each do |r|
