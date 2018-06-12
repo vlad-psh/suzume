@@ -20,6 +20,7 @@ require 'shellwords'
 paths index: '/',
     performer: '/performer/:id',
     autocomplete_performer: '/autocomplete/performer',
+    autocomplete_release: '/autocomplete/performer/:performer_id/release',
     record: '/record/:id', # PATCH (update some properties)
 
     search: '/search',
@@ -117,6 +118,15 @@ get :autocomplete_performer do
   q = "%#{params[:term]}%"
   performers = Performer.where('title ILIKE ? OR romaji ILIKE ? OR aliases ILIKE ?', q, q, q)
   performers.map{|p| {id: p.id, value: p.title, romaji: p.romaji, aliases: p.aliases} }.to_json
+end
+
+get :autocomplete_release do
+#  performer = Performer.find(params[:performer_id])
+  q = "%#{params[:term]}%"
+  releases = Release.where(performer_id: params[:performer_id])
+            .where('title ILIKE ? OR romaji ILIKE ?', q, q)
+            .order(title: :asc)
+  releases.map{|r| {id: r.id, value: r.title, romaji: r.romaji, year: r.year, rtype: r.release_type}}.to_json
 end
 
 get :search do

@@ -51,20 +51,23 @@ post :process_folder do
     )
   end
 
-  throw StandardError.new("Release title cannot be blank") if params[:release_title].blank?
-  # TODO: if title is empty, append tracks to 'no album'
-  release = Release.create(
-    performer: performer,
-    title: params[:release_title],
-    year: value_or_nil(params[:release_year]),
-    romaji: value_or_nil(params[:release_romaji]),
-    release_type: value_or_nil(params[:release_type]),
-    notes: folder.notes.present? ? folder.notes : nil
-  )
+  release = Release.find_by(id: params[:release_id], performer_id: params[:performer_id]) if params[:performer_id].present? && params[:release_id].present?
+  unless release.present?
+    throw StandardError.new("Release title cannot be blank") if params[:release_title].blank?
+    # TODO: if title is empty, append tracks to 'no album'
 
-  release.update_attributes(
-      directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s)
+    release = Release.create(
+      performer: performer,
+      title: params[:release_title],
+      year: value_or_nil(params[:release_year]),
+      romaji: value_or_nil(params[:release_romaji]),
+      release_type: value_or_nil(params[:release_type]),
+      notes: folder.notes.present? ? folder.notes : nil
     )
+    release.update_attributes(
+        directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s)
+      )
+  end
 
   folder.files.each do |md5,details|
     if details['type'] == 'audio' && details['rating'].present? && details['rating'] >= 0
@@ -88,7 +91,7 @@ post :process_folder do
         release: release,
         original_filename: details['fln'],
         filename: newfilename,
-        directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s),
+        directory: release.directory,
         rating: details['rating']
       )
       record.update_mediainfo!

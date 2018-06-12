@@ -70,35 +70,45 @@ div id='title-tip' style="display: none"
   script src="/js/jquery-ui.min.js"
   form.process-folder-form method="POST" action=path_to(:process_folder).with(@folder.id)
     input type="hidden" name="performer_id"
-    table.acmp-table
+    table.performer-acmp-table.acmp-table
       tr
         th ID
         th Performer Name
         th Romaji
         th Aliases
-      tr.acmp-forms
+      tr.performer-acmp-forms.acmp-forms
         td NEW
-        td: input.autocomplete type="text" data-url=path_to(:autocomplete_performer) data-id="performer" title="Field with autocompletion" name="performer_title"
+        td: input.autocomplete-performer type="text" data-url=path_to(:autocomplete_performer) data-id="performer" title="Field with autocompletion" name="performer_title"
         td: input type="text" name="performer_romaji"
         td: input type="text" name="performer_aliases"
-      tr.acmp-chosen-item
-        td.acmp-id
-        td.acmp-title
-        td.acmp-romaji
-        td.acmp-aliases
+      tr.performer-acmp-chosen-item.acmp-chosen-item
+        td.performer-acmp-id
+        td.performer-acmp-title
+        td.performer-acmp-romaji
+        td.performer-acmp-aliases
 
-    table
+    input type="hidden" name="release_id"
+    table.release-acmp-table.acmp-table
       tr
+        th ID
         th Year
         th Release Title
         th Romaji
         th Release Type
-        th
-      tr
+      tr.release-acmp-forms.acmp-forms
+        td NEW
         td: input type="text" name="release_year" style="width: 3em"
-        td: input type="text" name="release_title" value=@folder.name
+        td: input.autocomplete-release type="text" name="release_title" value=@folder.name data-url="" autocomplete="off"
         td: input type="text" name="release_romaji"
         td: input type="text" name="release_type" style="width: 7em"
+      tr.release-acmp-chosen-item.acmp-chosen-item
+        td.release-acmp-id
+        td.release-acmp-year
+        td.release-acmp-title
+        td.release-acmp-romaji
+        td.release-acmp-type
+      tr
+        td colspan="4"
         td: input type="submit"
 
   br
@@ -116,29 +126,63 @@ pre#mediainfo
 
 javascript:
  $(function(){
-  $('.autocomplete').each(function(){
+  $('.autocomplete-performer').each(function(){
     $(this).autocomplete({
       source: $(this).data('url'),
       minLength: 1,
       select: function(event,ui){
         $('input[name="performer_id"]').val(ui.item.id);
-        $('.acmp-table .acmp-forms').hide()
+        $('.performer-acmp-table .performer-acmp-forms').hide()
 
-        $('.acmp-table .acmp-id').html(ui.item.id);
-        $('.acmp-table .acmp-title').html(ui.item.value);
-        $('.acmp-table .acmp-romaji').html(ui.item.romaji);
-        $('.acmp-table .acmp-aliases').html(ui.item.aliases);
-        $('.acmp-table .acmp-chosen-item').show()
+        $('.performer-acmp-table .performer-acmp-id').html(ui.item.id);
+        $('.performer-acmp-table .performer-acmp-title').html(ui.item.value);
+        $('.performer-acmp-table .performer-acmp-romaji').html(ui.item.romaji);
+        $('.performer-acmp-table .performer-acmp-aliases').html(ui.item.aliases);
+
+        $('.performer-acmp-table .performer-acmp-chosen-item').show()
+
+        $('.autocomplete-release').each(function(){
+          $(this).autocomplete({
+            source: `/autocomplete/performer/${ui.item.id}/release`,
+            minLength: 0, // maybe should be 1
+            select: function(event,rui){
+              $('input[name="release_id"]').val(rui.item.id);
+              $('.release-acmp-table .release-acmp-forms').hide();
+
+              $('.release-acmp-table .release-acmp-id').html(rui.item.id);
+              $('.release-acmp-table .release-acmp-year').html(rui.item.year);
+              $('.release-acmp-table .release-acmp-title').html(rui.item.value);
+              $('.release-acmp-table .release-acmp-romaji').html(rui.item.romaji);
+              $('.release-acmp-table .release-acmp-type').html(rui.item.rtype);
+
+              $('.release-acmp-table .release-acmp-chosen-item').show();
+
+              return false;
+            }
+          });
+        });
 
         return false;
       }
     });
   });
  });
- $(document).on('click', '.acmp-chosen-item', function(event){
+ $(document).on('click', '.performer-acmp-chosen-item', function(event){
   $('input[name="performer_id"]').val(null);
+  $('input[name="release_id"]').val(null);
+
+  $('.performer-acmp-chosen-item').hide(); // aka $(this)
+  $('.release-acmp-chosen-item').hide();
+
+  $('.performer-acmp-table .performer-acmp-forms').show();
+  $('.release-acmp-table .release-acmp-forms').show();
+
+  $('.autocomplete-release').each('destroy');
+ });
+ $(document).on('click', '.release-acmp-chosen-item', function(event){
+  $('input[name="release_id"]').val(null);
   $(this).hide();
-  $('.acmp-table .acmp-forms').show();
+  $('.release-acmp-table .release-acmp-forms').show();
  });
 
  $(document).on('click', '.rating-choose-button', function(event){
