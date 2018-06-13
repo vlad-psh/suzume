@@ -52,6 +52,7 @@ post :process_folder do
   end
 
   release = Release.find_by(id: params[:release_id], performer_id: params[:performer_id]) if params[:performer_id].present? && params[:release_id].present?
+  new_release = false
   unless release.present?
     throw StandardError.new("Release title cannot be blank") if params[:release_title].blank?
     # TODO: if title is empty, append tracks to 'no album'
@@ -67,6 +68,7 @@ post :process_folder do
     release.update_attributes(
         directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s)
       )
+    new_release = true
   end
 
   folder.files.each do |md5,details|
@@ -117,7 +119,7 @@ post :process_folder do
       end
       img.destroy! # remove temp file
     end
-  end if release.records.count > 0
+  end if release.records.count > 0 && new_release == true
 
   folder.update_attributes(is_processed: true)
 

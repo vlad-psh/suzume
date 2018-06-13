@@ -127,10 +127,23 @@ class Folder < ActiveRecord::Base
       next unless File.directory?(c_fullpath)
 
       tulip_id_files = Dir.glob(File.join(c_fullpath, ".tulip.id.*"))
-      if tulip_id_files.count == 1 # should be only one file; TODO: review this condition
-        c_id = tulip_id_files[0].gsub(/.*\.tulip\.id\.([0-9]*)/, '\1').to_i # get only numbers
-        f = Folder.find_by(id: c_id)
-        if f.present?
+      if tulip_id_files.count > 0 # should be only one file; TODO: review this condition
+        c_folder_ids = tulip_id_files.map{|i| i.sub(/.*\.tulip\.id\./, '').to_i}
+        c_folders = Folder.where(id: c_folder_ids).order(id: :asc)
+
+        tulip_id_files.each do |tulip_id_file|
+          c_id = tulip_id_file.sub(/.*\.tulip\.id\./, '').to_i
+
+          # We only need one .tulip.id.# file
+          # We choose ID that was created earlier than others and has Folder object
+          # Ideally there shouldn't be more than one .tulip.id.# files, but...
+          next if c_folders[0].try(:id) == c_id
+
+          # Delete all other .tulip.id.# files
+          File.delete(tulip_id_files[0])
+        end
+
+        if (f = c_folders[0]).present?
           # update parents
           f.path = c_path
           f.folder_id = self.id
@@ -138,18 +151,17 @@ class Folder < ActiveRecord::Base
           f.is_removed = false
           f.is_symlink = File.symlink?(c_fullpath)
           f.save if f.changed?
-          next
-        else
-          File.delete(tulip_id_files[0]) unless f.present?
         end
+
+      else
+        Folder.create(
+            path: c_path,
+            folder_id: self.id,
+            parent_ids: [self.parent_ids, self.id].flatten,
+            is_symlink: File.symlink?(c_fullpath)
+        )
       end
 
-      Folder.create(
-          path: c_path,
-          folder_id: self.id,
-          parent_ids: [self.parent_ids, self.id].flatten,
-          is_symlink: File.symlink?(c_fullpath)
-      )
     end
 
     skip_folders.each do |c|
