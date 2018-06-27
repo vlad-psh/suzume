@@ -21,7 +21,11 @@ ul
         a href=path_to(:abyss_folder).with(f.id) data-method="delete" data-confirm="Delete?" Delete
 
 ruby:
-  ratings = %w(&#x1f525; &#x1f331; &#x1f33b; &#x1f337;)
+  ratings = [{emoji: '&#x274c;',  score: -1},
+             {emoji: '&#x1f342;', score: 3},
+             {emoji: '&#x1f331;', score: 0},
+             {emoji: '&#x1f33b;', score: 1},
+             {emoji: '&#x1f337;', score: 2}]
   @folder.get_files!
 
 - audio_count = 0
@@ -36,7 +40,7 @@ ruby:
         li
           - unless @folder.is_processed
             span.rating-choose-button> data-url=path_to(:abyss_file).with(@folder.id, md5)
-              == details['rating'] ? ratings[details['rating'] + 1] : '&#x2754;'
+              == details['rating'] ? ratings.select{|i|i[:score] == details['rating']}.first[:emoji] : '&#x2754;'
           - download_path = path_to(:abyss_file).with(@folder.id, md5)
           a.ajax-link.track-playback-link data-track-url=download_path href=download_path = fln
           '  | 
@@ -60,7 +64,7 @@ ruby:
 
 div id='title-tip' style="display: none"
   - ratings.each do |r|
-    div.rating-set-button data-value=(ratings.index(r) - 1) == r
+    div.rating-set-button data-value=r[:score] == r[:emoji]
 
 - if @folder.is_processed
   ' * This folder is already processed
@@ -208,7 +212,7 @@ javascript:
     method: "PATCH",
     data: {rating: rating}
   }).done(function(data){
-    $("[data-url='" + url + "']").html(#{{ratings}}[rating+1]);
+    $("[data-url='" + url + "']").html(#{{ ratings.sort{|a,b| a[:score] <=> b[:score]}.map{|i| i[:emoji]} }}[rating+1]);
     $('#title-tip').hide();
   });
 
