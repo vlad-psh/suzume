@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180328154605) do
+ActiveRecord::Schema.define(version: 2018_10_16_093451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,7 +68,6 @@ ActiveRecord::Schema.define(version: 20180328154605) do
   create_table "records", force: :cascade do |t|
     t.bigint "release_id", null: false
     t.string "original_filename"
-    t.string "filename"
     t.string "directory"
     t.integer "rating", default: 0
     t.jsonb "lyrics"
@@ -77,6 +76,8 @@ ActiveRecord::Schema.define(version: 20180328154605) do
     t.datetime "updated_at", null: false
     t.jsonb "mediainfo"
     t.jsonb "notes"
+    t.string "uid"
+    t.string "extension"
     t.index ["release_id"], name: "index_records_on_release_id"
   end
 
@@ -89,6 +90,7 @@ ActiveRecord::Schema.define(version: 20180328154605) do
     t.integer "year"
     t.string "romaji"
     t.string "release_type"
+    t.boolean "completed", default: false
     t.index ["performer_id"], name: "index_releases_on_performer_id"
   end
 

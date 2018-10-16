@@ -25,11 +25,7 @@ end
 
 patch :abyss_file do # currently only rating update
   folder = Folder.find(params[:folder_id])
-  filename = folder.files[params[:md5]].try(:[], 'fln')
-  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
-  folder.files[params[:md5]]['rating'] = params[:rating].to_i
-  folder.save if folder.changed?
-
+  folder.set_rating(params[:md5], params[:rating])
   return folder.files[params[:md5]].to_json
 end
 

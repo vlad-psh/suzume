@@ -56,6 +56,10 @@ class Record < ActiveRecord::Base
   has_one :performer, through: :release
   has_and_belongs_to_many :playlists
 
+  def filename
+    uid + '.' + extension
+  end
+
   def full_path
     File.join($library_path, directory, filename)
   end
@@ -236,5 +240,14 @@ class Folder < ActiveRecord::Base
     FileUtils.touch(tulip_id_filepath) unless File.exist?(tulip_id_filepath) || self.folder_id == nil
 
     return self.files
+  end
+
+  def set_rating(md5, _rating)
+    rating = _rating.to_i
+    filename = self.files[md5].try(:[], 'fln')
+    throw StandardError.new("Wrong file MD5: #{md5}") unless filename
+    self.files[md5]['rating'] = rating
+
+    self.save if self.changed?
   end
 end
