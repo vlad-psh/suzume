@@ -253,64 +253,89 @@ class Folder < ActiveRecord::Base
     self.save if self.changed?
   end
 
-  def process!
+  def process_image(md5, release)
+    details = self.files[md5]
+    throw StandardError.new("File with MD5 #{md5} doesn't exist in folder #{self.id}") unless details.present?
+    throw StandardError.new("File with MD5 #{md5} is not an image file") if details['type'] != 'image'
+
+    oldfilepath = File.join(self.full_path, details['fln'])
+    extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
+    newfilepath = File.join(release.full_path, "cover.#{extension}")
+    thumbfilepath = File.join(release.full_path, "thumb.#{extension}")
+    FileUtils.copy(oldfilepath, newfilepath)
+
+    img = MiniMagick::Image.open(newfilepath)
+    if [img.width, img.height].max > 400
+      img.resize("400x400>")
+      img.write(thumbfilepath)
+    else
+      FileUtils.copy(newfilepath, thumbfilepath)
+    end
+    img.destroy! # remove temp file
+  end
+
+  def process_audio(md5, release)
+    details = self.files[md5]
+    throw StandardError.new("File with MD5 #{md5} doesn't exist in folder #{self.id}") unless details.present?
+    throw StandardError.new("File with MD5 #{md5} is not an audio file") if details['type'] != 'audio'
+
+    FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
+    extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
+    # Select unique id for new filename
+    while Record.where(uid: (uid = SecureRandom.hex(4))).present? do end
+
+    oldfilepath = File.join(self.full_path, details['fln'])
+    newfilepath = File.join(release.full_path, "#{uid}.#{extension}")
+    FileUtils.copy(oldfilepath, newfilepath)
+
+    if extension == 'mp3'
+      `id3 -2 -rAPIC -rGEOB -s 0 -R '#{newfilepath}'`
+    elsif extension == 'm4a'
+      `mp4art --remove '#{newfilepath}'`
+      `mp4file --optimize '#{newfilepath}'`
+    end
+
+    record = Record.create(
+      release: release,
+      original_filename: details['fln'],
+      directory: release.directory,
+      uid: uid,
+      extension: extension,
+      rating: details['rating']
+    )
+
+    record.update_mediainfo!
+
+    return record
+  end
+
+  def process_files
     throw StandardError.new("Already processed") if self.is_processed
     release = self.release
+    throw StandardError.new("Cannot process Folder without linked Release") if release.blank?
     performer = release.performer
 
     self.files.each do |md5,details|
-      if details['type'] == 'audio' && details['rating'].present? && details['rating'] >= 0
-        FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
-        # create unique newfilename
-        extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
-        while File.exist?(File.join(release.full_path, newfilename = "#{SecureRandom.hex(4)}.#{extension}")) do end
+      next unless details['type'] == 'audio'
 
-        oldfilepath = File.join(self.full_path, details['fln'])
-        newfilepath = File.join(release.full_path, newfilename)
-        FileUtils.copy(oldfilepath, newfilepath)
-
-        if extension == 'mp3'
-          `id3 -2 -rAPIC -rGEOB -s 0 -R '#{newfilepath}'`
-        elsif extension == 'm4a'
-          `mp4art --remove '#{newfilepath}'`
-          `mp4file --optimize '#{newfilepath}'`
+      if details['rating'].present? && details['rating'] >= 0
+        if details['uid'].blank?
+          record = process_audio(md5, release)
+          self.files[md5]['uid'] = record.uid
+        # else # TODO: update rating of 'Record' object
         end
-
-        record = Record.create(
-          release: release,
-          original_filename: details['fln'],
-          filename: newfilename,
-          directory: release.directory,
-          rating: details['rating']
-        )
-        record.update_mediainfo!
+      # elsif details['rating'] == -1 && details['uid'].present? # TODO: Remove file from Library
       end
     end
 
     # Add/copy album cover image
-    self.files.each do |md5,details|
-      if details['type'] == 'image' && details.has_key?('cover') && details['cover'] == true
-        FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
+    # if directory (of an album) exists AND cover.* file DOES NOT exists
+    if Dir.exist?(release.full_path) && Dir.glob(File.join(release.full_path, 'cover.*')).length == 0
+      cover_index = self.files.keys.index {|i| self.files[i]['type'] == 'image' && self.files[i]['cover'] == true}
+      process_image(self.files.keys[cover_index], release) if cover_index.present?
+    end
 
-        oldfilepath = File.join(self.full_path, details['fln'])
-        extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
-        newfilepath = File.join(release.full_path, "cover.#{extension}")
-        thumbfilepath = File.join(release.full_path, "thumb.#{extension}")
-        FileUtils.copy(oldfilepath, newfilepath)
-
-        img = MiniMagick::Image.open(newfilepath)
-        if [img.width, img.height].max > 400
-          img.resize("400x400>")
-          img.write(thumbfilepath)
-        else
-          FileUtils.copy(newfilepath, thumbfilepath)
-        end
-        img.destroy! # remove temp file
-      end
-    end if release.records.count > 0 && new_release == true # TODO: check if new_release
-
-    self.update_attributes(is_processed: true)
-
-    flash[:notice] = "Folder \"#{self.path}\" processed successfully"
+#    self.is_processed = true
+    self.save if self.changed?
   end
 end

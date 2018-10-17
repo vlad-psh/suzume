@@ -69,6 +69,12 @@ post :abyss_set_folder_info do
   redirect path_to(:abyss_folder).with(folder.id)
 end
 
+post :abyss_process_folder do
+  folder = Folder.find(params[:folder_id])
+  folder.process_files
+  redirect path_to(:abyss_folder).with(folder.id)
+end
+
 post :abyss_set_cover do
   folder = Folder.find(params[:folder_id])
   filename = folder.files[params[:md5]].try(:[], 'fln')

@@ -66,6 +66,9 @@ div id='title-tip' style="display: none"
   - ratings.each do |r|
     div.rating-set-button data-value=r[:score] == r[:emoji]
 
+form method="POST" action=path_to(:abyss_process_folder).with(@folder.id)
+  input type="submit" value="Partial process"
+
 - if @folder.is_processed
   ' * This folder is already processed
 - elsif audio_count == 0
