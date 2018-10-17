@@ -33,9 +33,8 @@ def value_or_nil(v)
   return v.blank? ? nil : v
 end
 
-post :process_folder do
-  folder = Folder.find(params[:id])
-  throw StandardError.new("Already processed") if folder.is_processed
+post :abyss_set_folder_info do
+  folder = Folder.find(params[:folder_id])
 
   performer = Performer.find(params[:performer_id]) if params[:performer_id].present?
   unless performer.present?
@@ -47,8 +46,7 @@ post :process_folder do
     )
   end
 
-  release = Release.find_by(id: params[:release_id], performer_id: params[:performer_id]) if params[:performer_id].present? && params[:release_id].present?
-  new_release = false
+  release = Release.find_by(id: params[:release_id]) if params[:release_id].present?
   unless release.present?
     throw StandardError.new("Release title cannot be blank") if params[:release_title].blank?
     # TODO: if title is empty, append tracks to 'no album'
@@ -64,62 +62,9 @@ post :process_folder do
     release.update_attributes(
         directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s)
       )
-    new_release = true
   end
 
-  folder.files.each do |md5,details|
-    if details['type'] == 'audio' && details['rating'].present? && details['rating'] >= 0
-      FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
-      # create unique newfilename
-      extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
-      while File.exist?(File.join(release.full_path, newfilename = "#{SecureRandom.hex(4)}.#{extension}")) do end
-
-      oldfilepath = File.join(folder.full_path, details['fln'])
-      newfilepath = File.join(release.full_path, newfilename)
-      FileUtils.copy(oldfilepath, newfilepath)
-
-      if extension == 'mp3'
-        `id3 -2 -rAPIC -rGEOB -s 0 -R '#{newfilepath}'`
-      elsif extension == 'm4a'
-        `mp4art --remove '#{newfilepath}'`
-        `mp4file --optimize '#{newfilepath}'`
-      end
-
-      record = Record.create(
-        release: release,
-        original_filename: details['fln'],
-        filename: newfilename,
-        directory: release.directory,
-        rating: details['rating']
-      )
-      record.update_mediainfo!
-    end
-  end
-
-  folder.files.each do |md5,details|
-    if details['type'] == 'image' && details.has_key?('cover') && details['cover'] == true
-      FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
-
-      oldfilepath = File.join(folder.full_path, details['fln'])
-      extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
-      newfilepath = File.join(release.full_path, "cover.#{extension}")
-      thumbfilepath = File.join(release.full_path, "thumb.#{extension}")
-      FileUtils.copy(oldfilepath, newfilepath)
-
-      img = MiniMagick::Image.open(newfilepath)
-      if [img.width, img.height].max > 400
-        img.resize("400x400>")
-        img.write(thumbfilepath)
-      else
-        FileUtils.copy(newfilepath, thumbfilepath)
-      end
-      img.destroy! # remove temp file
-    end
-  end if release.records.count > 0 && new_release == true
-
-  folder.update_attributes(is_processed: true)
-
-  flash[:notice] = "Folder \"#{folder.path}\" processed successfully"
+  folder.update_attribute(:release_id, release.id)
 
   redirect path_to(:abyss_folder).with(folder.id)
 end

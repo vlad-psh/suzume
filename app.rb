@@ -47,7 +47,7 @@ paths index: '/',
     api_download_track: '/download/:id',
 # ----------- abyss.rb
     abyss_folder: '/abyss/:id', # get, delete
-    process_folder: '/abyss/:id/process', # post
+    abyss_set_folder_info: '/abyss/:folder_id/info', # post
 
     abyss_file: '/abyss/:folder_id/file/:md5', # get (download file), patch (set rating, ...?)
     abyss_set_cover: '/abyss/:folder_id/set_cover/:md5', # post

@@ -70,9 +70,12 @@ div id='title-tip' style="display: none"
   ' * This folder is already processed
 - elsif audio_count == 0
   ' * This folder cannot be processed because it doesn't contain any audio files
+- elsif @folder.release_id != nil
+  = "* #{@folder.release.title} (#{@folder.release.year}) by "
+  a href=path_to(:performer).with(@folder.release.performer.id) = @folder.release.performer.title
 - else
   script src="/js/jquery-ui.min.js"
-  form.process-folder-form method="POST" action=path_to(:process_folder).with(@folder.id)
+  form.process-folder-form method="POST" action=path_to(:abyss_set_folder_info).with(@folder.id)
     input type="hidden" name="performer_id"
     table.performer-acmp-table.acmp-table
       tr

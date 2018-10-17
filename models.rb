@@ -98,6 +98,8 @@ class Playlist < ActiveRecord::Base
 end
 
 class Folder < ActiveRecord::Base
+  belongs_to :release
+
   def self.root
     return Folder.find_or_create_by(path: '', folder_id: nil)
   end
@@ -249,5 +251,66 @@ class Folder < ActiveRecord::Base
     self.files[md5]['rating'] = rating
 
     self.save if self.changed?
+  end
+
+  def process!
+    throw StandardError.new("Already processed") if self.is_processed
+    release = self.release
+    performer = release.performer
+
+    self.files.each do |md5,details|
+      if details['type'] == 'audio' && details['rating'].present? && details['rating'] >= 0
+        FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
+        # create unique newfilename
+        extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
+        while File.exist?(File.join(release.full_path, newfilename = "#{SecureRandom.hex(4)}.#{extension}")) do end
+
+        oldfilepath = File.join(self.full_path, details['fln'])
+        newfilepath = File.join(release.full_path, newfilename)
+        FileUtils.copy(oldfilepath, newfilepath)
+
+        if extension == 'mp3'
+          `id3 -2 -rAPIC -rGEOB -s 0 -R '#{newfilepath}'`
+        elsif extension == 'm4a'
+          `mp4art --remove '#{newfilepath}'`
+          `mp4file --optimize '#{newfilepath}'`
+        end
+
+        record = Record.create(
+          release: release,
+          original_filename: details['fln'],
+          filename: newfilename,
+          directory: release.directory,
+          rating: details['rating']
+        )
+        record.update_mediainfo!
+      end
+    end
+
+    # Add/copy album cover image
+    self.files.each do |md5,details|
+      if details['type'] == 'image' && details.has_key?('cover') && details['cover'] == true
+        FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
+
+        oldfilepath = File.join(self.full_path, details['fln'])
+        extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
+        newfilepath = File.join(release.full_path, "cover.#{extension}")
+        thumbfilepath = File.join(release.full_path, "thumb.#{extension}")
+        FileUtils.copy(oldfilepath, newfilepath)
+
+        img = MiniMagick::Image.open(newfilepath)
+        if [img.width, img.height].max > 400
+          img.resize("400x400>")
+          img.write(thumbfilepath)
+        else
+          FileUtils.copy(newfilepath, thumbfilepath)
+        end
+        img.destroy! # remove temp file
+      end
+    end if release.records.count > 0 && new_release == true # TODO: check if new_release
+
+    self.update_attributes(is_processed: true)
+
+    flash[:notice] = "Folder \"#{self.path}\" processed successfully"
   end
 end
