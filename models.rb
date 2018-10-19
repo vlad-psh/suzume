@@ -24,6 +24,7 @@ end
 class Release < ActiveRecord::Base
   belongs_to :performer
   has_many :records
+  has_many :folders
 
   def full_path
     return nil unless self.directory
@@ -132,24 +133,14 @@ class Folder < ActiveRecord::Base
 
       next unless File.directory?(c_fullpath)
 
-      tulip_id_files = Dir.glob(File.join(c_fullpath, ".tulip.id.*"))
+      tulip_id_files = Dir.children(c_fullpath).select{|i| i =~ /\.tulip\.id\./}
+      folder_obj_exists = false
+
       if tulip_id_files.count > 0 # should be only one file; TODO: review this condition
-        c_folder_ids = tulip_id_files.map{|i| i.sub(/.*\.tulip\.id\./, '').to_i}
-        c_folders = Folder.where(id: c_folder_ids).order(id: :asc)
+        c_folder_id = tulip_id_files[0].sub(/.*\.tulip\.id\./, '').to_i
+        c_folder = Folder.find_by(id: c_folder_id)
 
-        tulip_id_files.each do |tulip_id_file|
-          c_id = tulip_id_file.sub(/.*\.tulip\.id\./, '').to_i
-
-          # We only need one .tulip.id.# file
-          # We choose ID that was created earlier than others and has Folder object
-          # Ideally there shouldn't be more than one .tulip.id.# files, but...
-          next if c_folders[0].try(:id) == c_id
-
-          # Delete all other .tulip.id.# files
-          File.delete(tulip_id_files[0])
-        end
-
-        if (f = c_folders[0]).present?
+        if (f = c_folder).present?
           # update parents
           f.path = c_path
           f.folder_id = self.id
@@ -157,15 +148,20 @@ class Folder < ActiveRecord::Base
           f.is_removed = false
           f.is_symlink = File.symlink?(c_fullpath)
           f.save if f.changed?
+          folder_obj_exists = true
+        else
+          File.delete(File.join(c_fullpath, tulip_id_files.first))
         end
+      end
 
-      else
-        Folder.create(
+      unless folder_obj_exists
+        f = Folder.create(
             path: c_path,
             folder_id: self.id,
             parent_ids: [self.parent_ids, self.id].flatten,
             is_symlink: File.symlink?(c_fullpath)
         )
+        FileUtils.touch(File.join(c_fullpath, ".tulip.id.#{f.id}"))
       end
 
     end

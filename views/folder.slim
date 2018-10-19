@@ -84,7 +84,7 @@ div id='title-tip' style="display: none"
     a href=path_to(:performer).with(@folder.release.performer.id) = @folder.release.performer.title
 
     h2 Notes
-    == slim :notes_table, locals: {notes: @folder.notes, parent_id: "#{@folder.model_name.singular}-#{@folder.id}"}
+    == slim :notes_table, locals: {notes: @folder.release.notes, parent_id: "release-#{@folder.release_id}"}
     == slim :note_form, locals: {note_parent: @folder.release}
   - else
     script src="/js/jquery-ui.min.js"
