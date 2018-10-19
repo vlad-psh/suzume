@@ -37,6 +37,6 @@ ul.releases-list
       = "#{r.year} #{r.title} (#{r.release_type}) "
       - unless r.completed
         span style="font-style: italic; opacity: 0.4" incomplete:
-        - r.folders.each do |f|
+        - r.folders.where(is_processed: false).each do |f|
           a< href=path_to(:abyss_folder).with(f.id) = f.id
       == slim :notes_table, locals: {notes: r.notes, parent_id: "release-#{r.id}"}

@@ -26,7 +26,7 @@ end
 patch :abyss_file do # currently only rating update
   folder = Folder.find(params[:folder_id])
   folder.set_rating(params[:md5], params[:rating])
-  folder.update_audio(params[:md5])
+  folder.update_audio(params[:md5]) if folder.release_id
   return folder.files[params[:md5]].to_json
 end
 
@@ -72,6 +72,12 @@ end
 post :abyss_process_folder do
   folder = Folder.find(params[:folder_id])
   folder.process_files
+  redirect path_to(:abyss_folder).with(folder.id)
+end
+
+post :abyss_folder_mark_completed do
+  folder = Folder.find(params[:folder_id])
+  folder.full_process
   redirect path_to(:abyss_folder).with(folder.id)
 end
 

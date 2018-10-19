@@ -50,6 +50,12 @@ class Release < ActiveRecord::Base
 
     return nil
   end
+
+  def maybe_completed!
+    if self.folders.map{|i| i.is_processed ? 0 : 1}.sum == 0
+      self.update_attribute(:completed, true)
+    end
+  end
 end
 
 class Record < ActiveRecord::Base
@@ -345,5 +351,12 @@ class Folder < ActiveRecord::Base
 
 #    self.is_processed = true
     self.save if self.changed?
+  end
+
+  def full_process
+    process_files
+    self.is_processed = true
+    self.save
+    self.release.maybe_completed!
   end
 end
