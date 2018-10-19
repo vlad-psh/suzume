@@ -249,7 +249,7 @@ class Folder < ActiveRecord::Base
     self.save if self.changed?
   end
 
-  def process_image(md5, release)
+  def process_image(md5)
     details = self.files[md5]
     throw StandardError.new("File with MD5 #{md5} doesn't exist in folder #{self.id}") unless details.present?
     throw StandardError.new("File with MD5 #{md5} is not an image file") if details['type'] != 'image'
@@ -270,18 +270,16 @@ class Folder < ActiveRecord::Base
     img.destroy! # remove temp file
   end
 
-  def process_audio(md5, release)
+  def create_audio_record(md5)
     details = self.files[md5]
-    throw StandardError.new("File with MD5 #{md5} doesn't exist in folder #{self.id}") unless details.present?
-    throw StandardError.new("File with MD5 #{md5} is not an audio file") if details['type'] != 'audio'
 
-    FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
+    FileUtils.mkdir_p(self.release.full_path) unless Dir.exist?(self.release.full_path)
     extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
     # Select unique id for new filename
     while Record.where(uid: (uid = SecureRandom.hex(4))).present? do end
 
     oldfilepath = File.join(self.full_path, details['fln'])
-    newfilepath = File.join(release.full_path, "#{uid}.#{extension}")
+    newfilepath = File.join(self.release.full_path, "#{uid}.#{extension}")
     FileUtils.copy(oldfilepath, newfilepath)
 
     if extension == 'mp3'
@@ -292,9 +290,9 @@ class Folder < ActiveRecord::Base
     end
 
     record = Record.create(
-      release: release,
+      release: self.release,
       original_filename: details['fln'],
-      directory: release.directory,
+      directory: self.release.directory,
       uid: uid,
       extension: extension,
       rating: details['rating']
@@ -302,36 +300,47 @@ class Folder < ActiveRecord::Base
 
     record.update_mediainfo!
 
-    return record
+    self.files[md5]['uid'] = record.uid
+    self.save
+  end
+
+  def update_audio(md5)
+    details = self.files[md5]
+    throw StandardError.new("File with MD5 #{md5} doesn't exist in folder #{self.id}") unless details.present?
+    throw StandardError.new("File with MD5 #{md5} is not an audio file") if details['type'] != 'audio'
+
+    if details['uid'].present?
+      r = Record.find_by(uid: details['uid'])
+      throw StandardError.new("Record not found by uid = #{details['uid']}") unless r.present?
+      if details['rating'].present? && details['rating'] >= 0
+        r.update_attribute(:rating, details['rating'])
+      else
+        r.delete_from_filesystem
+        self.files[md5].delete('uid')
+      end
+    else
+      if details['rating'].present? && details['rating'] >= 0
+        create_audio_record(md5)
+      # else # nothing to do
+      end
+    end
+    self.save
   end
 
   def process_files
     throw StandardError.new("Already processed") if self.is_processed
-    release = self.release
-    throw StandardError.new("Cannot process Folder without linked Release") if release.blank?
-    performer = release.performer
+    throw StandardError.new("Cannot process Folder without linked Release") if self.release.blank?
 
     self.files.each do |md5,details|
       next unless details['type'] == 'audio'
-
-      if details['rating'].present? && details['rating'] >= 0
-        if details['uid'].blank?
-          record = process_audio(md5, release)
-          self.files[md5]['uid'] = record.uid
-        # else # TODO: update rating of 'Record' object
-        end
-      elsif details['rating'] == -1 && details['uid'].present?
-        record = Record.find_by(uid: details['uid'])
-        record.delete_from_filesystem
-        self.files[md5].delete('uid')
-      end
+      update_audio(md5)
     end
 
     # Add/copy album cover image
     # if directory (of an album) exists AND cover.* file DOES NOT exists
-    if Dir.exist?(release.full_path) && Dir.glob(File.join(release.full_path, 'cover.*')).length == 0
+    if Dir.exist?(self.release.full_path) && Dir.glob(File.join(self.release.full_path, 'cover.*')).length == 0
       cover_index = self.files.keys.index {|i| self.files[i]['type'] == 'image' && self.files[i]['cover'] == true}
-      process_image(self.files.keys[cover_index], release) if cover_index.present?
+      process_image(self.files.keys[cover_index]) if cover_index.present?
     end
 
 #    self.is_processed = true
