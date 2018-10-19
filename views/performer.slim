@@ -7,7 +7,7 @@ p = "Romaji: #{@performer.romaji}; Aliases: #{@performer.aliases}"
 == slim :notes_table, locals: {notes: @performer.notes, parent_id: "performer-#{@performer.id}"}
 
 ruby:
-  ratings = %w(&#x1f342; &#x1f331; &#x1f33b; &#x1f337;)
+  ratings = RATING_EMOJI[1..-1]
   sorted_records = @performer.sorted_records
 
 - sorted_records.keys.reverse.each do |release|

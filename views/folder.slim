@@ -11,6 +11,11 @@ h1
   span< style="font-size: 0.5em; font-weight: normal"
     a href=path_to(:abyss_folder).with(@folder.id) data-method="delete" data-confirm="Delete?" Delete
 
+p style="font-size: 0.8em; opacity: 0.5"
+  - $config['rating_notes'].each_with_index do |n,i|
+    == RATING_EMOJI[i+1]
+    = " #{n} "
+
 ul
   - @folder.subfolders.each do |f|
     li
@@ -21,11 +26,7 @@ ul
         a href=path_to(:abyss_folder).with(f.id) data-method="delete" data-confirm="Delete?" Delete
 
 ruby:
-  ratings = [{emoji: '&#x274c;',  score: -1},
-             {emoji: '&#x1f342;', score: 0},
-             {emoji: '&#x1f331;', score: 1},
-             {emoji: '&#x1f33b;', score: 2},
-             {emoji: '&#x1f337;', score: 3}]
+  ratings = RATING_EMOJI.map{|i| {emoji: i, score: RATING_EMOJI.index(i) - 1}}
   @folder.get_files!
 
 - audio_count = 0

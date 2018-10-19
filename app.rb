@@ -84,8 +84,8 @@ configure do
 end
 
 MIME_EXT = {"JPEG" => "jpg", "image/jpeg" => "jpg", "PNG" => "png", "image/png" => "png"}
-RATINGS = ['Not Rated', 'Appalling', 'Horrible', 'Very Bad', 'Bad',
-           'Average', 'Fine', 'Good', 'Very Good', 'Great', 'Masterpiece']
+#RATING_EMOJI = %w(&#x274c; &#x1f342; &#x1f331; &#x1f33b; &#x1f337;) # plants sunflower tulip
+RATING_EMOJI = %w(&#x274c; &#x2753; &#x1f3b5; &#x2b50; &#x1f496;) # question note star heart
 
 def get_tulip_id(dir)
   tulip_files = Dir.glob(File.expand_path("*.tulip", dir))

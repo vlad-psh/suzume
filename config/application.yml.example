@@ -6,3 +6,8 @@ library_path: /mnt/pool/MUSICLIB
 abyss_path: /mnt/pool/MUSICUNSORT
 admins:
   adminUsername: veryStrongPassword
+rating_notes:
+  - Decent
+  - Fine
+  - Good
+  - I totally love it!
