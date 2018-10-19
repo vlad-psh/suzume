@@ -56,8 +56,7 @@ post :abyss_set_folder_info do
       title: params[:release_title],
       year: value_or_nil(params[:release_year]),
       romaji: value_or_nil(params[:release_romaji]),
-      release_type: value_or_nil(params[:release_type]),
-      notes: folder.notes.present? ? folder.notes : nil
+      release_type: value_or_nil(params[:release_type])
     )
     release.update_attributes(
         directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s)

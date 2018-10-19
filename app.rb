@@ -168,8 +168,6 @@ post :notes do
       Release.find(params[:parent_id])
     when 'record'
       Record.find(params[:parent_id])
-    when 'folder'
-      Folder.find(params[:parent_id])
     else
       raise StandardError.new("Unknown type: #{params[:parent_type]}")
     end

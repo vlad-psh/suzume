@@ -324,7 +324,10 @@ class Folder < ActiveRecord::Base
           self.files[md5]['uid'] = record.uid
         # else # TODO: update rating of 'Record' object
         end
-      # elsif details['rating'] == -1 && details['uid'].present? # TODO: Remove file from Library
+      elsif details['rating'] == -1 && details['uid'].present?
+        record = Record.find_by(uid: details['uid'])
+        record.delete_from_filesystem
+        self.files[md5].delete('uid')
       end
     end
 

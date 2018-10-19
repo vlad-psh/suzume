@@ -66,71 +66,70 @@ div id='title-tip' style="display: none"
   - ratings.each do |r|
     div.rating-set-button data-value=r[:score] == r[:emoji]
 
-form method="POST" action=path_to(:abyss_process_folder).with(@folder.id)
-  input type="submit" value="Partial process"
-
 - if @folder.is_processed
   ' * This folder is already processed
 - elsif audio_count == 0
   ' * This folder cannot be processed because it doesn't contain any audio files
-- elsif @folder.release_id != nil
-  = "* #{@folder.release.title} (#{@folder.release.year}) by "
-  a href=path_to(:performer).with(@folder.release.performer.id) = @folder.release.performer.title
 - else
-  script src="/js/jquery-ui.min.js"
-  form.process-folder-form method="POST" action=path_to(:abyss_set_folder_info).with(@folder.id)
-    input type="hidden" name="performer_id"
-    table.performer-acmp-table.acmp-table
-      tr
-        th ID
-        th Performer Name
-        th Romaji
-        th Aliases
-      tr.performer-acmp-forms.acmp-forms
-        td NEW
-        td: input.autocomplete-performer type="text" data-url=path_to(:autocomplete_performer) data-id="performer" title="Field with autocompletion" name="performer_title"
-        td: input type="text" name="performer_romaji"
-        td: input type="text" name="performer_aliases"
-      tr.performer-acmp-chosen-item.acmp-chosen-item
-        td.performer-acmp-id
-        td.performer-acmp-title
-        td.performer-acmp-romaji
-        td.performer-acmp-aliases
+  form method="POST" action=path_to(:abyss_process_folder).with(@folder.id)
+    input type="submit" value="Partial process"
 
-    input type="hidden" name="release_id"
-    table.release-acmp-table.acmp-table
-      tr
-        th ID
-        th Year
-        th Release Title
-        th Romaji
-        th Release Type
-      tr.release-acmp-forms.acmp-forms
-        td NEW
-        td: input type="text" name="release_year" style="width: 3em"
-        td: input.autocomplete-release type="text" name="release_title" value=@folder.name data-url="" autocomplete="off"
-        td: input type="text" name="release_romaji"
-        td: input type="text" name="release_type" style="width: 7em"
-      tr.release-acmp-chosen-item.acmp-chosen-item
-        td.release-acmp-id
-        td.release-acmp-year
-        td.release-acmp-title
-        td.release-acmp-romaji
-        td.release-acmp-type
-      tr
-        td colspan="4"
-        td: input type="submit"
-
-  br
   form method="POST" action=path_to(:download_cover)
     input type="text" name="url" placeholder="Cover URL"
     input type="hidden" name="folder_id" value=@folder.id
     input< type="submit" value="Download"
 
-  br
-  h2 Notes
-  == slim :notes_table, locals: {notes: @folder.notes, parent_id: "#{@folder.model_name.singular}-#{@folder.id}"}
-  == slim :note_form, locals: {note_parent: @folder}
+  - if @folder.release_id != nil
+    = "* #{@folder.release.title} (#{@folder.release.year}) by "
+    a href=path_to(:performer).with(@folder.release.performer.id) = @folder.release.performer.title
+
+    h2 Notes
+    == slim :notes_table, locals: {notes: @folder.notes, parent_id: "#{@folder.model_name.singular}-#{@folder.id}"}
+    == slim :note_form, locals: {note_parent: @folder.release}
+  - else
+    script src="/js/jquery-ui.min.js"
+    form.process-folder-form method="POST" action=path_to(:abyss_set_folder_info).with(@folder.id)
+      input type="hidden" name="performer_id"
+      table.performer-acmp-table.acmp-table
+        tr
+          th ID
+          th Performer Name
+          th Romaji
+          th Aliases
+        tr.performer-acmp-forms.acmp-forms
+          td NEW
+          td: input.autocomplete-performer type="text" data-url=path_to(:autocomplete_performer) data-id="performer" title="Field with autocompletion" name="performer_title"
+          td: input type="text" name="performer_romaji"
+          td: input type="text" name="performer_aliases"
+        tr.performer-acmp-chosen-item.acmp-chosen-item
+          td.performer-acmp-id
+          td.performer-acmp-title
+          td.performer-acmp-romaji
+          td.performer-acmp-aliases
+
+      input type="hidden" name="release_id"
+      table.release-acmp-table.acmp-table
+        tr
+          th ID
+          th Year
+          th Release Title
+          th Romaji
+          th Release Type
+        tr.release-acmp-forms.acmp-forms
+          td NEW
+          td: input type="text" name="release_year" style="width: 3em"
+          td: input.autocomplete-release type="text" name="release_title" value=@folder.name data-url="" autocomplete="off"
+          td: input type="text" name="release_romaji"
+          td: input type="text" name="release_type" style="width: 7em"
+        tr.release-acmp-chosen-item.acmp-chosen-item
+          td.release-acmp-id
+          td.release-acmp-year
+          td.release-acmp-title
+          td.release-acmp-romaji
+          td.release-acmp-type
+        tr
+          td colspan="4"
+          td: input type="submit"
 
 pre#mediainfo
 
