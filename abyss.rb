@@ -65,14 +65,14 @@ post :abyss_set_folder_info do
   end
 
   folder.update_attribute(:release_id, release.id)
-  folder.process_files
+  folder.process_files!
 
   redirect path_to(:abyss_folder).with(folder.id)
 end
 
 post :abyss_process_folder do
   folder = Folder.find(params[:folder_id])
-  folder.full_process
+  folder.full_process!
   redirect path_to(:abyss_folder).with(folder.id)
 end
 
@@ -87,6 +87,7 @@ post :abyss_set_cover do
   end
 
   folder.files[params[:md5]]['cover'] = true
+  folder.update_image(params[:md5])
   folder.save if folder.changed?
 
   return 'ok'

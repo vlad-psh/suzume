@@ -255,10 +255,25 @@ class Folder < ActiveRecord::Base
     self.save if self.changed?
   end
 
-  def process_image(md5)
+  def update_image(md5)
     details = self.files[md5]
+
     throw StandardError.new("File with MD5 #{md5} doesn't exist in folder #{self.id}") unless details.present?
     throw StandardError.new("File with MD5 #{md5} is not an image file") if details['type'] != 'image'
+
+    return unless Dir.exist?(self.release.full_path)
+    cover_names = Dir.children(self.release.full_path).select{|i| i =~ /cover\./}
+    if cover_names.length > 0
+      src_size = File.size( File.join(self.full_path, details['fln']) )
+      # we can assume that there is only one 'cover.*' file
+      dst_size = File.size( File.join(self.release.full_path, cover_names.first) )
+      return if src_size == dst_size
+    end
+
+    # Delete old covers
+    Dir.children(self.release.full_path).select{|i| i =~ /(cover|thumb)\./}.each do |imgname|
+      File.delete( File.join(self.release.full_path, imgname) )
+    end
 
     oldfilepath = File.join(self.full_path, details['fln'])
     extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
@@ -333,7 +348,7 @@ class Folder < ActiveRecord::Base
     self.save
   end
 
-  def process_files
+  def process_files!
     throw StandardError.new("Already processed") if self.is_processed
     throw StandardError.new("Cannot process Folder without linked Release") if self.release.blank?
 
@@ -342,19 +357,14 @@ class Folder < ActiveRecord::Base
       update_audio(md5)
     end
 
-    # Add/copy album cover image
-    # if directory (of an album) exists AND cover.* file DOES NOT exists
-    if Dir.exist?(self.release.full_path) && Dir.glob(File.join(self.release.full_path, 'cover.*')).length == 0
-      cover_index = self.files.keys.index {|i| self.files[i]['type'] == 'image' && self.files[i]['cover'] == true}
-      process_image(self.files.keys[cover_index]) if cover_index.present?
-    end
+    cover_index = self.files.keys.index {|i| self.files[i]['type'] == 'image' && self.files[i]['cover'] == true}
+    update_image(self.files.keys[cover_index]) if cover_index.present?
 
-#    self.is_processed = true
     self.save if self.changed?
   end
 
-  def full_process
-    process_files
+  def full_process!
+    process_files!
     self.is_processed = true
     self.save
     self.release.maybe_completed!
