@@ -28,7 +28,7 @@ paths index: '/',
     notes: '/notes',
     lyrics: '/lyrics',
     hide_notes: '/notes/hide',
-
+# ----------- auth.rb
     login: '/login',
     logout: '/logout',
 # ----------- tag.rb
@@ -57,10 +57,13 @@ paths index: '/',
 
     download_cover: '/download_cover' # post
 
-%w(models.rb helpers.rb api.rb tag.rb abyss.rb).each do |file|
-  require_relative "./#{file}"
-  also_reload "./#{file}"
-end
+require_relative './helpers.rb'
+also_reload './helpers.rb'
+
+Dir.glob('./models/*.rb').each {|f| require_relative f}
+Dir.glob('./controllers/*.rb').each {|f| require_relative f}
+also_reload './models/*.rb'
+also_reload './controllers/*.rb'
 
 helpers TulipHelpers
 
@@ -192,39 +195,6 @@ post :lyrics do
   track.save
 
   slim :lyrics_item, layout: false, locals: {title: params[:title], lyrics: params[:content]}
-end
-
-get :login do
-  if admin? || guest?
-    flash[:notice] = "Already logged in"
-    redirect path_to(:index)
-  else
-    slim :login
-  end
-end
-
-post :login do
-  if params['username'].blank? || params['password'].blank?
-    flash[:error] = "Incorrect username or password :("
-    redirect path_to(:login)
-  elsif $config['admins'] && $config['admins'][params['username']] == params['password']
-    flash[:notice] = "Successfully logged in as admin!"
-    session['role'] = 'admin'
-    redirect path_to(:index)
-  elsif $config['guests'] && $config['guests'][params['username']] == params['password']
-    flash[:notice] = "Successfully logged in as spectator!"
-    session['role'] = 'guest'
-    redirect path_to(:index)
-  else
-    flash[:error] = "Incorrect username or password :("
-    redirect path_to(:login)
-  end
-end
-
-delete :logout do
-  session.delete('role')
-  flash[:notice] = "Successfully logged out"
-  redirect path_to(:index)
 end
 
 def get_object_or_error(type, id)
