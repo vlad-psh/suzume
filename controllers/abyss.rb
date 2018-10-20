@@ -25,9 +25,12 @@ end
 
 patch :abyss_file do # currently only rating update
   folder = Folder.find(params[:folder_id])
-  folder.set_rating(params[:md5], params[:rating])
-  folder.update_audio(params[:md5]) if folder.release_id
-  return folder.files[params[:md5]].to_json
+  if params[:rating].present? && (rating = params[:rating].to_i) >= -1 && rating <= 3
+    folder.set_rating(params[:md5], rating)
+    folder.update_audio(params[:md5]) if folder.release_id
+    return {emoji: RATING_EMOJI[rating + 1]}.to_json
+  end
+  return {error: 'Unknown params'}.to_json
 end
 
 def value_or_nil(v)

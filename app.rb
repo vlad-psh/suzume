@@ -213,6 +213,10 @@ end
 
 patch :record do
   record = get_object_or_error(:record, params['id'])
-  return params.inspect
+  if params[:rating].present? && (rating = params[:rating].to_i) >= 0 && rating <= 3
+    record.update_attribute(:rating, rating)
+    return {emoji: RATING_EMOJI[rating + 1]}.to_json
+  end
+  return {error: 'Unknown params'}.to_json
 end
 

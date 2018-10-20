@@ -22,8 +22,9 @@ ruby:
       span< style="font-weight: normal; opacity: 0.5" = release.tmp_tags
       - sorted_records[release].each do |record|
         div
-          a.ajax-link.track-playback-link data-track-url=record.download_path href=record.download_path
+          span.rating-choose-button> data-url=path_to(:record).with(record.id)
             == ratings[record.rating]
+          a.ajax-link.track-playback-link data-track-url=record.download_path href=record.download_path
             = " #{strip_filename(record.original_filename)}"
           span< style="font-weight: normal; opacity: 0.5" = record.tmp_tags
           span< == "| #{mediainfo(record.mediainfo)}"
@@ -40,3 +41,7 @@ ul.releases-list
         - r.folders.where(is_processed: false).each do |f|
           a< href=path_to(:abyss_folder).with(f.id) = f.id
       == slim :notes_table, locals: {notes: r.notes, parent_id: "release-#{r.id}"}
+
+div id='title-tip' style="display: none"
+  - ratings.each_with_index do |r,i|
+    div.rating-set-button data-value=i == r

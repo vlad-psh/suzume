@@ -179,6 +179,7 @@ javascript:
     });
   });
  });
+ 
  $(document).on('click', '.performer-acmp-chosen-item', function(event){
   $('input[name="performer_id"]').val(null);
   $('input[name="release_id"]').val(null);
@@ -195,43 +196,6 @@ javascript:
   $('input[name="release_id"]').val(null);
   $(this).hide();
   $('.release-acmp-table .release-acmp-forms').show();
- });
-
- $(document).on('click', '.rating-choose-button', function(event){
-    var p = $(this).offset();
-    var tip = $('#title-tip');
-
-    tip.data('url', $(this).data('url'));
-    tip.show();
-
-    var pleft = p.left + $(this).outerWidth()/2 - tip.outerWidth()/2;
-    var ptop = p.top - tip.outerHeight() - 8;
-    tip.attr("style", "left: " + pleft + "px; top: " + ptop + "px");
-
-    event.stopPropagation();
- });
-
- $(document).on('click', '.rating-set-button', function(event){
-  var rating = $(this).data('value');
-  var url = $('#title-tip').data('url');
-
-  $.ajax({
-    url: url,
-    method: "PATCH",
-    data: {rating: rating}
-  }).done(function(data){
-    $("[data-url='" + url + "']").html(#{{ ratings.sort{|a,b| a[:score] <=> b[:score]}.map{|i| i[:emoji]} }}[rating+1]);
-    $('#title-tip').hide();
-  });
-
-  event.stopPropagation();
- });
-
- $(document).on('click', null, function(event){
-  if ($('#title-tip').is(":visible")) {
-    $('#title-tip').hide();
-    event.stopPropagation();
-  }
  });
 
  $(document).on('click', '.set-cover-link', function(event){

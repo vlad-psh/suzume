@@ -98,45 +98,43 @@ $(document).on('mouseleave', '.release-line', function(){
 // RATINGS
 // ***************************************
 
-var ratingNames = ["Not Rated","Appalling","Horrible","Very Bad","Bad","Average","Fine","Good","Very Good","Great","Masterpiece"];
+$(document).on('click', '.rating-choose-button', function(event){
+  var p = $(this).offset();
+  var tip = $('#title-tip');
 
-$(document).on('mousemove', 'div.rating', function(event){
-  var rating = getRatingFromPosition($(this), event);
-  updateRatingBlock($(this), rating);
+  tip.data('url', $(this).data('url'));
+  tip.show();
+
+  var pleft = p.left + $(this).outerWidth()/2 - tip.outerWidth()/2;
+  var ptop = p.top - tip.outerHeight() - 8;
+  tip.attr("style", "left: " + pleft + "px; top: " + ptop + "px");
+
+  event.stopPropagation();
 });
 
-$(document).on('mouseleave', 'div.rating', function(event){
-  updateRatingBlock($(this), $(this).data('rating'));
-});
+$(document).on('click', '.rating-set-button', function(event){
+  var rating = $(this).data('value');
+  var url = $('#title-tip').data('url');
 
-$(document).on('click', 'div.rating', function(event){
-  var el = $(this);
-  var rating = getRatingFromPosition(el, event);
   $.ajax({
-    url: el.data('url'),
-    method: "POST",
+    url: url,
+    method: "PATCH",
     data: {rating: rating}
-  }).done(function(data){
-    el.data('rating', data);
-    updateRatingBlock(el, data);
+  }).done(function(_data){
+    var data = JSON.parse(_data);
+    $("[data-url='" + url + "']").html(data.emoji);
+    $('#title-tip').hide();
   });
+
+  event.stopPropagation();
 });
 
-function getRatingFromPosition(el, event){
-  var offsetX = el.offset().left;
-  var width = el.width();
-  var rating = Math.round( (event.pageX - offsetX) / width * 10 );
-  return rating;
-}
-
-function updateRatingBlock(el, rating){
-  if (el.data('current-rating') != rating) {
-    el.removeClass('rated-' + el.data('current-rating'));
-    el.addClass('rated-' + rating);
-    el.data('current-rating', rating);
-    el.html(ratingNames[rating]);
+$(document).on('click', null, function(event){
+  if ($('#title-tip').is(":visible")) {
+    $('#title-tip').hide();
+    event.stopPropagation();
   }
-}
+});
 
 // ***************************************
 // HIDE NOTES
