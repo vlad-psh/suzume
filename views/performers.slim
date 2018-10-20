@@ -1,4 +1,4 @@
 ul.performers-list
   - @performers.each do |p|
     li
-      a href=path_to(:performer).with(p.id) = p.title
+      a href=path_to(:performer).with(p.id) = "#{p.title}#{p.romaji.present? ? ' (' + p.romaji + ')' : ''}"

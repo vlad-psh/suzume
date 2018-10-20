@@ -65,17 +65,12 @@ post :abyss_set_folder_info do
   end
 
   folder.update_attribute(:release_id, release.id)
+  folder.process_files
 
   redirect path_to(:abyss_folder).with(folder.id)
 end
 
 post :abyss_process_folder do
-  folder = Folder.find(params[:folder_id])
-  folder.process_files
-  redirect path_to(:abyss_folder).with(folder.id)
-end
-
-post :abyss_folder_mark_completed do
   folder = Folder.find(params[:folder_id])
   folder.full_process
   redirect path_to(:abyss_folder).with(folder.id)
