@@ -11,6 +11,14 @@ h1
   span< style="font-size: 0.5em; font-weight: normal"
     a href=path_to(:abyss_folder).with(@folder.id) data-method="delete" data-confirm="Delete?" Delete
 
+- if @folder.release_id != nil
+  = "* #{@folder.release.title} (#{@folder.release.year}) by "
+  a href=path_to(:performer).with(@folder.release.performer.id) = @folder.release.performer.title
+
+  - unless @folder.is_processed
+    br
+    a href=path_to(:abyss_process_folder).with(@folder.id) data-method="POST" data-confirm="Mark this folder as processed?" Full process!
+
 p style="font-size: 0.8em; opacity: 0.5"
   - $config['rating_notes'].each_with_index do |n,i|
     == RATING_EMOJI[i+1]
@@ -21,6 +29,9 @@ ul
     li
       == f.is_symlink ? '&#x1f517;' : nil
       a class=(f.is_processed ? 'processed-folder' : nil) href=path_to(:abyss_folder).with(f.id) = f.name
+      - if f.release_id
+        '  by
+        a style="background-color: #ffec83" href=path_to(:performer).with(f.release.performer.id) = f.release.performer.title
       span.li-autohide
         '  | 
         a href=path_to(:abyss_folder).with(f.id) data-method="delete" data-confirm="Delete?" Delete
@@ -28,8 +39,11 @@ ul
 ruby:
   ratings = RATING_EMOJI.map{|i| {emoji: i, score: RATING_EMOJI.index(i) - 1}}
   @folder.get_files!
+  audio_count = 0
+  @folder.files.each do |md5,details|
+    audio_count += 1 if details['type'] == 'audio'
+  end
 
-- audio_count = 0
 - unless @folder.files.blank?
   h2 Files
   ul
@@ -37,7 +51,6 @@ ruby:
       - md5 = @folder.md5_of_filename(fln)
       - details = @folder.files[md5]
       - if details['type'] == 'audio'
-        - audio_count += 1
         li
           - unless @folder.is_processed
             span.rating-choose-button> data-url=path_to(:abyss_file).with(@folder.id, md5)
@@ -68,28 +81,21 @@ div id='title-tip' style="display: none"
     div.rating-set-button data-value=r[:score] == r[:emoji]
 
 
-- if @folder.release_id != nil
-  = "* #{@folder.release.title} (#{@folder.release.year}) by "
-  a href=path_to(:performer).with(@folder.release.performer.id) = @folder.release.performer.title
-
-  h2 Notes
-  == slim :notes_table, locals: {notes: @folder.release.notes, parent_id: "release-#{@folder.release_id}"}
-  == slim :note_form, locals: {note_parent: @folder.release}
-
-
 - if @folder.is_processed
   ' * This folder is already processed
 - elsif audio_count == 0
   ' * This folder cannot be processed because it doesn't contain any audio files
 - else
-  a href=path_to(:abyss_process_folder).with(@folder.id) data-method="POST" data-confirm="Mark this folder as processed?" Full process!
-
   form method="POST" action=path_to(:download_cover)
     input type="text" name="url" placeholder="Cover URL"
     input type="hidden" name="folder_id" value=@folder.id
     input< type="submit" value="Download"
 
-  - if @folder.release_id == nil
+  - if @folder.release_id != nil
+    h2 Release Notes
+    == slim :notes_table, locals: {notes: @folder.release.notes, parent_id: "release-#{@folder.release_id}"}
+    == slim :note_form, locals: {note_parent: @folder.release}
+  - else
     script src="/js/jquery-ui.min.js"
     form.process-folder-form method="POST" action=path_to(:abyss_set_folder_info).with(@folder.id)
       input type="hidden" name="performer_id"
@@ -117,21 +123,24 @@ div id='title-tip' style="display: none"
           th Year
           th Release Title
           th Romaji
+          th Edition
           th Release Type
         tr.release-acmp-forms.acmp-forms
           td NEW
           td: input type="text" name="release_year" style="width: 3em"
           td: input.autocomplete-release type="text" name="release_title" value=@folder.name data-url="" autocomplete="off"
           td: input type="text" name="release_romaji"
+          td: input type="text" name="release_edition"
           td: input type="text" name="release_type" style="width: 7em"
         tr.release-acmp-chosen-item.acmp-chosen-item
           td.release-acmp-id
           td.release-acmp-year
           td.release-acmp-title
           td.release-acmp-romaji
+          td.release-acmp-edition
           td.release-acmp-type
         tr
-          td colspan="4"
+          td colspan="5"
           td: input type="submit"
 
 pre#mediainfo

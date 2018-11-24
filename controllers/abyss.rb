@@ -60,12 +60,14 @@ post :abyss_set_folder_info do
       title: params[:release_title],
       year: value_or_nil(params[:release_year]),
       romaji: value_or_nil(params[:release_romaji]),
+      format: value_or_nil(params[:release_format]),
       release_type: value_or_nil(params[:release_type])
     )
     release.update_attributes(
         directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s)
       )
   end
+  release.update_attribute(:completed, false) if release.completed && !folder.is_processed
 
   folder.update_attribute(:release_id, release.id)
   folder.process_files!
@@ -90,7 +92,7 @@ post :abyss_set_cover do
   end
 
   folder.files[params[:md5]]['cover'] = true
-  folder.update_image(params[:md5])
+  folder.update_image(params[:md5]) if folder.release.present?
   folder.save if folder.changed?
 
   return 'ok'

@@ -21,14 +21,14 @@ html
           a href=path_to(:login) style="text-decoration: none" ●
         a< href=path_to(:index) Index
         '  | 
-        a href=path_to(:tags) Tags
-        '  | 
+        //a href=path_to(:tags) Tags
+        //'  | 
         a href=path_to(:abyss_folder).with(0) Browse
       div.menu-block
         input.hide-notes-checkbox type="checkbox" checked=("checked" if request.session["hide-notes"] && request.session["hide-notes"] == true) Hide notes
-        '  |
-        form style="display: inline-block" action=path_to(:search) method="GET"
-          input type="text" name="query" placeholder="Search..."
+        //'  |
+        //form style="display: inline-block" action=path_to(:search) method="GET"
+        //  input type="text" name="query" placeholder="Search..."
       div#tulip-player
         a#pause-button &#9208;
         div id="progressbar" class="slider"

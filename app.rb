@@ -76,7 +76,7 @@ configure do
 #        key: 'fcs.app',
 #        domain: '172.16.0.11',
 #        path: '/',
-#        expire_after: 2592000,
+        expire_after: 2592000, # 30 days
         secret: $config['secret']
 
   $library_path = $config['library_path']

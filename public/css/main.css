@@ -513,19 +513,21 @@ input[type="submit"] {
 /* ==============================
    IPHONE
    ============================== */
-@media (max-width: 320px) {
+/* iphone max-width: 320px */
+@media (max-width: 420px) {
   .slider {
-    width: 200px;
+    width: 80vw;
     cursor: pointer;
   }
   #volumebar {
     width: 70px;
+    display: none;
   }
   #tulip-player {
     margin: 0;
   }
   #container {
-    margin-top: 100px;
+    padding-top: 1px;
     font-size: 0.8em;
   }
   #main-menu {
