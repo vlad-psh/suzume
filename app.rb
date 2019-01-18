@@ -19,6 +19,7 @@ require 'shellwords'
 
 paths index: '/',
     performer: '/performer/:id',
+    year: '/year/:year',
     autocomplete_performer: '/autocomplete/performer',
     autocomplete_release: '/autocomplete/performer/:performer_id/release',
     record: '/record/:id', # PATCH (update some properties)
@@ -116,6 +117,14 @@ get :performer do
 
   @performer = Performer.find(params[:id])
   slim :performer
+end
+
+get :year do
+  releases = Release.includes(:records).where(year: params[:year]).order(id: :desc)
+  @sorted_records = {}
+  releases.each {|r| @sorted_records[r] = r.records}
+
+  slim :releases
 end
 
 get :autocomplete_performer do

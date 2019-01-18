@@ -24,7 +24,7 @@ p style="font-size: 0.8em; opacity: 0.5"
     == RATING_EMOJI[i+1]
     = " #{n} "
 
-ul
+ul.folders-list
   - @folder.subfolders.each do |f|
     li
       == f.is_symlink ? '&#x1f517;' : nil
@@ -46,7 +46,7 @@ ruby:
 
 - unless @folder.files.blank?
   h2 Files
-  ul
+  ul.files-list
     - @folder.files.map{|md5,details|details['fln']}.sort.each do |fln|
       - md5 = @folder.md5_of_filename(fln)
       - details = @folder.files[md5]

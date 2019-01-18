@@ -1,3 +1,7 @@
+div
+  - Release.group(:year).count.keys.compact.sort.each do |year|
+    a> href=path_to(:year).with(year) = year
+
 ul.performers-list
   - @performers.each do |p|
     li

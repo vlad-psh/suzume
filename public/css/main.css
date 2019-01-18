@@ -534,6 +534,15 @@ input[type="submit"] {
     padding: 0;
     text-align: center;
   }
+  ul.folders-list,
+  ul.files-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  ul.folders-list li a,
+  ul.files-list li a {
+    line-height: 2em;
+  }
 }
 /* ==============================
    AUTOCOMPLETE MENU
