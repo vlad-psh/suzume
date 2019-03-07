@@ -59,4 +59,8 @@ module TulipHelpers
     return if admin? || guest?
     halt 401, "Unauthorized"
   end
+
+  def get_mime(filename)
+    MIME::Types.type_for(File.extname(filename)).first.to_s || 'application/octet-stream'
+  end
 end

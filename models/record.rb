@@ -11,10 +11,6 @@ class Record < ActiveRecord::Base
     File.join($library_path, directory, filename)
   end
 
-  def download_path
-    File.join('/rdownload', directory, filename)
-  end
-
   def update_mediainfo
     return unless File.exist?(self.full_path)
     m = MediaInfoNative::MediaInfo.new()

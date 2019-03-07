@@ -2,8 +2,8 @@
 - @sorted_records.keys.reverse.each do |release|
   div.release-container
     div.release-cover
-      a.cover-link href=release.download_cover
-        div.thumbnail: img src=release.download_thumb
+      a.cover-link href=path_to(:download_image).with(release.id, :cover)
+        div.thumbnail: img src=path_to(:download_image).with(release.id, :thumb)
     div.release-content
       span.release-title
         = "#{release.year} #{release.title}"
@@ -13,7 +13,7 @@
         div
           span.rating-choose-button> data-url=path_to(:record).with(record.id)
             == ratings[record.rating]
-          a.ajax-link.track-playback-link data-track-url=record.download_path href=record.download_path
+          a.ajax-link.track-playback-link data-track-url=path_to(:download_audio).with(record.uid) href=path_to(:download_audio).with(record.uid)
             = " #{strip_filename(record.original_filename)}"
           span< style="font-weight: normal; opacity: 0.5" = record.tmp_tags
           span< == "| #{mediainfo(record.mediainfo)}"

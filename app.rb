@@ -32,6 +32,9 @@ paths index: '/',
 # ----------- auth.rb
     login: '/login',
     logout: '/logout',
+# ----------- download.rb
+    download_audio: '/download/audio/:uid',
+    download_image: '/download/image/:release_id/:cover_type',
 # ----------- tag.rb
     tags: '/tags', # index
     tag: '/tag/:id', # delete tag
@@ -120,7 +123,7 @@ get :performer do
 end
 
 get :year do
-  releases = Release.includes(:records).where(year: params[:year]).order(id: :desc)
+  releases = Release.includes(:records).where(year: params[:year]).order(id: :asc)
   @sorted_records = {}
   releases.each {|r| @sorted_records[r] = r.records}
 
