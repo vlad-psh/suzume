@@ -183,6 +183,7 @@ class Folder < ActiveRecord::Base
       FileUtils.copy(newfilepath, thumbfilepath)
     end
     img.destroy! # remove temp file
+    self.release.update_attribute(:cover, extension)
   end
 
   def create_audio_record(md5)

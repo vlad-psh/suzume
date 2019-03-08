@@ -2,8 +2,11 @@
 - @sorted_records.keys.reverse.each do |release|
   div.release-container
     div.release-cover
-      a.cover-link href=path_to(:download_image).with(release.id, :cover)
-        div.thumbnail: img src=path_to(:download_image).with(release.id, :thumb)
+      - if release.cover
+        a.cover-link href=path_to(:download_image).with(release.id, :cover)
+          div.thumbnail: img src=path_to(:download_image).with(release.id, :thumb)
+      - else
+        div.thumbnail
     div.release-content
       span.release-title
         = "#{release.year} #{release.title}"
