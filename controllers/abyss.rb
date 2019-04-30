@@ -17,10 +17,13 @@ end
 
 get :abyss_file do
   folder = Folder.find(params[:folder_id])
-  file_path = folder.files[params[:md5]].try(:[], 'fln')
-  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless file_path
-  file_fullpath = File.join(folder.full_path, file_path)
-  send_file file_fullpath
+  filename = folder.files[params[:md5]].try(:[], 'fln')
+  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
+
+  filepath = File.join(folder.path, filename)
+  headers['X-Accel-Redirect'] = File.join("/nginx-abyss", filepath)
+  headers['Content-Disposition'] = "inline; filename=\"#{filename}\""
+  headers['Content-Type'] = get_mime(filename)
 end
 
 patch :abyss_file do # currently only rating update
