@@ -1,7 +1,6 @@
 // locals: tag, performer
 
-div class="tag tag-#{tag.category}"
-  span.tag-category = "#{tag.category}:"
+div class="tag"
   = tag.title
   a class="ajax-button remove-tag-link" data-performer-id=performer.id data-tag-id=tag.id
     img src="/img/del.png"

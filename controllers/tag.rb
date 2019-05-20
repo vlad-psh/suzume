@@ -54,14 +54,8 @@ post :tag_add do
   protect!
 
   performer = Performer.includes(:tags).find(params[:performer_id])
-
-  tag_category, tag_title = params[:tag_name].downcase.split(":")
-  unless tag_category.length != 1
-    tag = Tag.find_or_create_by(title: tag_title, category: tag_category)
-    performer.tags << tag unless performer.tags.include?(tag)
-  else
-    halt 400, "Specify category!"
-  end
+  tag = Tag.find_or_create_by(title: params[:tag_name])
+  performer.tags << tag
 
   slim :tag_item, layout: false, locals: {tag: tag, performer: performer}
 end
@@ -69,12 +63,9 @@ end
 post :tag_remove do
   protect!
 
-  TagRelation.where(
-        parent_type: params[:obj_type],
-        parent_id: params[:obj_id],
-        tag_id: params[:tag_id]).each do |tr|
-    tr.delete
-  end
+  performer = Performer.includes(:tags).find(params[:performer_id])
+  tag = Tag.find(params[:tag_id])
+  performer.tags.delete(tag)
 
   return "OK"
 end
