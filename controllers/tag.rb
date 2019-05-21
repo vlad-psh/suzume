@@ -9,23 +9,16 @@ end
 get :search_by_tag do
   protect!
 
-  tag = Tag.find(params[:id].to_i)
+  tag = Tag.find(params[:id])
 
   unless tag
     flash[:error] = "Tag with ID=#{params[:id]} was not found"
     redirect_to :index
   end
 
-  @artists = tag.artists
-  @sorted_albums = albums_by_type(tag.albums.order(year: :desc))
-  @tracks = tag.tracks
-  @notes = {}
-  Note.where(parent_type: 't', parent_id: @tracks).each do |n|
-    @notes[n.parent_id] ||= []
-    @notes[n.parent_id] << n
-  end
+  @performers = tag.performers
 
-  slim :index
+  slim :performers
 end
 
 delete :tag do
