@@ -1,6 +1,6 @@
 get :api_index do
   return Performer.all.order(title: :asc).map do |a|
-    {id: a.id, title: a.romaji ? "#{a.title} (#{a.romaji})" : a.title}
+    {id: a.id, title: a.romaji.present? ? "#{a.title} (#{a.romaji})" : a.title}
   end.to_json
 end
 

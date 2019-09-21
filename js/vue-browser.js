@@ -15,14 +15,19 @@ Vue.component('vue-browser', {
   methods: {
     loadPlaylist(tracks) {
       this.playlist = tracks;
-      this.playerStartPlaying();
+      this.playerStartPlaying(true);
     },
     addUpnext(track) {
       this.upnext.unshift(track);
+      if (this.playerStopped()) this.playerStartPlaying(false);
     },
-    playerStartPlaying() {
+    playerStartPlaying(skipUpnext) {
       if (this.upnext.length > 0 || this.playlist.length > 0) {
-        this.nowPlaying = this.upnext.length > 0 ? this.upnext.shift() : this.playlist.shift();
+        if (skipUpnext) {
+          this.nowPlaying = this.playlist.length > 0 ? this.playlist.shift() : this.upnext.shift();
+        } else {
+          this.nowPlaying = this.upnext.length > 0 ? this.upnext.shift() : this.playlist.shift();
+        }
         this.player.setAttribute('src', this.nowPlaying.src);
         this.player.play();
       } else {
@@ -46,6 +51,9 @@ Vue.component('vue-browser', {
         this.performers = [];
         this.performer = JSON.parse(data);
       });
+    },
+    playerStopped() {
+      return this.player.src === '' || this.player.ended === true;
     }
   },
   created() {
@@ -59,7 +67,7 @@ Vue.component('vue-browser', {
 <div class="vue-browser">
   <a class="ajax-link" @click="openIndex">Index</a>
   <br>
-  <audio id="main-player2" preload="none" @ended="playerStartPlaying" controls="controls" style="width: 500px"></audio>
+  <audio id="main-player2" preload="none" @ended="playerStartPlaying(false)" controls="controls" style="width: 500px"></audio>
 
   <ul v-if="performers.length > 0" class="performers-list">
     <li v-for="p in performers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></li>
