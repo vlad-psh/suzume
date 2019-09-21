@@ -6,3 +6,5 @@ Gemfile.lock
 *.sqlite3-journal
 public/cover
 public/lib
+public/build
+node_modules

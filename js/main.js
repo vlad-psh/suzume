@@ -1,3 +1,9 @@
+window.Vue = require('vue');
+require("jquery-ui/ui/widgets/autocomplete.js");
+require("jquery-ujs");
+
+require('./vue-browser.js');
+
 $(document).on('submit', '.add-tag-form', function(event){
   event.preventDefault();
 

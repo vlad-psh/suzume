@@ -1,0 +1,31 @@
+{
+  "name": "tulip",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@fruithub.fc:Tulip"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "cross-env": "^5.2.0",
+    "expose-loader": "^0.7.5",
+    "jquery": "^3.4.0",
+    "jquery-ui": "^1.12.1",
+    "jquery-ujs": "^1.2.2",
+    "vue": "^2.6.10",
+    "vue-loader": "^15.7.0",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0"
+  }
+}
