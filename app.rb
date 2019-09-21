@@ -23,6 +23,7 @@ paths index: '/',
     autocomplete_performer: '/autocomplete/performer',
     autocomplete_release: '/autocomplete/performer/:performer_id/release',
     record: '/record/:id', # PATCH (update some properties)
+    browser: '/browser',
 
     search: '/search',
 
@@ -43,12 +44,8 @@ paths index: '/',
     search_by_tag: '/tag/:id',
 # ----------- api.rb
     api_index: '/api/index',
-    api_artist: '/api/artist/:id',
-    api_album: '/api/album/:id',
-    # these methods are here for compatibility and should be rewritten
-    api_cover_orig: '/cover/orig/:id',
-    api_cover_thumb: '/cover/thumb/:id',
-    api_download_track: '/download/:id',
+    api_performer: '/api/performer/:id',
+    api_abyss: '/api/abyss/:id',
 # ----------- abyss.rb
     abyss_folder: '/abyss/:id', # get, delete
     abyss_process_folder: '/abyss/:folder_id/process', # post
@@ -113,6 +110,12 @@ get :index do
 #  end
 
   slim :performers
+end
+
+get :browser do
+  protect!
+
+  slim :browser
 end
 
 get :performer do

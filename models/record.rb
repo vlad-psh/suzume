@@ -34,4 +34,20 @@ class Record < ActiveRecord::Base
     File.delete(full_path) if File.exist?(full_path)
     self.delete
   end
+
+  def api_hash
+    return {
+      uid: uid,
+      title: stripped_filename,
+      rating: rating
+    }
+  end
+
+  def api_json
+    return api_hash.to_json
+  end
+
+  def stripped_filename
+    return original_filename.gsub(/\.mp3$/i, '').gsub(/\.m4a$/i, '').gsub(/^[0-9\-\.]* (- )?/, '')
+  end
 end

@@ -15,4 +15,18 @@ class Performer < ActiveRecord::Base
 
     return result
   end
+
+  def api_hash
+    return {
+      id: id,
+      title: title,
+      aliases: aliases,
+      romaji: romaji,
+      releases: releases.includes(:records).order(year: :desc).map{|r| r.api_hash}
+    }
+  end
+
+  def api_json
+    return api_hash.to_json
+  end
 end

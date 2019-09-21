@@ -13,4 +13,18 @@ class Release < ActiveRecord::Base
       self.update_attribute(:completed, true)
     end
   end
+
+  def api_hash
+    return {
+      id: id,
+      title: title,
+      year: year,
+      cover: cover,
+      records: records.map{|r| r.api_hash}
+    }
+  end
+
+  def api_json
+    return api_hash.to_json
+  end
 end

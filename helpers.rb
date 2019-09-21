@@ -38,10 +38,6 @@ module TulipHelpers
     return "<span class='mediainfo'>#{duration} | #{bitrate} @ #{samplerate}</span>"
   end
 
-  def strip_filename(fln)
-    return fln.gsub(/\.mp3$/i, '').gsub(/\.m4a$/i, '').gsub(/^[0-9\-\.]* (- )?/, '')
-  end
-
   def admin?
     session['role'] == 'admin'
   end

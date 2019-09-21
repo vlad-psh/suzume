@@ -16,7 +16,7 @@
           span.rating-choose-button> data-url=path_to(:record).with(record.id)
             == ratings[record.rating]
           a.ajax-link.track-playback-link data-track-url=path_to(:download_audio).with(record.uid) href=path_to(:download_audio).with(record.uid)
-            = " #{strip_filename(record.original_filename)}"
+            = " #{record.original_filename}"
           span< == "| #{mediainfo(record.mediainfo)}"
           span< style="font-size: 0.65em; opacity: 0.4" = "##{record.id}"
           == slim :notes_table, locals: {notes: record.notes, parent_id: "record-#{record.id}"}
