@@ -50,7 +50,9 @@ Vue.component('vue-performer', {
   },
   template: `
 <div class="vue-performer">
-  PERFORMER {{title}}
+  <h1>{{title}} <span style="font-size: 0.5em">#tags#</span></h1>
+  <p><template v-if="romaji">Romaji: {{romaji}};</template> <template v-if="aliases">Aliases: {{aliases}}</template></p>
+
   <template v-for="release of releases">
     <div v-if="release.records.length > 0" class="release-container">
       <div class="release-cover">

@@ -1,5 +1,14 @@
+ruby:
+  performers = Performer.all.order(title: :asc).map do |p|
+    {
+      id: p.id,
+      title: p.romaji.present? ? "#{p.title} (#{p.romaji})" : p.title
+    }
+  end
+
 div#vue-app
-  vue-browser :init-data=Performer.all.sample.api_json
+  /vue-browser :init-data={performer: Performer.all.sample.api_hash}.to_json
+  vue-browser :init-data={performers: performers}.to_json
 
 javascript:
   var app = new Vue({
