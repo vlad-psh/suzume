@@ -28,6 +28,14 @@ Vue.component('vue-performer', {
       }
       this.$emit('load-playlist', tracks);
     },
+    upnext(uid) {
+      record = this.releases.reduce((acc, release) => [...acc, ...release.records], []).find(i => i.uid === uid)
+      this.$emit('upnext', {
+        uid: record.uid,
+        title: record.title,
+        src: `/download/audio/${record.uid}`
+      });
+    },
     coverThumb(id) {
       return `/download/image/${id}/thumb`;
     },
@@ -57,7 +65,7 @@ Vue.component('vue-performer', {
         </span>
         <div v-for="record of release.records">
           <span class="rating-choose-button">{{ratingEmoji(record.rating + 1)}}</span>
-          <a class="ajax-link" :class="nowPlaying == record.uid ? 'track-now-playing' : null" @click="playSong(record.uid)">{{record.title}}</a>
+          <a class="ajax-link" :class="nowPlaying == record.uid ? 'track-now-playing' : null" @click="playSong(record.uid)">{{record.title}}</a> <span @click="upnext(record.uid)">&#x1f51c;</span>
         </div>
       </div>
     </div>
