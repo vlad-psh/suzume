@@ -1,6 +1,7 @@
 Vue.component('vue-performer', {
   props: {
-    initData: {type: Object, required: false}
+    initData: {type: Object, required: false},
+    nowPlaying: {type: String, required: false}
   },
   data() {
     return {
@@ -13,7 +14,19 @@ Vue.component('vue-performer', {
       return ['\u274c', '\u2753', '\ud83c\udfb5', '\u2b50', '\ud83d\udc96'][rating];
     },
     playSong(uid) { // emitted by vue-release
-      console.log(uid);
+      var tracks = [];
+      var appending = false;
+      for (release of this.releases) {
+        for (record of release.records) {
+          if (record.uid === uid) appending = true;
+          if (appending === true) tracks.push({
+            uid: record.uid,
+            title: record.title,
+            src: `/download/audio/${record.uid}`
+          });
+        }
+      }
+      this.$emit('load-playlist', tracks);
     },
     coverThumb(id) {
       return `/download/image/${id}/thumb`;
@@ -44,7 +57,7 @@ Vue.component('vue-performer', {
         </span>
         <div v-for="record of release.records">
           <span class="rating-choose-button">{{ratingEmoji(record.rating + 1)}}</span>
-          <a class="ajax-link" @click="playSong(record.uid)">{{record.title}}</a>
+          <a class="ajax-link" :class="nowPlaying == record.uid ? 'track-now-playing' : null" @click="playSong(record.uid)">{{record.title}}</a>
         </div>
       </div>
     </div>
