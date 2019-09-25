@@ -18,6 +18,7 @@ Vue.component('vue-browser', {
       this.playerStartPlaying(true);
     },
     addUpnext(track) {
+      track.origin = 'upnext';
       this.upnext.unshift(track);
       if (this.playerStopped()) this.playerStartPlaying(false);
     },
@@ -28,6 +29,7 @@ Vue.component('vue-browser', {
         } else {
           this.nowPlaying = this.upnext.length > 0 ? this.upnext.shift() : this.playlist.shift();
         }
+        this.nowPlaying.origin = "np";
         this.player.setAttribute('src', this.nowPlaying.src);
         this.player.play();
       } else {
@@ -55,6 +57,15 @@ Vue.component('vue-browser', {
     playerStopped() {
       return this.player.src === '' || this.player.ended === true;
     }
+  }, // end of methods()
+  computed: {
+    allTracks() {
+      tracks = [];
+      if (this.nowPlaying) tracks.push(this.nowPlaying);
+      if (this.upnext.length > 0) tracks.push(...this.upnext);
+      if (this.playlist.length > 0) tracks.push(...this.playlist);
+      return tracks;
+    }
   },
   created() {
     if (this.initData.performer) this.performer = this.initData.performer;
@@ -77,9 +88,9 @@ Vue.component('vue-browser', {
   <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @load-playlist="loadPlaylist($event)" @upnext="addUpnext($event)"></vue-performer>
   </td><td>
     <ul>
-      <li v-if="nowPlaying">&gt;&gt; {{nowPlaying.title}}</li>
-      <li v-for="track in upnext" style="background: rgba(255,255,0,0.2)">{{track.title}}</li>
-      <li v-for="track in playlist">{{track.title}}</li>
+      <li v-for="track in allTracks" :style="track.origin === 'upnext' ? 'background: rgba(255,255,0,0.2)' : null">
+        {{track.rating}} <template v-if="track.origin === 'np'">&gt;&gt; </template>{{track.title}}
+      </li>
     </ul>
   </td></tr></table>
 </div>

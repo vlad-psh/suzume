@@ -19,22 +19,23 @@ Vue.component('vue-performer', {
       for (release of this.releases) {
         for (record of release.records) {
           if (record.uid === uid) appending = true;
-          if (appending === true) tracks.push({
-            uid: record.uid,
-            title: record.title,
-            src: `/download/audio/${record.uid}`
-          });
+          if (appending === true) tracks.push(this.recordObject(record))
         }
       }
       this.$emit('load-playlist', tracks);
     },
     upnext(uid) {
       record = this.releases.reduce((acc, release) => [...acc, ...release.records], []).find(i => i.uid === uid)
-      this.$emit('upnext', {
+      this.$emit('upnext', this.recordObject(record));
+    },
+    recordObject(uid) {
+      return {
         uid: record.uid,
         title: record.title,
+        performer: this.title,
+        rating: this.ratingEmoji(record.rating + 1),
         src: `/download/audio/${record.uid}`
-      });
+      };
     },
     coverThumb(id) {
       return `/download/image/${id}/thumb`;
