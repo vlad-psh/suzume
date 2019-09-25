@@ -87,11 +87,20 @@ Vue.component('vue-browser', {
   <table v-if="performer.id"><tr><td>
   <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @load-playlist="loadPlaylist($event)" @upnext="addUpnext($event)"></vue-performer>
   </td><td>
-    <ul>
-      <li v-for="track in allTracks" :style="track.origin === 'upnext' ? 'background: rgba(255,255,0,0.2)' : null">
-        {{track.rating}} <template v-if="track.origin === 'np'">&gt;&gt; </template>{{track.title}}
-      </li>
-    </ul>
+    <div class="queue-manager">
+      <h3>Queue:</h3>
+      <table>
+        <tr v-for="track in allTracks" class="queue-track" :class="track.origin">
+          <td>
+            <template v-if="track.origin === 'np'">
+              <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+            </template>
+            <template v-else>{{track.rating}}</template>
+          </td>
+          <td>{{track.title}}<br><span class="performer">{{track.performer}}</span></td>
+        </tr>
+      </table>
+    </div>
   </td></tr></table>
 </div>
 `
