@@ -27,6 +27,7 @@ Vue.component('vue-browser', {
     },
     playerStartPlaying(skipUpnext) {
       if (this.upnext.length > 0 || this.playlist.length > 0) {
+        this.playerPosition = 0;
         if (skipUpnext) {
           this.nowPlaying = this.playlist.length > 0 ? this.playlist.shift() : this.upnext.shift();
         } else {
@@ -39,8 +40,9 @@ Vue.component('vue-browser', {
         this.startUpdatingProgress();
       } else {
         this.stopUpdatingProgress();
-        this.nowPlaying = null;
+        this.playerPosition = 0;
         this.playerStatus = 'stopped';
+        this.nowPlaying = null;
       }
     },
     openIndex() {
@@ -66,9 +68,11 @@ Vue.component('vue-browser', {
     },
     progressbarClick(e) {
       if (this.playerStatus !== 'playing' && this.playerStatus !== 'paused') return;
-      var percent = (e.pageX - e.srcElement.offsetLeft) / e.srcElement.clientWidth;
+      var leftOffset = e.srcElement.offsetLeft + document.querySelectorAll('.vue-player')[0].offsetLeft;
+      var percent = (e.pageX - leftOffset) / e.srcElement.clientWidth;
       percent = percent > 1 ? 1 : (percent < 0 ? 0 : percent); // return value between 0 and 1
       this.player.currentTime = this.player.duration * percent;
+      this.playerPosition = (percent * 100).toFixed(1);
     },
     pauseButtonClick() {
       this.player.pause();
@@ -96,7 +100,6 @@ Vue.component('vue-browser', {
     stopUpdatingProgress() {
       clearInterval(this.playerUpdater);
       this.playerUpdater = null;
-      this.playerPosition = 0;
     },
     playerLoadedMetadata() {
       if (this.playerStatus === 'playing') {
@@ -119,13 +122,11 @@ Vue.component('vue-browser', {
     if (this.initData.performers) this.performers = this.initData.performers;
   },
   mounted() {
-    this.player = $('#main-player2')[0];
+    this.player = document.querySelectorAll('#main-player')[0];
   },
   template: `
 <div class="vue-browser">
-  <a class="ajax-link" @click="openIndex">Index</a>
-  <br>
-  <audio id="main-player2" preload="none" @ended="playerStartPlaying(false)" controls="controls" style="width: 500px" @loadedmetadata="playerLoadedMetadata"></audio>
+  <audio id="main-player" preload="none" @ended="playerStartPlaying(false)" controls="controls" style="display: none;" @loadedmetadata="playerLoadedMetadata"></audio>
 
   <div class="vue-player" :class="'vue-player-' + playerStatus">
     <template>
@@ -139,6 +140,10 @@ Vue.component('vue-browser', {
       </div>
     </div>
   </div>
+
+  <br>
+  <a class="ajax-link" @click="openIndex">Index</a>
+  <br>
 
   <ul v-if="performers.length > 0" class="performers-list">
     <li v-for="p in performers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></li>

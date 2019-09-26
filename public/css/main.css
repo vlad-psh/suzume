@@ -457,7 +457,6 @@ input[type="submit"] {
 }
 .queue-manager .queue-track .performer {
   font-size: .8em;
-  font-weight: bold;
   opacity: .4;
 }
 .queue-manager table {
@@ -532,6 +531,8 @@ input[type="submit"] {
   }
 }
 .vue-player {
+  position: fixed;
+  top: 30px;
   width: 400px;
   display: flex;
   align-items: center;
