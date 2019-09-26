@@ -36,16 +36,9 @@ Vue.component('vue-browser', {
         this.player.setAttribute('src', this.nowPlaying.src);
         this.player.play();
         this.playerStatus = 'playing';
-        if (!this.playerUpdater) {
-          this.playerUpdater = setInterval(() => {
-            this.playerPosition = Math.round(this.player.currentTime / this.player.duration * 1000)/10;
-          }, 500);
-        }
+        this.startUpdatingProgress();
       } else {
-        clearInterval(this.playerUpdater);
-        this.playerUpdater = null;
-        this.playerPosition = 0;
-
+        this.stopUpdatingProgress();
         this.nowPlaying = null;
         this.playerStatus = 'stopped';
       }
@@ -75,17 +68,41 @@ Vue.component('vue-browser', {
       if (this.playerStatus !== 'playing' && this.playerStatus !== 'paused') return;
       var percent = (e.pageX - e.srcElement.offsetLeft) / e.srcElement.clientWidth;
       percent = percent > 1 ? 1 : (percent < 0 ? 0 : percent); // return value between 0 and 1
-      console.log(percent);
       this.player.currentTime = this.player.duration * percent;
     },
     pauseButtonClick() {
       this.player.pause();
       this.playerStatus = 'paused';
+      this.stopUpdatingProgress();
     },
     playButtonClick() {
       if (this.playerStatus !== 'paused') return;
       this.player.play();
       this.playerStatus = 'playing';
+      this.startUpdatingProgress();
+    },
+    startUpdatingProgress() {
+      if (this.playerUpdater) return; // Already has working updater
+      if (!this.player.duration) return; // Doesn't have metadata yet
+
+      var progressbarWidth = document.querySelectorAll('.vue-player .player-progressbar-wrapper')[0].clientWidth;
+      var interval = (this.player.duration * 1000 / progressbarWidth).toFixed(0);
+      if (interval < 200) interval = 200;
+
+      this.playerUpdater = setInterval(() => {
+        this.playerPosition = (this.player.currentTime / this.player.duration * 100).toFixed(1);
+      }, interval);
+    },
+    stopUpdatingProgress() {
+      clearInterval(this.playerUpdater);
+      this.playerUpdater = null;
+      this.playerPosition = 0;
+    },
+    playerLoadedMetadata() {
+      if (this.playerStatus === 'playing') {
+        this.stopUpdatingProgress();
+        this.startUpdatingProgress();
+      }
     }
   }, // end of methods()
   computed: {
@@ -108,7 +125,7 @@ Vue.component('vue-browser', {
 <div class="vue-browser">
   <a class="ajax-link" @click="openIndex">Index</a>
   <br>
-  <audio id="main-player2" preload="none" @ended="playerStartPlaying(false)" controls="controls" style="width: 500px"></audio>
+  <audio id="main-player2" preload="none" @ended="playerStartPlaying(false)" controls="controls" style="width: 500px" @loadedmetadata="playerLoadedMetadata"></audio>
 
   <div class="vue-player" :class="'vue-player-' + playerStatus">
     <template>
