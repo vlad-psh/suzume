@@ -7,6 +7,9 @@ Vue.component('vue-browser', {
       performer: {},
       performers: [],
       player: null,
+      playerStatus: 'init', // init, stopped, paused, playing
+      playerUpdater: null, // setInterval/clearInterval
+      playerPosition: 0, // in percents
       nowPlaying: null,
       playlist: [],
       upnext: [] // priority tracks
@@ -32,8 +35,19 @@ Vue.component('vue-browser', {
         this.nowPlaying.origin = "np";
         this.player.setAttribute('src', this.nowPlaying.src);
         this.player.play();
+        this.playerStatus = 'playing';
+        if (!this.playerUpdater) {
+          this.playerUpdater = setInterval(() => {
+            this.playerPosition = Math.round(this.player.currentTime / this.player.duration * 1000)/10;
+          }, 500);
+        }
       } else {
+        clearInterval(this.playerUpdater);
+        this.playerUpdater = null;
+        this.playerPosition = 0;
+
         this.nowPlaying = null;
+        this.playerStatus = 'stopped';
       }
     },
     openIndex() {
@@ -56,6 +70,22 @@ Vue.component('vue-browser', {
     },
     playerStopped() {
       return this.player.src === '' || this.player.ended === true;
+    },
+    progressbarClick(e) {
+      if (this.playerStatus !== 'playing' && this.playerStatus !== 'paused') return;
+      var percent = (e.pageX - e.srcElement.offsetLeft) / e.srcElement.clientWidth;
+      percent = percent > 1 ? 1 : (percent < 0 ? 0 : percent); // return value between 0 and 1
+      console.log(percent);
+      this.player.currentTime = this.player.duration * percent;
+    },
+    pauseButtonClick() {
+      this.player.pause();
+      this.playerStatus = 'paused';
+    },
+    playButtonClick() {
+      if (this.playerStatus !== 'paused') return;
+      this.player.play();
+      this.playerStatus = 'playing';
     }
   }, // end of methods()
   computed: {
@@ -80,6 +110,19 @@ Vue.component('vue-browser', {
   <br>
   <audio id="main-player2" preload="none" @ended="playerStartPlaying(false)" controls="controls" style="width: 500px"></audio>
 
+  <div class="vue-player" :class="'vue-player-' + playerStatus">
+    <template>
+      <div v-if="playerStatus === 'paused'" class="player-button" @click="playButtonClick">&#x25b6;</div>
+      <div v-else-if="playerStatus === 'playing'" class="player-button" @click="pauseButtonClick">&#x23f8;</div>
+      <div v-else class="player-button">&#x25b6;</div>
+    </template>
+    <div class="player-progressbar-wrapper" @click="progressbarClick">
+      <div class="player-progressbar">
+        <div class="player-progressbar-knob" :style="'left: calc(' + playerPosition + '% - 4px);'"></div>
+      </div>
+    </div>
+  </div>
+
   <ul v-if="performers.length > 0" class="performers-list">
     <li v-for="p in performers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></li>
   </ul>
@@ -92,8 +135,8 @@ Vue.component('vue-browser', {
       <table>
         <tr v-for="track in allTracks" class="queue-track" :class="track.origin">
           <td>
-            <template v-if="track.origin === 'np'">
-              <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+            <template v-if="track.origin === 'np' && playerStatus === 'playing'">
+              <div v-for="bar in [1,2,3,4]" class="eq-bar"></div>
             </template>
             <template v-else>{{track.rating}}</template>
           </td>
