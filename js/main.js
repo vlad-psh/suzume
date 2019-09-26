@@ -127,7 +127,7 @@ $(document).on('click', '.cover-link', function(event){
   $('#fullscreen-cover-container img').attr('src', link);
   $('#fullscreen-cover-container').show();
 });
-    
+
 $(document).on('click', '#fullscreen-cover-container', function(){
   $(this).hide();
   $('#fullscreen-cover-container img').attr('src', '');
@@ -138,178 +138,15 @@ $(document).on('click', '#fullscreen-cover-container', function(){
 // ***************************************
 
 $(document).ready(function(){
-  var playlist = [];
-  var playIndex = 0;
   var player = $('#main-player')[0];
-  var progressUpdateInterval;
-  var progressUpdateIntervalValue = null;
-  $('#volumebar .slider-value').css('width', player.volume * 100 + '%');
-
-  function startUpdateProgress(){
-    if (!progressUpdateInterval){
-      // 500ms is default value; it will be changed in updateProgress() function
-      progressUpdateInterval = setInterval(updateProgress, 500);
-      updateProgress(); // execute function immediately
-    }
-  };
-
-  function stopUpdateProgress(){
-    if (progressUpdateInterval){
-      clearInterval(progressUpdateInterval);
-      progressUpdateInterval = undefined;
-      progressUpdateIntervalValue = null;
-    }
-  };
-
-  function updateProgress(){
-    var width = 0;
-
-    if (progressUpdateIntervalValue == null) {
-      if (player.duration) {
-        progressUpdateIntervalValue = (player.duration / $('#progressbar').width() * 1000).toFixed(0)
-        console.log("interval: " + progressUpdateIntervalValue);
-        // recreate interval(timer) with correct interval value
-        clearInterval(progressUpdateInterval);
-        progressUpdateInterval = setInterval(updateProgress, progressUpdateIntervalValue);
-      }
-    }
-
-    if (player.duration) {
-      var hPercent = (player.currentTime / player.duration).toFixed(4);
-      width = ($('#progressbar').width() * hPercent).toFixed(0);
-    }
-    $('#progressbar .slider-value').css('width', width + 'px');
-    //console.log('width: ' + width);
-  };
-
-  function offsetPercents(el, event){
-    var percent = (event.pageX - el.offset().left) / el.width();
-    if (percent > 1){
-      percent = 1;
-    } else if (percent < 0){
-      percent = 0;
-    }
-    return percent;
-  };
-
-// progressbar seeking
-
-  var seekProgressMove = function(event){
-    $('#progressbar .slider-value').css('width', offsetPercents($('#progressbar'), event) * 100 + '%');
-    
-  };
-
-  var seekProgressMouseUp = function(event){
-    event.preventDefault();
-
-    $(document).off('mouseup', seekProgressMouseUp);
-    $(document).off('mousemove', seekProgressMove);
-
-    $('#progressbar').removeClass('seeking');
-    player.currentTime = offsetPercents($('#progressbar'), event) * player.duration;
-
-    startUpdateProgress();
-  };
-
-  $(document).on('mousedown', '#progressbar', function(event){
-    if (event.which == 1 && !player.paused){ // left mouse button only
-      event.preventDefault();
-
-      stopUpdateProgress();
-      $(this).addClass('seeking');
-      $(this).find('.slider-value').css('width', offsetPercents($('#progressbar'), event) * 100 + '%');
-
-      $(document).on('mouseup', seekProgressMouseUp);
-      $(document).on('mousemove', seekProgressMove);
-    }
-  });
-
-// volume slider
-
-  var seekVolumeMove = function(event){
-    $('#volumebar .slider-value').css('width', offsetPercents($('#volumebar'), event) * 100 + '%');
-    player.volume = offsetPercents($('#volumebar'), event);
-  };
-
-  var seekVolumeMouseUp = function(event){
-    event.preventDefault();
-
-    $(document).off('mouseup', seekVolumeMouseUp);
-    $(document).off('mousemove', seekVolumeMove);
-
-    $('#volumebar').removeClass('seeking');
-    player.volume = offsetPercents($('#volumebar'), event);
-    
-    startUpdateProgress();
-  };
-
-  $(document).on('mousedown', '#volumebar', function(event){
-    if (event.which == 1){ // left mouse button only
-      event.preventDefault();
-      
-      stopUpdateProgress();
-      $(this).addClass('seeking');
-      $(this).find('.slider-value').css('width', offsetPercents($('#volumebar'), event) * 100 + '%');
-
-      $(document).on('mouseup', seekVolumeMouseUp);
-      $(document).on('mousemove', seekVolumeMove);
-    }
-  });
-
-// other actions
-
-  $(document).on('click', '#pause-button', function(){
-    if (player.paused){
-      player.play();
-      startUpdateProgress();
-    } else {
-      player.pause();
-      stopUpdateProgress();
-    }
-  });
-
-  $(document).on('click', '.toggle-link', function(){
-    var target = $(this).data('target');
-    $(target).toggle();
-  });
 
   $(document).on('click', '.track-playback-link', function(event){
     event.preventDefault();
 
-    var track_url = $(this).data('track-url');
-    playlist = [];
-    $('.track-playback-link').each(function(){
-      var url = $(this).data('track-url');
-      playlist.push(url);
-      //console.log(url);
-      if (url == track_url) {
-        playIndex = playlist.length - 1;
-      }
-    });
-
-    stopUpdateProgress();
-    play();
-    startUpdateProgress();
-  });
-
-  function play(){
-    $(player).attr('src', playlist[playIndex]);
+    var trackUrl = $(this).data('track-url');
+    $(player).attr('src', trackUrl);
     player.play();
-    startUpdateProgress();
     $('.track-now-playing').removeClass('track-now-playing');
-    $('.track-playback-link').each(function(){
-      if ($(this).data('track-url') == playlist[playIndex]) {
-        $(this).addClass('track-now-playing')
-      }
-    });
-  }
-
-  $('#main-player').on('ended', function(){
-    stopUpdateProgress();
-    playIndex = playIndex + 1;
-    if (playIndex < playlist.length) {
-      player.currentTime = 0;
-      play();
-    }
+    $(this).addClass('track-now-playing');
   });
 });

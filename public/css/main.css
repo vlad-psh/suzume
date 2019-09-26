@@ -365,64 +365,6 @@ body.hide-notes .notes-table .note-content:hover {
 #main-menu .menu-block {
   display: inline-block;
 }
-/* --------------------------
-   tulip-player
-   -------------------------- */
-#tulip-player {
-  display: inline-block;
-  position: relative;
-  vertical-align: top;
-  margin: 0 0 0 0.8em;
-  padding: 0;
-  height: 100%;
-}
-.slider {
-  display: inline-block;
-  width: 300px;
-  padding: 12px 0;
-}
-.slider-value-wrapper {
-  background-color: rgba(255,255,255,0.1);
-  border-radius: 10px;
-}
-.slider-value {
-  background-color: #00AEEF;
-  height: 7px;
-  width: 7px;
-/*  transition: width 500ms;*/
-  vertical-align: middle;
-  border-radius: 10px;
-}
-.slider:hover .slider-value-wrapper {
-  background-color: rgba(255,255,255,0.15);
-}
-.slider.seeking {
-  opacity: 0.85;
-}
-.slider.seeking .slider-value {
-  transition: none !important;
-}
-#volumebar {
-  width: 100px;
-  margin-left: 0.5em;
-}
-#volumebar .slider-value {
-  background-color: #00A651;
-}
-#progressbar:hover .slider-value {
-  background-color: #20c1fc;
-}
-#volumebar:hover .slider-value {
-  background-color: #00c15d;
-}
-#tulip-player a {
-  display: inline-block;
-  cursor: pointer;
-  font-size: 1.2em;
-  vertical-align: middle;
-  margin: -28px 0.3em 0 0;
-  padding: 0 0 0 0;
-}
 /* ==============================
    RATING-TOOLTIP
    ============================== */
