@@ -8,3 +8,4 @@ public/cover
 public/lib
 public/build
 node_modules
+package-lock.json
