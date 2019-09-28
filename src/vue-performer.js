@@ -1,3 +1,5 @@
+require("jquery-ui/ui/widgets/selectable");
+
 Vue.component('vue-performer', {
   props: {
     initData: {type: Object, required: false},
@@ -13,22 +15,11 @@ Vue.component('vue-performer', {
       // 274c, 2753, 1f3b5, 2b50, 1f496
       return ['\u274c', '\u2753', '\ud83c\udfb5', '\u2b50', '\ud83d\udc96'][rating];
     },
-    playSong(uid) { // emitted by vue-release
-      var tracks = [];
-      var appending = false;
-      for (release of this.releases) {
-        for (record of release.records) {
-          if (record.uid === uid) appending = true;
-          if (appending === true) tracks.push(this.recordObject(record))
-        }
-      }
-      this.$emit('load-playlist', tracks);
+    playTrack(uid) { // emitted by vue-release
+      record = this.releases.reduce((acc, release) => [...acc, ...release.records], []).find(i => i.uid === uid);
+      this.$emit('play-track', this.recordObject(record));
     },
-    upnext(uid) {
-      record = this.releases.reduce((acc, release) => [...acc, ...release.records], []).find(i => i.uid === uid)
-      this.$emit('upnext', this.recordObject(record));
-    },
-    recordObject(uid) {
+    recordObject(record) {
       return {
         uid: record.uid,
         title: record.title,
@@ -49,10 +40,14 @@ Vue.component('vue-performer', {
       this[key] = this.initData[key];
     }
   },
+  mounted() {
+//    $('.vue-performer').selectable({
+//      filter: '.record-line'
+//    });
+  },
   template: `
 <div class="vue-performer">
-  <h1>{{title}} <span style="font-size: 0.5em">#tags#</span></h1>
-  <p><template v-if="romaji">Romaji: {{romaji}};</template> <template v-if="aliases">Aliases: {{aliases}}</template></p>
+  <div class="performer-title">{{title}} <span class="performer-aliases">{{romaji}}<template v-if="romaji && aliases">, </template>{{aliases}}</span></div>
 
   <div class="releases-grid">
     <template v-for="release of releases">
@@ -68,10 +63,10 @@ Vue.component('vue-performer', {
             <span style="font-size: 0.65em; opacity: 0.4; font-weight: normal;">#{{id}}</span>
           </span>
           <table class="records-table">
-            <tr v-for="record of release.records">
+            <tr v-for="record of release.records" class="record-line">
               <td class="rating"><span class="rating-choose-button">{{ratingEmoji(record.rating + 1)}}</span></td>
-              <td class="trackname" @click="playSong(record.uid)" :class="nowPlaying == record.uid ? 'track-now-playing' : null"><span>{{record.title}}</span></td>
-              <td><span @click="upnext(record.uid)">&#x1f51c;</span></td>
+              <td class="trackname" @click="playTrack(record.uid)" :class="nowPlaying == record.uid ? 'track-now-playing' : null"><span>{{record.title}}</span></td>
+              <td class="duration">{{record.dur}}</td>
             </tr>
           </table>
         </div>

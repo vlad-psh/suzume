@@ -27,7 +27,7 @@ module.exports = {
           loader: 'expose-loader',
           options: '$'
         }]
-      }
+      },
     ] // end of rules
   }, // end of module
   resolve: {

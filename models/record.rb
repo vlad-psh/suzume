@@ -35,11 +35,22 @@ class Record < ActiveRecord::Base
     self.delete
   end
 
+  def duration_string
+    total_s = mediainfo['dur'].to_i / 1000
+    s = total_s % 60
+    total_m = total_s / 60
+    m = total_m % 60
+    h = total_m / 60
+    return [h > 0 ? h : nil, h > 0 ? '%02d' % m : m, '%02d' % s].compact.join(':')
+  end
+
   def api_hash
     return {
       uid: uid,
       title: stripped_filename,
-      rating: rating
+      rating: rating,
+      dur: duration_string,
+      br: "#{mediainfo['br'].to_i/1000}#{mediainfo['brm']}"
     }
   end
 

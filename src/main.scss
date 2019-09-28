@@ -8,7 +8,7 @@ body {
 
   #container {
     margin: 1em;
-    margin-top: 30px;
+    margin-top: 50px;
   }
   h1 {
     font-weight: 600;
@@ -58,6 +58,18 @@ body {
   }
 
   .vue-performer {
+    .performer-title {
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin-left: 1rem;
+
+      .performer-aliases {
+        font-size: 1rem;
+        font-weight: normal;
+        opacity: .3;
+      }
+    }
+
     .releases-grid {
       display: flex;
       //justify-content: space-evenly;
@@ -88,7 +100,7 @@ body {
       .release-content {
         .records-table {
           td.trackname {
-            max-width: 14em;
+            max-width: 12em;
             position: relative;
             z-index: 10;
             cursor: pointer;
@@ -111,8 +123,23 @@ body {
             &.track-now-playing span {
               background: #ffffa3;
             }
+          } // end of td.trackname
+          td.duration {
+            font-size: .8em;
           }
-        }
+          tr.record-line.ui-selecting,
+          tr.record-line.ui-selected {
+            td.trackname {
+              background: #295fb8;
+
+              span {
+                background: none;
+                color: white;
+                text-shadow: none;
+              }
+            }
+          }
+        } // end of .records-table
       } // end of .release-content
     } // end of .releases-grid
   } // end of .vue-performer
@@ -241,6 +268,7 @@ body {
     background: #eee;
     padding: .2em .8em;
     border-radius: .6em;
+    z-index: 100;
 
     div {
       display: inline-block;
@@ -294,6 +322,13 @@ body {
     }
 
   } // end of .vue-player
+
+  .ui-selectable-helper {
+    position: absolute;
+    //border: 1px dotted black;
+    border: 1px solid #39f;
+    background: rgba(51,153,255,0.4);
+  }
 }
 
 @keyframes eq-bar {

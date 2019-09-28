@@ -10,30 +10,32 @@ Vue.component('vue-browser', {
       playerStatus: 'init', // init, stopped, paused, playing
       playerUpdater: null, // setInterval/clearInterval
       playerPosition: 0, // in percents
-      nowPlaying: null,
-      playlist: [],
-      upnext: [] // priority tracks
+      nowPlayingIndex: null,
+      playlist: []
     }
   },
   methods: {
-    loadPlaylist(tracks) {
-      this.playlist = tracks;
-      this.playerStartPlaying(true);
+    addTrack(track) {
+      this.playlist.push(track);
+      if (this.playerStatus === 'init' || this.playerStatus === 'stopped') {
+        this.playerStartPlaying(this.playlist.length - 1);
+      }
     },
-    addUpnext(track) {
-      track.origin = 'upnext';
-      this.upnext.unshift(track);
-      if (this.playerStopped()) this.playerStartPlaying(false);
-    },
-    playerStartPlaying(skipUpnext) {
-      if (this.upnext.length > 0 || this.playlist.length > 0) {
-        this.playerPosition = 0;
-        if (skipUpnext) {
-          this.nowPlaying = this.playlist.length > 0 ? this.playlist.shift() : this.upnext.shift();
+    playerStartPlaying(index = null) {
+      if (index === null) {
+        if (this.nowPlayingIndex !== null) {
+          index = this.nowPlayingIndex + 1;
+          if (index >= this.playlist.length) index = 0;
+          // TODO: check if repeat mode is turned on
+          // If repeat mode is turned off, set 'index = null'
         } else {
-          this.nowPlaying = this.upnext.length > 0 ? this.upnext.shift() : this.playlist.shift();
+          index = 0;
         }
-        this.nowPlaying.origin = "np";
+      }
+
+      this.nowPlayingIndex = index;
+      if (index !== null) {
+        this.playerPosition = 0;
         this.player.setAttribute('src', this.nowPlaying.src);
         this.player.play();
         this.playerStatus = 'playing';
@@ -42,7 +44,6 @@ Vue.component('vue-browser', {
         this.stopUpdatingProgress();
         this.playerPosition = 0;
         this.playerStatus = 'stopped';
-        this.nowPlaying = null;
       }
     },
     openIndex() {
@@ -109,12 +110,8 @@ Vue.component('vue-browser', {
     }
   }, // end of methods()
   computed: {
-    allTracks() {
-      tracks = [];
-      if (this.nowPlaying) tracks.push(this.nowPlaying);
-      if (this.upnext.length > 0) tracks.push(...this.upnext);
-      if (this.playlist.length > 0) tracks.push(...this.playlist);
-      return tracks;
+    nowPlaying() {
+      return this.nowPlayingIndex !== null ? this.playlist[this.nowPlayingIndex] : null;
     }
   },
   created() {
@@ -126,7 +123,7 @@ Vue.component('vue-browser', {
   },
   template: `
 <div class="vue-browser">
-  <audio id="main-player" preload="none" @ended="playerStartPlaying(false)" controls="controls" style="display: none;" @loadedmetadata="playerLoadedMetadata"></audio>
+  <audio id="main-player" preload="none" @ended="playerStartPlaying()" controls="controls" style="display: none;" @loadedmetadata="playerLoadedMetadata"></audio>
 
   <div class="vue-player" :class="'vue-player-' + playerStatus">
     <template>
@@ -152,15 +149,15 @@ Vue.component('vue-browser', {
     </div>
 
     <div v-else-if="performer.id" class="browser-content">
-      <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @load-playlist="loadPlaylist($event)" @upnext="addUpnext($event)"></vue-performer>
+      <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @play-track="addTrack($event)"></vue-performer>
     </div>
 
     <div class="queue-manager">
       <h3>Queue:</h3>
       <table>
-        <tr v-for="track in allTracks" class="queue-track" :class="track.origin">
+        <tr v-for="(track, trackIndex) in playlist" class="queue-track" :class="track.origin">
           <td>
-            <template v-if="track.origin === 'np' && playerStatus === 'playing'">
+            <template v-if="trackIndex === nowPlayingIndex && playerStatus === 'playing'">
               <div v-for="bar in [1,2,3,4]" class="eq-bar"></div>
             </template>
             <template v-else>{{track.rating}}</template>
