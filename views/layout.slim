@@ -4,7 +4,7 @@ html
     meta charset="utf-8"
     title = (@title ? "#{@title} - Tulip" : "Tulip")
     script src="/build/main.js"
-    link rel="stylesheet" type="text/css" href="/css/main.css"
+    link rel="stylesheet" type="text/css" href="/build/main.css"
     meta content="width=device-width, initial-scale=1" name="viewport"
   body class=("hide-notes" if request.session["hide-notes"] && request.session["hide-notes"] == true)
     div#fullscreen-cover-container

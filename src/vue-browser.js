@@ -141,17 +141,20 @@ Vue.component('vue-browser', {
     </div>
   </div>
 
-  <br>
   <a class="ajax-link" @click="openIndex">Index</a>
   <br>
 
-  <ul v-if="performers.length > 0" class="performers-list">
-    <li v-for="p in performers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></li>
-  </ul>
+  <div class="browser-grid-layout">
+    <div v-if="performers.length > 0" class="browser-content">
+      <div class="performers-list">
+        <div v-for="p in performers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></div>
+      </div>
+    </div>
 
-  <table v-if="performer.id"><tr><td>
-  <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @load-playlist="loadPlaylist($event)" @upnext="addUpnext($event)"></vue-performer>
-  </td><td>
+    <div v-else-if="performer.id" class="browser-content">
+      <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @load-playlist="loadPlaylist($event)" @upnext="addUpnext($event)"></vue-performer>
+    </div>
+
     <div class="queue-manager">
       <h3>Queue:</h3>
       <table>
@@ -166,7 +169,7 @@ Vue.component('vue-browser', {
         </tr>
       </table>
     </div>
-  </td></tr></table>
+  </div>
 </div>
 `
 });

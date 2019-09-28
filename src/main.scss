@@ -1,0 +1,309 @@
+body {
+/*  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;*/
+  font-family: myfont, Cambria, serif;
+  font-weight: 300;
+  font-size: 11pt;
+  margin: 0;
+  padding: 0;
+
+  #container {
+    margin: 1em;
+    margin-top: 30px;
+  }
+  h1 {
+    font-weight: 600;
+  }
+  h2 {
+    font-weight: 400;
+  }
+  .flash-notice {
+    background: #80c921;
+    color: #062700;
+  }
+  .flash-error {
+    background: #c92d21;
+    color: #270300;
+  }
+  a {
+    color: #1c79cb;
+    &:hover {
+      color: #529fe2;
+    }
+  }
+  .ajax-link {
+    cursor: pointer;
+    border-bottom: 1px dashed #1c79cb;
+    text-decoration: none;
+  }
+  .ajax-button {
+    cursor: pointer;
+  }
+  td {
+    vertical-align: top;
+  }
+
+  .browser-grid-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'queue content';
+
+    .browser-content {
+      grid-area: content;
+    }
+    .queue-manager {
+      grid-area: queue;
+      border-right: 1px solid #eee;
+      padding-right: 1em;
+    }
+  }
+
+  .vue-performer {
+    .releases-grid {
+      display: flex;
+      //justify-content: space-evenly;
+      flex-wrap: wrap;
+
+      .release-container {
+        width: 16em;
+        padding: 1em;
+      }
+
+      .release-cover {
+        text-align: left;
+
+        .thumbnail {
+          height: 100px;
+          max-width: 100px;
+          display: table-cell;
+          vertical-align: bottom;
+
+          img {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 4px;
+          }
+        }
+      } // end of .release-cover
+
+      .release-content {
+        .records-table {
+          td.trackname {
+            max-width: 14em;
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+
+            span {
+              display: block;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              color: #1c79cb;
+            }
+            &:hover span {
+              width: inline;
+              display: initial;
+              color: #529fe2;
+              text-shadow: 1px 1px 0 white;
+              background: rgba(255,255,255,.7);
+            }
+            &.track-now-playing,
+            &.track-now-playing span {
+              background: #ffffa3;
+            }
+          }
+        }
+      } // end of .release-content
+    } // end of .releases-grid
+  } // end of .vue-performer
+
+  #fullscreen-cover-container {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.85);
+    z-index: 500;
+
+    #fullscreen-cover-flexbox {
+      display: flex;
+      flex-flow: row wrap;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        max-height: 100%;
+        max-width: 100%;
+      }
+    }
+  } // end of #fullscreen-cover-container
+
+  .performers-list {
+    padding: 0 1em;
+    column-width: 15em;
+  }
+
+  .queue-manager {
+    table {
+      border-collapse: collapse;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      width: 15em;
+
+      tr.queue-track {
+        display: block;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding: .2em .5em;
+
+        &:hover {
+          background-color: rgba(255,255,0,0.2);
+        }
+        &.upnext {
+          background: rgba(255,255,0,0.2);
+        }
+        .performer {
+          font-size: .8em;
+          opacity: .4;
+        }
+        td {
+          vertical-align: middle;
+
+          &:nth-child(1) { // rating/eq-bar
+            width: 24px;
+          }
+        }
+      }
+
+    } // end of table
+
+
+    .eq-bar {
+      display: inline-block;
+      width: 3px;
+      height: 11px;
+      border-radius: 1px;
+      margin: 0 .5px;
+      background-color: #555; /* 0070c9 */
+
+      animation-name: eq-bar;
+      animation-play-state: running;
+      animation-direction: alternate;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      transform-origin: center bottom;
+
+      -webkit-animation-name: eq-bar;
+      -webkit-animation-play-state: running;
+      -webkit-animation-direction: alternate;
+      -webkit-animation-timing-function: ease-in-out;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-transform-origin: center bottom;
+
+      &:nth-child(1) {
+        animation-duration: 350ms;
+        animation-delay: -250ms;
+        -webkit-animation-duration: 350ms;
+        -webkit-animation-delay: -250ms;
+      }
+      &:nth-child(2) {
+        animation-duration: 425ms;
+        animation-delay: -275ms;
+        -webkit-animation-duration: 425ms;
+        -webkit-animation-delay: -275ms;
+      }
+      &:nth-child(3) {
+        animation-duration: .5s;
+        animation-delay: -.3s;
+        -webkit-animation-duration: .5s;
+        -webkit-animation-delay: -.3s;
+      }
+      &:nth-child(4) {
+        animation-duration: 275ms;
+        animation-delay: -225ms;
+        -webkit-animation-duration: 275ms;
+        -webkit-animation-delay: -225ms;
+      }
+
+    } // end of .eq-bar
+  } // end of .queue-manager
+
+  .vue-player {
+    position: fixed;
+    top: 30px;
+    width: 400px;
+    display: flex;
+    align-items: center;
+    background: #eee;
+    padding: .2em .8em;
+    border-radius: .6em;
+
+    div {
+      display: inline-block;
+    }
+
+    .player-button {
+      padding: .2em .4em;
+      margin-right: .4em;
+      width: 1.2em;
+      // default (for init/stopped states)
+      cursor: default;
+      opacity: 0.5;
+    }
+
+    .player-progressbar-wrapper {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      height: 2em;
+
+      .player-progressbar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 3px;
+        background: #999;
+
+        .player-progressbar-knob {
+          position: absolute;
+          height: 9px;
+          width: 9px;
+          border-radius: 5px;
+          background-color: #999;
+        }
+      } // end of .player-progressbar
+    } // end of .player-progressbar-wrapper
+
+    &.vue-player-playing,
+    &.vue-player-paused {
+      .player-button {
+        cursor: pointer;
+        &:hover {
+          opacity: .7;
+        }
+      }
+      .player-progressbar-wrapper:hover .player-progressbar-knob,
+      .player-progressbar-wrapper:hover .player-progressbar-knob {
+        background-color: black;
+      }
+    }
+
+  } // end of .vue-player
+}
+
+@keyframes eq-bar {
+  0% {
+    -webkit-transform: scaleY(.27273);
+    transform: scaleY(.27273);
+  }
+  100% {
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+

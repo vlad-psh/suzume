@@ -3,8 +3,8 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: [
-    "./js/main.js",
-    "./css/test.scss",
+    "./src/main.js",
+    "./src/main.scss",
 //    vendor: "./src/vendor.js"
   ],
   module: {

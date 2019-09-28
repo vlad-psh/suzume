@@ -54,25 +54,30 @@ Vue.component('vue-performer', {
   <h1>{{title}} <span style="font-size: 0.5em">#tags#</span></h1>
   <p><template v-if="romaji">Romaji: {{romaji}};</template> <template v-if="aliases">Aliases: {{aliases}}</template></p>
 
-  <template v-for="release of releases">
-    <div v-if="release.records.length > 0" class="release-container">
-      <div class="release-cover">
-        <template v-if="release.cover">
-          <a class="cover-link" :href="coverOrig(release.id)"><div class="thumbnail"><img :src="coverThumb(release.id)"></div></a>
-        </template>
-        <template v-else><div class="thumbnail"></div></template>
-      </div>
-      <div class="release-content">
-        <span class="release-title">{{release.year}} {{release.title}}
-          <span style="font-size: 0.65em; opacity: 0.4; font-weight: normal;">#{{id}}</span>
-        </span>
-        <div v-for="record of release.records">
-          <span class="rating-choose-button">{{ratingEmoji(record.rating + 1)}}</span>
-          <a class="ajax-link" :class="nowPlaying == record.uid ? 'track-now-playing' : null" @click="playSong(record.uid)">{{record.title}}</a> <span @click="upnext(record.uid)">&#x1f51c;</span>
+  <div class="releases-grid">
+    <template v-for="release of releases">
+      <div v-if="release.records.length > 0" class="release-container">
+        <div class="release-cover">
+          <template v-if="release.cover">
+            <a class="cover-link" :href="coverOrig(release.id)"><div class="thumbnail"><img :src="coverThumb(release.id)"></div></a>
+          </template>
+          <template v-else><div class="thumbnail"></div></template>
+        </div>
+        <div class="release-content">
+          <span class="release-title">{{release.year}} {{release.title}}
+            <span style="font-size: 0.65em; opacity: 0.4; font-weight: normal;">#{{id}}</span>
+          </span>
+          <table class="records-table">
+            <tr v-for="record of release.records">
+              <td class="rating"><span class="rating-choose-button">{{ratingEmoji(record.rating + 1)}}</span></td>
+              <td class="trackname" @click="playSong(record.uid)" :class="nowPlaying == record.uid ? 'track-now-playing' : null"><span>{{record.title}}</span></td>
+              <td><span @click="upnext(record.uid)">&#x1f51c;</span></td>
+            </tr>
+          </table>
         </div>
       </div>
-    </div>
-  </template>
+    </template>
+  </div>
 </div>
 `
 });
