@@ -83,27 +83,42 @@ body {
       .release-cover {
         text-align: left;
 
-        .thumbnail {
-          height: 100px;
-          max-width: 100px;
-          display: table-cell;
-          vertical-align: bottom;
+        a.cover-link {
+          display: inline-block;
 
-          img {
+          .thumbnail {
+            height: 100px;
             max-width: 100px;
-            max-height: 100px;
-            border-radius: 4px;
+            display: table-cell;
+            vertical-align: bottom;
+
+            img {
+              display: block;
+              max-width: 100px;
+              max-height: 100px;
+              border-radius: 4px;
+            }
           }
         }
       } // end of .release-cover
 
       .release-content {
+        width: 100%;
         .records-table {
+          //border-collapse: collapse;
+          border-spacing: 1px;
+          width: 100%;
+
+          td {
+            vertical-align: middle;
+          }
           td.trackname {
-            max-width: 12em;
+            width: 100%;
+            max-width: 11em;
             position: relative;
             z-index: 10;
             cursor: pointer;
+            height: 1.6em;
 
             span {
               display: block;
@@ -127,6 +142,10 @@ body {
           td.duration {
             font-size: .8em;
           }
+          td.checkbox {
+            width: 1em; cursor: pointer;
+            .selected {display: none; color: green;}
+          }
           tr.record-line.ui-selecting,
           tr.record-line.ui-selected {
             td.trackname {
@@ -137,6 +156,10 @@ body {
                 color: white;
                 text-shadow: none;
               }
+            }
+            td.checkbox {
+              .unselected {display: none;}
+              .selected {display: inline;}
             }
           }
         } // end of .records-table
@@ -186,12 +209,10 @@ body {
         display: block;
         border-bottom: 1px solid rgba(0,0,0,0.1);
         padding: .2em .5em;
+        cursor: pointer;
 
         &:hover {
           background-color: rgba(255,255,0,0.2);
-        }
-        &.upnext {
-          background: rgba(255,255,0,0.2);
         }
         .performer {
           font-size: .8em;

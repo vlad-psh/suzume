@@ -22,6 +22,8 @@ Vue.component('vue-browser', {
       }
     },
     playerStartPlaying(index = null) {
+      //if (this.playerStatus === 'playing' && this.nowPlayingIndex === index) return;
+
       if (index === null) {
         if (this.nowPlayingIndex !== null) {
           index = this.nowPlayingIndex + 1;
@@ -155,7 +157,7 @@ Vue.component('vue-browser', {
     <div class="queue-manager">
       <h3>Queue:</h3>
       <table>
-        <tr v-for="(track, trackIndex) in playlist" class="queue-track" :class="track.origin">
+        <tr v-for="(track, trackIndex) in playlist" class="queue-track" :class="track.origin" @click="playerStartPlaying(trackIndex)">
           <td>
             <template v-if="trackIndex === nowPlayingIndex && playerStatus === 'playing'">
               <div v-for="bar in [1,2,3,4]" class="eq-bar"></div>
