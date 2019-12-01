@@ -1,10 +1,12 @@
 get :abyss_folder do
+  protect!
   @folder = Folder.find_by(id: params[:id]) || Folder.root
 
   slim :folder
 end
 
 delete :abyss_folder do
+  protect!
   folder = Folder.find(params[:id])
   throw StandardError.new("Already removed") if folder.is_removed
   FileUtils.remove_dir(folder.full_path)
@@ -27,6 +29,7 @@ get :abyss_file do
 end
 
 patch :abyss_file do # currently only rating update
+  protect!
   folder = Folder.find(params[:folder_id])
   if params[:rating].present? && (rating = params[:rating].to_i) >= -1 && rating <= 3
     folder.set_rating(params[:md5], rating)
@@ -41,6 +44,7 @@ def value_or_nil(v)
 end
 
 post :abyss_set_folder_info do
+  protect!
   folder = Folder.find(params[:folder_id])
 
   performer = Performer.find(params[:performer_id]) if params[:performer_id].present?
@@ -79,12 +83,14 @@ post :abyss_set_folder_info do
 end
 
 post :abyss_process_folder do
+  protect!
   folder = Folder.find(params[:folder_id])
   folder.full_process!
   redirect path_to(:abyss_folder).with(folder.id)
 end
 
 post :abyss_set_cover do
+  protect!
   folder = Folder.find(params[:folder_id])
   filename = folder.files[params[:md5]].try(:[], 'fln')
   throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
@@ -102,6 +108,7 @@ post :abyss_set_cover do
 end
 
 post :abyss_extract_cover do
+  protect!
   folder = Folder.find(params[:folder_id])
   filename = folder.files[params[:md5]].try(:[], 'fln')
   throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
@@ -126,6 +133,7 @@ post :abyss_extract_cover do
 end
 
 get :abyss_mediainfo do
+  protect!
   folder = Folder.find(params[:folder_id])
   filename = folder.files[params[:md5]].try(:[], 'fln')
   throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
@@ -135,6 +143,7 @@ get :abyss_mediainfo do
 end
 
 post :download_cover do
+  protect!
   folder = Folder.find(params[:folder_id])
 
   if params[:url] =~ /redacted\.ch/

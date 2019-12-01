@@ -128,6 +128,7 @@ Vue.component('vue-browser', {
   <audio id="main-player" preload="none" @ended="playerStartPlaying()" controls="controls" style="display: none;" @loadedmetadata="playerLoadedMetadata"></audio>
 
   <div class="vue-player" :class="'vue-player-' + playerStatus">
+    <a class="ajax-link" @click="openIndex">Index</a>
     <template>
       <div v-if="playerStatus === 'paused'" class="player-button" @click="playButtonClick">&#x25b6;</div>
       <div v-else-if="playerStatus === 'playing'" class="player-button" @click="pauseButtonClick">&#x23f8;</div>
@@ -139,9 +140,6 @@ Vue.component('vue-browser', {
       </div>
     </div>
   </div>
-
-  <a class="ajax-link" @click="openIndex">Index</a>
-  <br>
 
   <div class="browser-grid-layout">
     <div v-if="performers.length > 0" class="browser-content">

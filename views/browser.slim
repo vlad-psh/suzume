@@ -2,7 +2,9 @@ ruby:
   performers = Performer.all.order(title: :asc).map do |p|
     {
       id: p.id,
-      title: p.romaji.present? ? "#{p.title} (#{p.romaji})" : p.title
+      title: p.romaji.present? ? "#{p.title} (#{p.romaji})" : p.title,
+      aliases: p.aliases,
+      tags: p.tags.pluck(:title)
     }
   end
 

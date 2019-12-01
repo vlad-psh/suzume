@@ -22,6 +22,7 @@ class Performer < ActiveRecord::Base
       title: title,
       aliases: aliases,
       romaji: romaji,
+      tags: tags.pluck(:title),
       releases: releases.includes(:records).order(year: :desc).map{|r| r.api_hash}
     }
   end

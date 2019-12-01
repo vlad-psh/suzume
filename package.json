@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.dev.js",
+    "start": "webpack-dev-server --config webpack.dev.js --port 3401",
     "build": "webpack --progress --hide-modules --config webpack.prod.js"
   },
   "repository": {

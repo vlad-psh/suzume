@@ -1,3 +1,7 @@
+html, body, #container, #vue-app, .vue-browser, .browser-grid-layout {
+  height: 100%;
+}
+
 body {
 /*  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;*/
   font-family: myfont, Cambria, serif;
@@ -6,10 +10,14 @@ body {
   margin: 0;
   padding: 0;
 
-  #container {
-    margin: 1em;
-    margin-top: 50px;
+  #main-menu {
+    position: fixed;
+    background: black;
+    color: white;
+    top: 0;
+    left: 0;
   }
+
   h1 {
     font-weight: 600;
   }
@@ -47,6 +55,13 @@ body {
     grid-template-columns: auto 1fr;
     grid-template-areas: 'queue content';
 
+
+    .browser-content,
+    .queue-manager {
+      overflow-x: hidden;
+      overflow-y: scroll;
+      padding-top: 5em;
+    }
     .browser-content {
       grid-area: content;
     }
