@@ -1,7 +1,7 @@
 html, body, #container, #vue-app, .vue-browser, .browser-grid-layout {
   height: 100%;
 }
-
+.rating-set-button {display: inline-block; cursor: pointer;}
 body {
 /*  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;*/
   font-family: myfont, Cambria, serif;
@@ -156,26 +156,6 @@ body {
           } // end of td.trackname
           td.duration {
             font-size: .8em;
-          }
-          td.checkbox {
-            width: 1em; cursor: pointer;
-            .selected {display: none; color: green;}
-          }
-          tr.record-line.ui-selecting,
-          tr.record-line.ui-selected {
-            td.trackname {
-              background: #295fb8;
-
-              span {
-                background: none;
-                color: white;
-                text-shadow: none;
-              }
-            }
-            td.checkbox {
-              .unselected {display: none;}
-              .selected {display: inline;}
-            }
           }
         } // end of .records-table
       } // end of .release-content

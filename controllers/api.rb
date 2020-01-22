@@ -1,3 +1,5 @@
+paths api_tags: '/api/tags'
+
 get :api_index do
   protect!
   return Performer.all.order(title: :asc).map do |a|
@@ -17,3 +19,6 @@ get :api_performer do
   return performer.api_json
 end
 
+get :api_tags do
+
+end

@@ -1,6 +1,5 @@
 window.Vue = require('vue');
 require("jquery-ui/ui/widgets/autocomplete.js");
-require("jquery-ujs");
 
 require('./vue-browser.js');
 require('./vue-performer.js');

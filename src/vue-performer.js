@@ -1,5 +1,3 @@
-require("jquery-ui/ui/widgets/selectable");
-
 Vue.component('vue-performer', {
   props: {
     initData: {type: Object, required: false},
@@ -41,10 +39,6 @@ Vue.component('vue-performer', {
     }
   },
   mounted() {
-    $('.vue-performer').selectable({
-      filter: '.record-line',
-      cancel: 'td.trackname, .release-cover a' // TODO: also exclude rating button and other buttons
-    });
   },
   template: `
 <div class="vue-performer">
@@ -61,13 +55,12 @@ Vue.component('vue-performer', {
         </div>
         <div class="release-content">
           <span class="release-title">{{release.year}} {{release.title}}
-            <span style="font-size: 0.65em; opacity: 0.4; font-weight: normal;">#{{id}}</span>
+            <span style="font-size: 0.65em; opacity: 0.4; font-weight: normal;">#{{release.id}}</span>
           </span>
           <table class="records-table">
             <tr v-for="record of release.records" class="record-line">
-              <td class="checkbox"><span class="unselected">・</span><span class="selected">&#x2714;</span></td>
               <td class="rating"><span class="rating-choose-button">{{ratingEmoji(record.rating + 1)}}</span></td>
-              <td class="trackname" @click="playTrack(record.uid)" :class="nowPlaying == record.uid ? 'track-now-playing' : null"><span>{{record.title}}</span></td>
+              <td class="trackname" :class="nowPlaying == record.uid ? 'track-now-playing' : null"><a :href="'download/audio/' + record.uid" @click.prevent="playTrack(record.uid)">{{record.title}}</span></td>
               <td class="duration">{{record.dur}}</td>
             </tr>
           </table>
