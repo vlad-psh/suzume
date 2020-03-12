@@ -6,6 +6,7 @@ Vue.component('vue-browser', {
     return {
       performer: {},
       performers: [],
+      filterValue: '',
       player: null,
       playerStatus: 'init', // init, stopped, paused, playing
       playerUpdater: null, // setInterval/clearInterval
@@ -109,11 +110,19 @@ Vue.component('vue-browser', {
         this.stopUpdatingProgress();
         this.startUpdatingProgress();
       }
-    }
+    },
   }, // end of methods()
   computed: {
     nowPlaying() {
       return this.nowPlayingIndex !== null ? this.playlist[this.nowPlayingIndex] : null;
+    },
+    filteredPerformers() {
+      if (this.filterValue) {
+        var r = new RegExp(this.filterValue, 'i');
+        return this.performers.filter(i => i.title.match(r) || (i.aliases && i.aliases.match(r)));
+      } else {
+        return this.performers;
+      }
     }
   },
   created() {
@@ -143,8 +152,9 @@ Vue.component('vue-browser', {
 
   <div class="browser-grid-layout">
     <div v-if="performers.length > 0" class="browser-content">
+      <input v-model="filterValue">
       <div class="performers-list">
-        <div v-for="p in performers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></div>
+        <div v-for="p in filteredPerformers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></div>
       </div>
     </div>
 
