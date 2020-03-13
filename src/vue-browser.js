@@ -50,11 +50,13 @@ Vue.component('vue-browser', {
       }
     },
     openIndex() {
+      this.performer = {};
+    },
+    reloadIndex() {
       $.ajax({
         url: `/api/index`,
         method: 'GET'
       }).done(data => {
-        this.performer = {};
         this.performers = JSON.parse(data);
       });
     },
@@ -63,7 +65,6 @@ Vue.component('vue-browser', {
         url: `/api/performer/${id}`,
         method: 'GET'
       }).done(data => {
-        this.performers = [];
         this.performer = JSON.parse(data);
       });
     },
@@ -151,15 +152,15 @@ Vue.component('vue-browser', {
   </div>
 
   <div class="browser-grid-layout">
-    <div v-if="performers.length > 0" class="browser-content">
+    <div v-if="performer.id" class="browser-content">
+      <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @play-track="addTrack($event)"></vue-performer>
+    </div>
+
+    <div v-else class="browser-content">
       <input v-model="filterValue">
       <div class="performers-list">
         <div v-for="p in filteredPerformers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></div>
       </div>
-    </div>
-
-    <div v-else-if="performer.id" class="browser-content">
-      <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @play-track="addTrack($event)"></vue-performer>
     </div>
 
     <div class="queue-manager">

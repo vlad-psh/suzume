@@ -60,7 +60,7 @@ Vue.component('vue-performer', {
           <table class="records-table">
             <tr v-for="record of release.records" class="record-line">
               <td class="rating"><span class="rating-choose-button">{{ratingEmoji(record.rating + 1)}}</span></td>
-              <td class="trackname" :class="nowPlaying == record.uid ? 'track-now-playing' : null"><a :href="'download/audio/' + record.uid" @click.prevent="playTrack(record.uid)">{{record.title}}</span></td>
+              <td class="trackname" :class="nowPlaying == record.uid ? 'track-now-playing' : null"><a :href="'download/audio/' + record.uid" @click.prevent="playTrack(record.uid)">{{record.title}}</a></td>
               <td class="duration">{{record.dur}}</td>
             </tr>
           </table>
