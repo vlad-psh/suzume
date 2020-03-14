@@ -2,6 +2,7 @@ window.Vue = require('vue');
 require("jquery-ui/ui/widgets/autocomplete.js");
 
 require('./vue-browser.js');
+require('./vue-player.js');
 require('./vue-performer.js');
 require('./vue-abyss.js');
 
