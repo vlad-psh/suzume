@@ -10,7 +10,7 @@ html
     div#fullscreen-cover-container
       div#fullscreen-cover-flexbox
         img
-    div#main-menu
+    div#main-menu style="position: fixed; top: 0; right: 1em;"
       - if admin? || guest?
         a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: #{admin? ? 'red' : 'green'}" ●
       - else
@@ -18,7 +18,6 @@ html
       a< href=path_to(:browser) Index
       '  | 
       a href=path_to(:abyss_folder).with(0) Browse
-      input.hide-notes-checkbox type="checkbox" checked=("checked" if request.session["hide-notes"] && request.session["hide-notes"] == true) Hide notes
 
     div#container
       == slim :flashes

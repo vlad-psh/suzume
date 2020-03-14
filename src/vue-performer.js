@@ -8,14 +8,25 @@ Vue.component('vue-performer', {
       id: null, title: null, aliases: null, romaji: null, releases: []
     }
   },
+  computed: {
+    allRecords() {
+      return [].concat(...this.releases.map(i => i.records)).map(i => this.recordObject(i));
+    }
+  },
   methods: {
     ratingEmoji(rating) {
       // 274c, 2753, 1f3b5, 2b50, 1f496
       return ['\u274c', '\u2753', '\ud83c\udfb5', '\u2b50', '\ud83d\udc96'][rating];
     },
-    playTrack(uid) { // emitted by vue-release
-      record = this.releases.reduce((acc, release) => [...acc, ...release.records], []).find(i => i.uid === uid);
-      this.$emit('play-track', this.recordObject(record));
+    playTrack2(uid) { // emitted by vue-release
+      const record = this.allRecords.find(i => i.uid === uid);
+      this.$emit('add', record);
+    },
+    playTrack(uid) {
+      const all = this.allRecords;
+      var idx = all.findIndex(i => i.uid === uid);
+      var tracks = [].concat(all.slice(idx, all.length), idx !== 0 ? all.slice(0, idx): []);
+      this.$emit('start', tracks);
     },
     recordObject(record) {
       return {

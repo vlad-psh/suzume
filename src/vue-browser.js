@@ -9,7 +9,7 @@ Vue.component('vue-browser', {
       performers: [],
       filterValue: '',
       abyssFolderId: 0,
-      playlist: [],
+      tracklists: {playlist: [], simple: []},
     }
   },
   methods: {
@@ -31,8 +31,12 @@ Vue.component('vue-browser', {
       });
     },
     addTrack(track) {
-      this.playlist.push(track);
-      this.$refs.player.addTrack(track);
+      this.tracklists.playlist.push(track);
+      this.$refs.player.trackAddedToPlaylist();
+    },
+    startSimplePlaying(tracklist) {
+      this.tracklists.simple = tracklist;
+      this.$refs.player.startSimple();
     },
   }, // end of methods()
   computed: {
@@ -53,7 +57,13 @@ Vue.component('vue-browser', {
   },
   template: `
 <div class="vue-browser">
-  <vue-player ref="player"></vue-player>
+  <vue-player ref="player" :tracklists="tracklists"></vue-player>
+
+  <div class="menu" style="position: fixed; top: 0; left: 0;">
+    <a class="ajax-link" @click="mode = 'index'">Index</a>
+    <a class="ajax-link" @click="mode = 'abyss'">Abyss</a>
+  </div>
+
 
   <div class="browser-grid-layout">
     <div class="browser-content">
@@ -66,7 +76,7 @@ Vue.component('vue-browser', {
       </template>
 
       <template v-else-if="mode === 'performer'">
-        <vue-performer :init-data="performer" :now-playing="$refs.player.nowPlaying ? $refs.player.nowPlaying.uid : null" @play-track="addTrack($event)"></vue-performer>
+        <vue-performer :init-data="performer" :now-playing="$refs.player.nowPlaying ? $refs.player.nowPlaying.uid : null" @add="addTrack" @start="startSimplePlaying"></vue-performer>
       </template>
 
       <template v-else-if="mode === 'abyss'">
@@ -74,10 +84,10 @@ Vue.component('vue-browser', {
       </template>
     </div>
 
-    <div class="queue-manager">
+    <div class="queue-manager" v-if="tracklists.playlist.length > 0">
       <h3>Playlist:</h3>
       <table>
-        <tr v-for="(track, trackIndex) in playlist" class="queue-track" :class="track.origin" @click="$refs.player.playerStartPlaying(trackIndex)">
+        <tr v-for="(track, trackIndex) in tracklists.playlist" class="queue-track" :class="track.origin" @click="$refs.player.playerStartPlaying(trackIndex)">
           <td>
             <template v-if="$refs.player.nowPlaying.uid === track.uid && $refs.player.playerStatus === 'playing'">
               <div v-for="bar in [1,2,3,4]" class="eq-bar"></div>

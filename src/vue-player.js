@@ -1,6 +1,7 @@
 Vue.component('vue-player', {
   props: {
-    initData: {type: Object, required: false}
+    initData: {type: Object, required: false},
+    tracklists: {type: Object, required: true},
   },
   data() {
     return {
@@ -8,15 +9,19 @@ Vue.component('vue-player', {
       playerUpdater: null, // setInterval/clearInterval
       playerPosition: 0, // in percents
       nowPlayingIndex: null,
-      playlist: [],
+      mode: 'simple',
     }
   },
   methods: {
-    addTrack(track) {
-      this.playlist.push(track);
+    trackAddedToPlaylist() {
       if (this.playerStatus === 'init' || this.playerStatus === 'stopped') {
-        this.playerStartPlaying(this.playlist.length - 1);
+        this.mode = 'playlist';
+        this.playerStartPlaying(this.pl.length - 1);
       }
+    },
+    startSimple() {
+      this.mode = 'simple';
+      this.playerStartPlaying(0);
     },
     playerStartPlaying(index = null) {
       //if (this.playerStatus === 'playing' && this.nowPlayingIndex === index) return;
@@ -24,7 +29,7 @@ Vue.component('vue-player', {
       if (index === null) {
         if (this.nowPlayingIndex !== null) {
           index = this.nowPlayingIndex + 1;
-          if (index >= this.playlist.length) index = 0;
+          if (index >= this.pl.length) index = 0;
           // TODO: check if repeat mode is turned on
           // If repeat mode is turned off, set 'index = null'
         } else {
@@ -91,16 +96,17 @@ Vue.component('vue-player', {
     },
   }, // end of methods()
   computed: {
+    pl() {
+      return this.tracklists[this.mode];
+    },
     nowPlaying() {
-      return this.nowPlayingIndex !== null ? this.playlist[this.nowPlayingIndex] : null;
+      return this.nowPlayingIndex !== null ? this.pl[this.nowPlayingIndex] : null;
     },
   },
   template: `
 <div class="vue-player" :class="'vue-player-' + playerStatus">
   <audio id="main-player" ref="player" preload="none" @ended="playerStartPlaying()" controls="controls" style="display: none;" @loadedmetadata="playerLoadedMetadata"></audio>
 
-  <a class="ajax-link" @click="mode = 'index'">Index</a>
-  <a class="ajax-link" @click="mode = 'abyss'">Abyss</a>
   <template>
     <div v-if="playerStatus === 'paused'" class="player-button" @click="playButtonClick">&#x25b6;</div>
     <div v-else-if="playerStatus === 'playing'" class="player-button" @click="pauseButtonClick">&#x23f8;</div>
