@@ -1,3 +1,7 @@
+paths \
+  download_audio: '/download/audio/:uid',
+  download_image: '/download/image/:release_id/:cover_type'
+
 get :download_audio do
   record = Record.find_by(uid: params[:uid])
   halt 404, "Record not found" if record.blank?

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_12_162536) do
+ActiveRecord::Schema.define(version: 2020_03_14_092105) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,14 +26,12 @@ ActiveRecord::Schema.define(version: 2020_01_12_162536) do
 
   create_table "folders", force: :cascade do |t|
     t.string "path"
-    t.bigint "folder_id"
-    t.jsonb "parent_ids"
     t.jsonb "files", default: {}
     t.boolean "is_processed", default: false
     t.boolean "is_removed", default: false
     t.boolean "is_symlink", default: false
     t.integer "release_id"
-    t.index ["folder_id"], name: "index_folders_on_folder_id"
+    t.integer "nodes", default: [], array: true
   end
 
   create_table "performers", force: :cascade do |t|

@@ -4,6 +4,7 @@ Vue.component('vue-browser', {
   },
   data() {
     return {
+      mode: 'index',
       performer: {},
       performers: [],
       filterValue: '',
@@ -12,7 +13,8 @@ Vue.component('vue-browser', {
       playerUpdater: null, // setInterval/clearInterval
       playerPosition: 0, // in percents
       nowPlayingIndex: null,
-      playlist: []
+      playlist: [],
+      abyssFolderId: 0,
     }
   },
   methods: {
@@ -49,9 +51,6 @@ Vue.component('vue-browser', {
         this.playerStatus = 'stopped';
       }
     },
-    openIndex() {
-      this.performer = {};
-    },
     reloadIndex() {
       $.ajax({
         url: `/api/index`,
@@ -66,6 +65,7 @@ Vue.component('vue-browser', {
         method: 'GET'
       }).done(data => {
         this.performer = JSON.parse(data);
+        this.mode = 'performer';
       });
     },
     playerStopped() {
@@ -138,7 +138,8 @@ Vue.component('vue-browser', {
   <audio id="main-player" preload="none" @ended="playerStartPlaying()" controls="controls" style="display: none;" @loadedmetadata="playerLoadedMetadata"></audio>
 
   <div class="vue-player" :class="'vue-player-' + playerStatus">
-    <a class="ajax-link" @click="openIndex">Index</a>
+    <a class="ajax-link" @click="mode = 'index'">Index</a>
+    <a class="ajax-link" @click="mode = 'abyss'">Abyss</a>
     <template>
       <div v-if="playerStatus === 'paused'" class="player-button" @click="playButtonClick">&#x25b6;</div>
       <div v-else-if="playerStatus === 'playing'" class="player-button" @click="pauseButtonClick">&#x23f8;</div>
@@ -152,15 +153,22 @@ Vue.component('vue-browser', {
   </div>
 
   <div class="browser-grid-layout">
-    <div v-if="performer.id" class="browser-content">
-      <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @play-track="addTrack($event)"></vue-performer>
-    </div>
+    <div class="browser-content">
 
-    <div v-else class="browser-content">
-      <input v-model="filterValue">
-      <div class="performers-list">
-        <div v-for="p in filteredPerformers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></div>
-      </div>
+      <template v-if="mode === 'index'">
+        <input v-model="filterValue">
+        <div class="performers-list">
+          <div v-for="p in filteredPerformers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></div>
+        </div>
+      </template>
+
+      <template v-else-if="mode === 'performer'">
+        <vue-performer :init-data="performer" :now-playing="nowPlaying ? nowPlaying.uid : null" @play-track="addTrack($event)"></vue-performer>
+      </template>
+
+      <template v-else-if="mode === 'abyss'">
+        <vue-abyss :id="abyssFolderId" @open="abyssFolderId = $event"></vue-abyss>
+      </template>
     </div>
 
     <div class="queue-manager">

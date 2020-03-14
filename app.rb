@@ -29,34 +29,7 @@ paths index: '/',
 
     notes: '/notes',
     lyrics: '/lyrics',
-    hide_notes: '/notes/hide',
-# ----------- auth.rb
-    login: '/login',
-    logout: '/logout',
-# ----------- download.rb
-    download_audio: '/download/audio/:uid',
-    download_image: '/download/image/:release_id/:cover_type',
-# ----------- tag.rb
-    tags: '/tags', # index
-    tag: '/tag/:id', # delete tag
-    tag_add: '/tag/add',
-    tag_remove: '/tag/remove',
-    search_by_tag: '/tag/:id',
-# ----------- api.rb
-    api_index: '/api/index',
-    api_performer: '/api/performer/:id',
-    api_abyss: '/api/abyss/:id',
-# ----------- abyss.rb
-    abyss_folder: '/abyss/:id', # get, delete
-    abyss_process_folder: '/abyss/:folder_id/process', # post
-    abyss_set_folder_info: '/abyss/:folder_id/info', # post
-
-    abyss_file: '/abyss/:folder_id/file/:md5', # get (download file), patch (set rating, ...?)
-    abyss_set_cover: '/abyss/:folder_id/set_cover/:md5', # post
-    abyss_extract_cover: '/abyss/:folder_id/extract_cover/:md5', # post
-    abyss_mediainfo: '/abyss/:folder_id/mediainfo/:md5', # get
-
-    download_cover: '/download_cover' # post
+    hide_notes: '/notes/hide'
 
 require_relative './helpers.rb'
 also_reload './helpers.rb'

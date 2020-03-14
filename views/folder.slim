@@ -5,7 +5,7 @@ audio#main-player preload="none" style="width: 500px;" controls="controls"
 h1
   a href=path_to(:abyss_folder).with(0) abyss
   | ://
-  - Folder.where(id: @folder.parent_ids).order(path: :asc).each do |p|
+  - Folder.where(id: @folder.nodes).order(path: :asc).each do |p|
     - next if p.name.empty? # skip root
     == p.is_symlink ? '&#x1f517;' : nil
     a href=path_to(:abyss_folder).with(p.id) = p.name
@@ -29,7 +29,7 @@ p style="font-size: 0.8em; opacity: 0.5"
     = " #{n} "
 
 ul.folders-list
-  - @folder.subfolders.each do |f|
+  - @folder.subfolders!.each do |f|
     li
       == f.is_symlink ? '&#x1f517;' : nil
       a class=(f.is_processed ? 'processed-folder' : nil) href=path_to(:abyss_folder).with(f.id) = f.name

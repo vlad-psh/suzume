@@ -3,6 +3,7 @@ require("jquery-ui/ui/widgets/autocomplete.js");
 
 require('./vue-browser.js');
 require('./vue-performer.js');
+require('./vue-abyss.js');
 
 $(document).on('submit', '.add-tag-form', function(event){
   event.preventDefault();

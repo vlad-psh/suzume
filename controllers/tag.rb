@@ -1,3 +1,10 @@
+paths \
+  tags: '/tags', # index
+  search_by_tag: '/tag/:id',
+  tag: '/tag/:id', # delete tag
+  tag_add: '/tag/add',
+  tag_remove: '/tag/remove'
+
 get :tags do
   protect!
 

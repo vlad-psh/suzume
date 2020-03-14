@@ -1,3 +1,7 @@
+paths \
+  login: '/login',
+  logout: '/logout'
+
 get :login do
   if admin? || guest?
     flash[:notice] = "Already logged in"

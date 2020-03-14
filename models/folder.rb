@@ -1,8 +1,22 @@
 class Folder < ActiveRecord::Base
   belongs_to :release
+  validates :nodes, presence: true # Prevents accidentally saving of 'virtual root'
 
   def self.root
-    return Folder.find_or_create_by(path: '', folder_id: nil)
+    Folder.new(path: '', nodes: nil)
+  end
+
+  def is_root?
+    nodes === nil ? true : false
+  end
+
+  def parent
+    return nil if is_root?
+    (parent_id = nodes.last) ? Folder.find(parent_id) : Folder.root
+  end
+
+  def parent=(p)
+    self.nodes = p.is_root? ? [] : p.nodes + [p.id]
   end
 
   def full_path
@@ -14,13 +28,13 @@ class Folder < ActiveRecord::Base
   end
 
   def subfolders
-    update_content! unless @_subfolders # update content and set @_subfolders
-
-    return @_subfolders
+    Folder.where(nodes: (is_root? ? [] : nodes + [id]), is_removed: false).order(path: :asc)
   end
 
-  def update_content!
-    skip_folders = Folder.where(folder_id: self.id, is_removed: false).pluck(:path)
+  def subfolders!
+    return @_subfolders if @_subfolders
+
+    skip_folders = subfolders.pluck(:path)
 
     Dir.children(self.full_path).each do |c|
       c_path = self.path == '' ? c : File.join(self.path, c)
@@ -43,8 +57,7 @@ class Folder < ActiveRecord::Base
         if (f = c_folder).present?
           # update parents
           f.path = c_path
-          f.folder_id = self.id
-          f.parent_ids = [self.parent_ids, self.id].flatten
+          f.parent = self
           f.is_removed = false
           f.is_symlink = File.symlink?(c_fullpath)
           f.save if f.changed?
@@ -57,8 +70,7 @@ class Folder < ActiveRecord::Base
       unless folder_obj_exists
         f = Folder.create(
             path: c_path,
-            folder_id: self.id,
-            parent_ids: [self.parent_ids, self.id].flatten,
+            parent: self,
             is_symlink: File.symlink?(c_fullpath)
         )
         FileUtils.touch(File.join(c_fullpath, ".tulip.id.#{f.id}"))
@@ -66,15 +78,13 @@ class Folder < ActiveRecord::Base
 
     end
 
-    skip_folders.each do |c|
-      Folder.find_by(folder_id: self.id, is_removed: false, path: c).try(:mark_as_removed)
-    end
+    subfolders.where(path: skip_folders).each{|sf| sf.mark_as_removed}
 
-    @_subfolders = Folder.where(folder_id: self.id, is_removed: false).order(path: :asc)
+    @_subfolders = subfolders
   end
 
   def mark_as_removed
-    Folder.where(folder_id: self.id, is_removed: false).each do |f|
+    subfolders.each do |f|
       f.mark_as_removed
     end
     self.is_removed = true
@@ -135,7 +145,7 @@ class Folder < ActiveRecord::Base
 
     tulip_id_filepath = File.join(self.full_path, ".tulip.id.#{self.id}")
     # Do not save .tulip.id in root folder (and do not save if already exists)
-    FileUtils.touch(tulip_id_filepath) unless File.exist?(tulip_id_filepath) || self.folder_id == nil
+    FileUtils.touch(tulip_id_filepath) unless File.exist?(tulip_id_filepath) || is_root?
 
     return self.files
   end
