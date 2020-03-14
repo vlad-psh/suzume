@@ -3,6 +3,7 @@ html, body, #container, #vue-app, .vue-browser, .browser-grid-layout {
 }
 .rating-set-button {display: inline-block; cursor: pointer;}
 $blue: #1c79cb;
+$yellow: #ffffa3;
 body {
 /*  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;*/
   font-family: myfont, Cambria, serif;
@@ -147,7 +148,7 @@ body {
             }
             &.track-now-playing,
             &.track-now-playing span {
-              background: #ffffa3;
+              background: $yellow;
             }
           } // end of td.trackname
           td.duration {
@@ -346,6 +347,9 @@ body {
           content: '/';
         }
       }
+    }
+    .file {
+      .now-playing {background: $yellow;}
     }
   }
 

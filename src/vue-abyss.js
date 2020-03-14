@@ -1,10 +1,9 @@
-function compare(a, b, reverse = false) {
-  return a > b ? (reverse ? -1 : 1) : (a < b ? (reverse ? 1 : -1) : 0);
-}
+import helpers from './helpers.js';
 
 Vue.component('vue-abyss', {
   props: {
     id: {type: Number, required: true},
+    nowPlaying: {type: String, required: false},
   },
   data() {
     return {
@@ -15,6 +14,11 @@ Vue.component('vue-abyss', {
     id(val) {
       this.reloadFolder();
     }
+  },
+  computed: {
+    allRecords() {
+      return this.j.files.filter(i => i.type === 'audio').map(i => this.recordObject(i));
+    },
   },
   methods: {
     reloadFolder() {
@@ -27,9 +31,23 @@ Vue.component('vue-abyss', {
     },
     openFolder(id) {
       this.$emit('open', id);
-    }
-  },
-  computed: {
+    },
+    start(md5) {
+      const all = this.allRecords;
+      const idx = all.findIndex(i => i.md5 === md5);
+      this.$emit('start', this.splitArray(all, idx));
+    },
+    recordObject(record) {
+      return {
+        //uid: record.uid,
+        md5: record.md5,
+        title: record.fln,
+        //performer: this.title,
+        //rating: this.ratingEmoji(record.rating + 1),
+        src: `/abyss/${this.id}/file/${record.md5}`
+      };
+    },
+    ...helpers
   },
   created() {
     this.reloadFolder();
@@ -49,7 +67,7 @@ Vue.component('vue-abyss', {
 
   <template v-if="j.files && j.files.length > 0">
     <h2>Files</h2>
-    <div class="file" v-for="f of j.files"><div class="ajax-link">{{f.fln}}</div></div>
+    <div class="file" v-for="f of j.files"><div class="ajax-link" :class="nowPlaying === f.md5 ? 'now-playing' : ''" @click="start(f.md5)">{{f.fln}}</div></div>
   </template>
 </div>
 `

@@ -6,6 +6,8 @@ require('./vue-player.js');
 require('./vue-performer.js');
 require('./vue-abyss.js');
 
+
+// Obsolete code?
 $(document).on('submit', '.add-tag-form', function(event){
   event.preventDefault();
 

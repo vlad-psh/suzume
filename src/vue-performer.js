@@ -1,3 +1,5 @@
+import helpers from './helpers.js';
+
 Vue.component('vue-performer', {
   props: {
     initData: {type: Object, required: false},
@@ -14,10 +16,6 @@ Vue.component('vue-performer', {
     }
   },
   methods: {
-    ratingEmoji(rating) {
-      // 274c, 2753, 1f3b5, 2b50, 1f496
-      return ['\u274c', '\u2753', '\ud83c\udfb5', '\u2b50', '\ud83d\udc96'][rating];
-    },
     playTrack2(uid) { // emitted by vue-release
       const record = this.allRecords.find(i => i.uid === uid);
       this.$emit('add', record);
@@ -25,8 +23,7 @@ Vue.component('vue-performer', {
     playTrack(uid) {
       const all = this.allRecords;
       var idx = all.findIndex(i => i.uid === uid);
-      var tracks = [].concat(all.slice(idx, all.length), idx !== 0 ? all.slice(0, idx): []);
-      this.$emit('start', tracks);
+      this.$emit('start', this.splitArray(all, idx));
     },
     recordObject(record) {
       return {
@@ -42,10 +39,11 @@ Vue.component('vue-performer', {
     },
     coverOrig(id) {
       return `/download/image/${id}/cover`
-    }
+    },
+    ...helpers
   },
   created() {
-    for (key of Object.keys(this._data)) {
+    for (var key of Object.keys(this._data)) {
       this[key] = this.initData[key];
     }
   },
