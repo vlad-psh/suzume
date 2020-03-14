@@ -26,11 +26,13 @@ end
 get :api_abyss do
   protect!
   folder = Folder.find_by(id: params[:id]) || Folder.root
+  folder.get_files!
 
   return folder.serializable_hash.merge({
+    files: folder.files.map{|k,v| v.merge({md5: k})}.sort{|a,b| a['fln'].downcase <=> b['fln'].downcase},
     name: (folder.is_symlink ? '🔗' : '') + folder.name,
     parents: Folder.where(id: folder.nodes).map{|f| [f.id, (f.is_symlink ? '🔗' : '') + File.basename(f.path)]},
-    subfolders: folder.subfolders.pluck(:id, :path).map{|i,p| [i, File.basename(p)]},
+    subfolders: folder.subfolders!.map{|f| [f.id, (f.is_symlink ? '🔗' : '') + File.basename(f.path)]},
   }).to_json
 end
 

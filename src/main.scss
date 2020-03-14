@@ -2,6 +2,7 @@ html, body, #container, #vue-app, .vue-browser, .browser-grid-layout {
   height: 100%;
 }
 .rating-set-button {display: inline-block; cursor: pointer;}
+$blue: #1c79cb;
 body {
 /*  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;*/
   font-family: myfont, Cambria, serif;
@@ -33,15 +34,18 @@ body {
     color: #270300;
   }
   a {
-    color: #1c79cb;
+    color: $blue;
     &:hover {
       color: #529fe2;
     }
   }
   .ajax-link {
+    display: inline;
+    color: $blue;
     cursor: pointer;
-    border-bottom: 1px dashed #1c79cb;
+    border-bottom: 1px dashed $blue;
     text-decoration: none;
+    &:hover {color: #529fe2;}
   }
   .ajax-button {
     cursor: pointer;
@@ -140,7 +144,7 @@ body {
               white-space: nowrap;
               overflow: hidden;
               text-overflow: ellipsis;
-              color: #1c79cb;
+              color: $blue;
             }
             &:hover span {
               width: inline;
@@ -338,6 +342,20 @@ body {
     }
 
   } // end of .vue-player
+
+  .vue-abyss {
+    margin: 0 1em;
+
+    .folder-path {
+      .node {
+        display: inline-block;
+
+        &:after {
+          content: '/';
+        }
+      }
+    }
+  }
 
   .ui-selectable-helper {
     position: absolute;
