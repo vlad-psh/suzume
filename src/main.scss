@@ -40,6 +40,16 @@ body {
     text-decoration: none;
     &:hover {color: #529fe2;}
   }
+  .button-link {
+    cursor: pointer;
+    display: inline;
+    padding: 0 .2em;
+    border-radius: 3px;
+    background-color: #7772;
+    &:hover {
+      background: #7773;
+    }
+  }
   .ajax-button {
     cursor: pointer;
   }

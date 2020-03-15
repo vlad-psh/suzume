@@ -19,6 +19,12 @@ Vue.component('vue-abyss', {
     allRecords() {
       return this.j.files.filter(i => i.type === 'audio').map(i => this.recordObject(i));
     },
+    allImages() {
+      return this.j.files.filter(i => i.type === 'image');
+    },
+    allOther() {
+      return this.j.files.filter(i => i.type === undefined);
+    },
   },
   methods: {
     reloadFolder() {
@@ -57,17 +63,29 @@ Vue.component('vue-abyss', {
   template: `
 <div class="vue-abyss">
   <div class="folder-path">
-    <div class="node"><div class="ajax-link" @click="openFolder(0)">root</div></div><div class="node" v-for="f of j.parents"><div class="ajax-link" @click="openFolder(f[0])">{{f[1]}}</div></div>{{j.name}}
+    <div class="node"><div class="ajax-link" @click="openFolder(0)">root</div></div><div class="node" v-for="f of j.parents"><div class="ajax-link" @click="openFolder(f[0])">{{f[1]}}</div></div>{{j.name}} <a class="button-link" @click="reloadFolder">⟳</a>
   </div>
+
+  <div v-if="j.release">«{{j.release[1]}}» by {{j.performer[1]}}</div>
 
   <template v-if="j.subfolders && j.subfolders.length > 0">
     <br>
-    <div class="folder" v-for="f of j.subfolders" @click="openFolder(f[0])"><div class="ajax-link">{{f[1]}}</div></div>
+    <div class="folder" v-for="f of j.subfolders"><div class="ajax-link" @click="openFolder(f[0])">{{f[1]}}</div><template v-if="f[2]"> by {{f[2][1]}}</template></div>
   </template>
 
-  <template v-if="j.files && j.files.length > 0">
-    <h2>Files</h2>
-    <div class="file" v-for="f of j.files"><div class="ajax-link" :class="nowPlaying === f.md5 ? 'now-playing' : ''" @click="start(f.md5)">{{f.fln}}</div></div>
+  <template v-if="allRecords.length > 0">
+    <h2>&#x1f3b6; Audio</h2>
+    <div class="file" v-for="f of allRecords"><div class="ajax-link" :class="nowPlaying === f.md5 ? 'now-playing' : ''" @click="start(f.md5)">{{f.title}}</div></div>
+  </template>
+
+  <template v-if="allImages.length > 0">
+    <h2>&#x1f5bc;&#xfe0f; Images</h2>
+    <div class="file" v-for="f of allImages"><div class="ajax-link">{{f.fln}}</div></div>
+  </template>
+
+  <template v-if="allOther.length > 0">
+    <h2>&#x1f4c4; Files</h2>
+    <div class="file" v-for="f of allOther"><div class="ajax-link">{{f.fln}}</div></div>
   </template>
 </div>
 `

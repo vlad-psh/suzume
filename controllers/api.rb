@@ -25,14 +25,20 @@ end
 
 get :api_abyss do
   protect!
-  folder = Folder.find_by(id: params[:id]) || Folder.root
+  folder = Folder.eager_load(release: :performer).find_by(id: params[:id]) || Folder.root
   folder.get_files!
 
   return folder.serializable_hash.merge({
+    release: folder.release ? [folder.release.id, folder.release.title] : nil,
+    performer: folder.release ? [folder.release.performer.id, folder.release.performer.title] : nil,
     files: folder.files.map{|k,v| v.merge({md5: k})}.sort{|a,b| a['fln'].downcase <=> b['fln'].downcase},
     name: (folder.is_symlink ? '🔗' : '') + folder.name,
     parents: Folder.where(id: folder.nodes).map{|f| [f.id, (f.is_symlink ? '🔗' : '') + File.basename(f.path)]},
-    subfolders: folder.subfolders!.map{|f| [f.id, (f.is_symlink ? '🔗' : '') + File.basename(f.path)]},
+    subfolders: folder.subfolders!.eager_load(release: :performer).map{|f|
+      [f.id,
+      (f.is_symlink ? '🔗' : '') + File.basename(f.path),
+       f.release ? [f.release.performer_id, f.release.performer.title] : nil]
+    },
   }).to_json
 end
 
