@@ -5,7 +5,7 @@ require('./vue-browser.js');
 require('./vue-player.js');
 require('./vue-performer.js');
 require('./vue-abyss.js');
-
+require('./vue-rating-button.js');
 
 // Obsolete code?
 $(document).on('submit', '.add-tag-form', function(event){

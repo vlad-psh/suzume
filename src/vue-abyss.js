@@ -49,7 +49,7 @@ Vue.component('vue-abyss', {
         md5: record.md5,
         title: record.fln,
         //performer: this.title,
-        //rating: this.ratingEmoji(record.rating + 1),
+        rating: record.rating,
         src: `/abyss/${this.id}/file/${record.md5}`
       };
     },
@@ -75,7 +75,10 @@ Vue.component('vue-abyss', {
 
   <template v-if="allRecords.length > 0">
     <h2>&#x1f3b6; Audio</h2>
-    <div class="file" v-for="f of allRecords"><div class="ajax-link" :class="nowPlaying === f.md5 ? 'now-playing' : ''" @click="start(f.md5)">{{f.title}}</div></div>
+    <div class="file" v-for="f of allRecords">
+      <vue-rating-button :track="f"></vue-rating-button>
+      <div class="ajax-link" :class="nowPlaying === f.md5 ? 'now-playing' : ''" @click="start(f.md5)">{{f.title}}</div>
+    </div>
   </template>
 
   <template v-if="allImages.length > 0">

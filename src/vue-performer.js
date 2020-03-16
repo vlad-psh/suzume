@@ -30,7 +30,7 @@ Vue.component('vue-performer', {
         uid: record.uid,
         title: record.title,
         performer: this.title,
-        rating: this.ratingEmoji(record.rating + 1),
+        rating: record.rating,
         src: `/download/audio/${record.uid}`
       };
     },

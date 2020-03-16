@@ -361,6 +361,29 @@ body {
     .file {
       .now-playing {background: $yellow;}
     }
+  } // end of .vue-abyss
+
+  .vue-rating-button {
+    position: relative;
+    display: inline-block;
+
+    .emoji {
+      cursor: pointer;
+      &:hover {opacity: .6;}
+    }
+    .popup {
+      position: absolute;
+      background: #111c;
+      padding: .2em .6em;
+      border-radius: 4px;
+      width: 8em;
+      z-index: 10;
+
+      .rating {
+        display: inline-block;
+        padding: .3em;
+      }
+    }
   }
 
   .ui-selectable-helper {
