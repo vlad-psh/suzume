@@ -89,7 +89,7 @@ post :abyss_set_folder_info do
   folder.update_attribute(:release_id, release.id)
   folder.process_files!
 
-  redirect path_to(:abyss_folder).with(folder.id)
+  return {result: 'ok'}.to_json
 end
 
 post :abyss_process_folder do

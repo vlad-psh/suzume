@@ -32,7 +32,11 @@ Vue.component('vue-abyss', {
         url: `/api/abyss/${this.id}`,
         method: 'GET'
       }).done(data => {
-        this.j = JSON.parse(data);
+        var j = JSON.parse(data);
+        for (var f of j.files) {
+          if (f.type === 'image' && !f.cover) f.cover = false;
+        }
+        this.j = j;
       });
     },
     openFolder(id) {
@@ -55,6 +59,10 @@ Vue.component('vue-abyss', {
     },
     releaseUpdated() {
       this.reloadFolder();
+    },
+    setCover(md5) {
+      fetch(`/abyss/${this.id}/set_cover/${md5}`, {method: 'POST'})
+        .then((response) => this.j.files.find(i => i.md5 === md5).cover = true)
     },
     ...helpers
   },
@@ -87,7 +95,9 @@ Vue.component('vue-abyss', {
 
   <template v-if="allImages.length > 0">
     <h2>&#x1f5bc;&#xfe0f; Images</h2>
-    <div class="file" v-for="f of allImages"><div class="ajax-link">{{f.fln}}</div></div>
+    <div class="file" v-for="f of allImages" @click="setCover(f.md5)">
+      <div class="ajax-link" :class="f.cover ? 'now-playing' : ''">{{f.fln}}</div>
+    </div>
   </template>
 
   <template v-if="allOther.length > 0">
