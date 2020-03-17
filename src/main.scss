@@ -361,6 +361,30 @@ body {
     .file {
       .now-playing {background: $yellow;}
     }
+    table.release-form {
+      font-size: .8em;
+      font-family: sans-serif;
+
+      tr.reset {
+        cursor: pointer;
+        &:hover {background-color: $yellow;}
+      }
+      th {color: #555;}
+      td {text-align: center;}
+      input {
+        border: none;
+        font-size: 1.1em;
+        border-bottom: 1px solid #ccc;
+
+        &[type='search'] {
+          border-color: #08f;
+        }
+        &[type='button'] {
+          border: 1px solid #ccc;
+          padding: .2em .5em;
+        }
+      }
+    }
   } // end of .vue-abyss
 
   .vue-rating-button {
@@ -405,3 +429,22 @@ body {
   }
 }
 
+.v-autocomplete{
+  position:relative;
+  display: inline-block;
+
+  .v-autocomplete-list{
+    position: absolute;
+    background: white;
+    z-index: 15;
+
+    .v-autocomplete-list-item{
+      cursor: pointer;
+      border: 1px solid #ccc;
+      margin-bottom: -1px;
+      padding: .2em .5em;
+
+      &.v-autocomplete-item-active{background-color: $yellow;}
+    }
+  }
+}

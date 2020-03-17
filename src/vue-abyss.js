@@ -7,7 +7,7 @@ Vue.component('vue-abyss', {
   },
   data() {
     return {
-      j: {},
+      j: {files: []},
     }
   },
   watch: {
@@ -53,6 +53,9 @@ Vue.component('vue-abyss', {
         src: `/abyss/${this.id}/file/${record.md5}`
       };
     },
+    releaseUpdated() {
+      this.reloadFolder();
+    },
     ...helpers
   },
   created() {
@@ -67,9 +70,10 @@ Vue.component('vue-abyss', {
   </div>
 
   <div v-if="j.release">«{{j.release[1]}}» by {{j.performer[1]}}</div>
+  <vue-abyss-release-form v-else-if="allRecords.length > 0" :id="id" @update="releaseUpdated"></vue-abyss-release-form>
 
   <template v-if="j.subfolders && j.subfolders.length > 0">
-    <br>
+    <h2>&#x1f4c1; Folders</h2>
     <div class="folder" v-for="f of j.subfolders"><div class="ajax-link" @click="openFolder(f[0])">{{f[1]}}</div><template v-if="f[2]"> by {{f[2][1]}}</template></div>
   </template>
 
