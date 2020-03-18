@@ -8,6 +8,8 @@ Vue.component('vue-abyss', {
   data() {
     return {
       j: {files: []},
+      cover: null,
+      coverUrl: null,
     }
   },
   watch: {
@@ -17,10 +19,19 @@ Vue.component('vue-abyss', {
   },
   computed: {
     allRecords() {
-      return this.j.files.filter(i => i.type === 'audio').map(i => this.recordObject(i));
+      return this.j.files.filter(i => i.type === 'audio').map(i => new Object({
+        md5: i.md5,
+        title: i.fln,
+        rating: i.rating,
+        src: `/abyss/${this.id}/file/${i.md5}`,
+      }));
     },
     allImages() {
-      return this.j.files.filter(i => i.type === 'image');
+      return this.j.files.filter(i => i.type === 'image').map(i => new Object({
+        md5: i.md5,
+        fln: i.fln,
+        cover: i.cover ? true : false,
+      }));
     },
     allOther() {
       return this.j.files.filter(i => i.type === undefined);
@@ -32,11 +43,8 @@ Vue.component('vue-abyss', {
         url: `/api/abyss/${this.id}`,
         method: 'GET'
       }).done(data => {
-        var j = JSON.parse(data);
-        for (var f of j.files) {
-          if (f.type === 'image' && !f.cover) f.cover = false;
-        }
-        this.j = j;
+        this.j = JSON.parse(data);
+        this.cover = this.allImages.find(i => i.cover === true);
       });
     },
     openFolder(id) {
@@ -47,22 +55,27 @@ Vue.component('vue-abyss', {
       const idx = all.findIndex(i => i.md5 === md5);
       this.$emit('start', this.splitArray(all, idx));
     },
-    recordObject(record) {
-      return {
-        //uid: record.uid,
-        md5: record.md5,
-        title: record.fln,
-        //performer: this.title,
-        rating: record.rating,
-        src: `/abyss/${this.id}/file/${record.md5}`
-      };
-    },
     releaseUpdated() {
       this.reloadFolder();
     },
     setCover(md5) {
       fetch(`/abyss/${this.id}/set_cover/${md5}`, {method: 'POST'})
-        .then((response) => this.j.files.find(i => i.md5 === md5).cover = true)
+        .then((response) => {
+          // TODO: change cover without reload
+          this.reloadFolder();
+        })
+    },
+    downloadCover() {
+      if (!this.coverUrl) return false;
+      var data = new FormData();
+      data.append('url', this.coverUrl);
+      this.coverUrl = null;
+
+      fetch(`/abyss/${this.id}/download_cover`, {method: 'POST', body: data})
+        .then((response) => {
+          // TODO: without reloading
+          this.reloadFolder()
+        });
     },
     ...helpers
   },
@@ -78,7 +91,6 @@ Vue.component('vue-abyss', {
   </div>
 
   <div v-if="j.release">«{{j.release[1]}}» by {{j.performer[1]}}</div>
-  <vue-abyss-release-form v-else-if="allRecords.length > 0" :id="id" @update="releaseUpdated"></vue-abyss-release-form>
 
   <template v-if="j.subfolders && j.subfolders.length > 0">
     <h2>&#x1f4c1; Folders</h2>
@@ -93,17 +105,22 @@ Vue.component('vue-abyss', {
     </div>
   </template>
 
-  <template v-if="allImages.length > 0">
+  <template v-if="allRecords.length > 0 || allImages.length > 0">
     <h2>&#x1f5bc;&#xfe0f; Images</h2>
-    <div class="file" v-for="f of allImages" @click="setCover(f.md5)">
-      <div class="ajax-link" :class="f.cover ? 'now-playing' : ''">{{f.fln}}</div>
+    <div class="file" v-for="f of allImages">
+      <div class="emoji" @click="setCover(f.md5)">{{f.cover ? '※' : '・'}}</div> <div class="ajax-link">{{f.fln}}</div>
     </div>
+    <input v-model="coverUrl" @keydown.enter="downloadCover">
+    <input type="button" @click="downloadCover" value="Download">
   </template>
 
   <template v-if="allOther.length > 0">
     <h2>&#x1f4c4; Files</h2>
     <div class="file" v-for="f of allOther"><div class="ajax-link">{{f.fln}}</div></div>
   </template>
+
+  <br>
+  <vue-abyss-release-form v-if="!j.release && allRecords.length > 0" :id="id" @update="releaseUpdated"></vue-abyss-release-form>
 </div>
 `
 });

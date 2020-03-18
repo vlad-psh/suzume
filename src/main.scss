@@ -387,14 +387,16 @@ body {
     }
   } // end of .vue-abyss
 
+  .emoji {
+    display: inline-block;
+    cursor: pointer;
+    &:hover {opacity: .6;}
+  }
+
   .vue-rating-button {
     position: relative;
     display: inline-block;
 
-    .emoji {
-      cursor: pointer;
-      &:hover {opacity: .6;}
-    }
     .popup {
       position: absolute;
       background: #111c;
@@ -404,7 +406,6 @@ body {
       z-index: 10;
 
       .rating {
-        display: inline-block;
         padding: .3em;
       }
     }

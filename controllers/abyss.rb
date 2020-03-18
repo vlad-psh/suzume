@@ -6,7 +6,7 @@ paths \
   abyss_set_cover: '/abyss/:folder_id/set_cover/:md5', # post
   abyss_extract_cover: '/abyss/:folder_id/extract_cover/:md5', # post
   abyss_mediainfo: '/abyss/:folder_id/mediainfo/:md5', # get
-  download_cover: '/download_cover' # post
+  download_cover: '/abyss/:folder_id/download_cover' # post
 
 get :abyss_folder do
   protect!
@@ -176,5 +176,5 @@ post :download_cover do
 
   saved_file.unlink
 
-  redirect path_to(:abyss_folder).with(folder.id)
+  return {result: 'ok'}.to_json
 end
