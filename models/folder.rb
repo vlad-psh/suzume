@@ -1,6 +1,6 @@
 class Folder < ActiveRecord::Base
   belongs_to :release
-  validates :nodes, presence: true # Prevents accidentally saving of 'virtual root'
+  validates :nodes, exclusion: {in: [nil]} # Prevents accidentally saving of 'virtual root'
 
   def self.root
     Folder.new(path: '', nodes: nil)
