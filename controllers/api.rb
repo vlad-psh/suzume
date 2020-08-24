@@ -2,6 +2,7 @@ paths \
   api_index: '/api/index',
   api_performer: '/api/performer/:id',
   api_abyss: '/api/abyss/:id',
+  api_rating: '/api/rating/:uid',
   api_tags: '/api/tags'
 
 get :api_index do
@@ -26,7 +27,6 @@ end
 get :api_abyss do
   protect!
   folder = Folder.eager_load(release: :performer).find_by(id: params[:id]) || Folder.root
-  folder.get_files!
 
   return folder.serializable_hash.merge({
     release: folder.release ? [folder.release.id, folder.release.title] : nil,
@@ -34,14 +34,22 @@ get :api_abyss do
     files: folder.files.map{|k,v| v.merge({md5: k})}.sort{|a,b| a['fln'].downcase <=> b['fln'].downcase},
     name: (folder.is_symlink ? '🔗' : '') + folder.name,
     parents: Folder.where(id: folder.nodes).map{|f| [f.id, (f.is_symlink ? '🔗' : '') + File.basename(f.path)]},
-    subfolders: folder.subfolders!.eager_load(release: :performer).map{|f|
-      [f.id,
-      (f.is_symlink ? '🔗' : '') + File.basename(f.path),
-       f.release ? [f.release.performer_id, f.release.performer.title] : nil]
+    subfolders: folder.contents[:dirs].map{|f|
+      [f[:id],
+      (f[:sym] ? '🔗' : '') + f[:t],
+       nil # f.release ? [f.release.performer_id, f.release.performer.title] : nil
+      ]
     },
   }).to_json
 end
 
 get :api_tags do
 
+end
+
+patch :api_rating do
+  record = Record.find_by(uid: params[:uid])
+  halt(404, 'Not found') unless record.present?
+  record.update(rating: params[:rating])
+  return record.rating.to_s
 end

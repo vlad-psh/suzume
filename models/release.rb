@@ -20,6 +20,7 @@ class Release < ActiveRecord::Base
       title: title,
       year: year,
       cover: cover,
+      folders: folders.pluck(:id),
       records: records.map{|r| r.api_hash}
     }
   end

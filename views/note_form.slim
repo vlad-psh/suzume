@@ -1,8 +1,0 @@
-// locals: note_parent
-
-form.ajax-insert-form action=path_to(:notes) method="POST" data-remote="true" data-append-to="#notes-table-#{note_parent.model_name.singular}-#{note_parent.id}"
-  input type="hidden" name="parent_type" value=note_parent.model_name.singular
-  input type="hidden" name="parent_id" value=note_parent.id
-  textarea.clear-value name="content" style="width: 400px; height: 70px;"
-  br
-  input type="submit" value="Create"

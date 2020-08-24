@@ -1,9 +1,0 @@
-// locals: performer
-
-div class="tags-block"
-  form class="add-tag-form" method="POST" action=path_to(:tag_add)
-    input type="hidden" name="performer_id" value=performer.id
-    - performer.tags.each do |t|
-      == slim :tag_item, locals: {tag: t, performer: performer}
-    input class="new-tag-input" type="text" name="tag_name" autocomplete="off" placeholder="Add new tag..."
-

@@ -13,6 +13,14 @@ Vue.component('vue-browser', {
     }
   },
   methods: {
+    reloadCurrent() {
+      if (this.mode === 'index') {
+        this.reloadIndex();
+      } else if (this.mode === 'performer') {
+        this.mode = 'index';
+        this.openPerformer(this.performer.id);
+      }
+    },
     reloadIndex() {
       $.ajax({
         url: `/api/index`,
@@ -29,6 +37,10 @@ Vue.component('vue-browser', {
         this.performer = JSON.parse(data);
         this.mode = 'performer';
       });
+    },
+    openAbyss(id) {
+      this.abyssFolderId = id;
+      this.mode = 'abyss';
     },
     addTrack(track) {
       this.tracklists.playlist.push(track);
@@ -59,9 +71,10 @@ Vue.component('vue-browser', {
 <div class="vue-browser">
   <vue-player ref="player" :tracklists="tracklists"></vue-player>
 
-  <div class="menu" style="position: fixed; top: 0; left: 0;">
+  <div class="menu" style="position: fixed; top: 0; left: 0; background: white;">
     <a class="ajax-link" @click="mode = 'index'">Index</a>
     <a class="ajax-link" @click="mode = 'abyss'">Abyss</a>
+    <a class="ajax-link" @click="reloadCurrent">Refresh content</a>
   </div>
 
 
@@ -76,7 +89,7 @@ Vue.component('vue-browser', {
       </template>
 
       <template v-else-if="mode === 'performer'">
-        <vue-performer :init-data="performer" :now-playing="$refs.player.nowPlaying ? $refs.player.nowPlaying.uid : null" @add="addTrack" @start="startSimplePlaying"></vue-performer>
+        <vue-performer :init-data="performer" :now-playing="$refs.player.nowPlaying ? $refs.player.nowPlaying.uid : null" @add="addTrack" @start="startSimplePlaying" @abyss="openAbyss"></vue-performer>
       </template>
 
       <template v-else-if="mode === 'abyss'">

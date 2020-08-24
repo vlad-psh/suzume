@@ -1,6 +1,0 @@
-// locals: note
-
-tr
-  - date = note['d'].is_a?(String) ? DateTime.parse(note['d']).localtime : note['d']
-  td.note-date = date.strftime('%-d %b %Y, %H:%M')
-  td.note-content = note['c']

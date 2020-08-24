@@ -1,30 +1,10 @@
 paths \
-  abyss_folder: '/abyss/:id', # get, delete
-  abyss_file: '/abyss/:folder_id/file/:md5', # get (download file), patch (set rating, ...?)
-  abyss_set_folder_info: '/abyss/:folder_id/info', # post
-  abyss_process_folder: '/abyss/:folder_id/process', # post
-  abyss_set_cover: '/abyss/:folder_id/set_cover/:md5', # post
-  abyss_extract_cover: '/abyss/:folder_id/extract_cover/:md5', # post
-  abyss_mediainfo: '/abyss/:folder_id/mediainfo/:md5', # get
-  download_cover: '/abyss/:folder_id/download_cover' # post
+  abyss_file: '/abyss/:folder_id/file/:md5',
+  abyss_set_cover: '/abyss/:folder_id/set_cover/:md5',
+  abyss_set_folder_info: '/abyss/:folder_id/info'
 
-get :abyss_folder do
-  protect!
-  @folder = Folder.find_by(id: params[:id]) || Folder.root
-
-  slim :folder
-end
-
-delete :abyss_folder do
-  protect!
-  folder = Folder.find(params[:id])
-  throw StandardError.new("Already removed") if folder.is_removed
-  FileUtils.remove_dir(folder.full_path)
-  folder.update_attributes(is_removed: true)
-
-  flash[:notice] = "Folder \"#{folder.path}\" was removed"
-
-  redirect path_to(:abyss_folder).with(folder.folder_id)
+def value_or_nil(v)
+  return v.blank? ? nil : v
 end
 
 get :abyss_file do
@@ -36,21 +16,6 @@ get :abyss_file do
   headers['X-Accel-Redirect'] = File.join("/nginx-abyss", filepath)
   headers['Content-Disposition'] = "inline; filename=\"#{filename}\""
   headers['Content-Type'] = get_mime(filename)
-end
-
-patch :abyss_file do # currently only rating update
-  protect!
-  folder = Folder.find(params[:folder_id])
-  if params[:rating].present? && (rating = params[:rating].to_i) >= -1 && rating <= 3
-    folder.set_rating(params[:md5], rating)
-    folder.update_audio(params[:md5]) if folder.release_id
-    return {emoji: RATING_EMOJI[rating + 1]}.to_json
-  end
-  return {error: 'Unknown params'}.to_json
-end
-
-def value_or_nil(v)
-  return v.blank? ? nil : v
 end
 
 post :abyss_set_folder_info do
@@ -84,97 +49,59 @@ post :abyss_set_folder_info do
         directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s)
       )
   end
-  release.update_attribute(:completed, false) if release.completed && !folder.is_processed
 
   folder.update_attribute(:release_id, release.id)
-  folder.process_files!
+  folder.files.values.each do |f|
+    next unless f['type'] == 'audio'
+    #throw StandardError.new("file shouldn't have UID") if f['uid']
+    rec = Record.find_by(release_id: release.id, original_filename: f['fln'])
+    rec = Record.new unless rec.present?
+    rec.attributes = {
+        release_id: release.id,
+        folder_id: folder.id,
+        original_filename: f['fln'],
+        directory: release.directory,
+        extension: f['fln'].gsub(/.*\./, ''),
+        size: f['size'],
+        rating: f['rating'],
+        mediainfo: {br: f['br'], ch: f['ch'], sr: f['sr'], brm: f['brm'], dur: f['dur']},
+    }
+    rec.save
+  end
 
   return {result: 'ok'}.to_json
-end
-
-post :abyss_process_folder do
-  protect!
-  folder = Folder.find(params[:folder_id])
-  folder.full_process!
-  redirect path_to(:abyss_folder).with(folder.id)
 end
 
 post :abyss_set_cover do
-  protect!
-  folder = Folder.find(params[:folder_id])
-  filename = folder.files[params[:md5]].try(:[], 'fln')
-  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
+  f = Folder.find(params[:folder_id])
+  details = f.files[params[:md5]]
 
-  folder.files.each do |md5,details|
-    # clear cover status for all images
-    details.delete('cover') if details['type'] == 'image'
+  throw StandardError.new("File with MD5 #{md5} doesn't exist in folder #{f.id}") unless details.present?
+  throw StandardError.new("File with MD5 #{md5} is not an image file") if details['type'] != 'image'
+
+  FileUtils.mkdir_p(f.release.full_path) unless File.exist?(f.release.full_path)
+
+  # Delete old covers
+  Dir.children(f.release.full_path).select{|i| i =~ /(cover|thumb)\./}.each do |imgname|
+    File.delete( File.join(f.release.full_path, imgname) )
   end
 
-  folder.files[params[:md5]]['cover'] = true
-  folder.update_image(params[:md5]) if folder.release.present?
-  folder.save if folder.changed?
+  oldfilepath = File.join(f.full_path, details['fln'])
+  extension = details['fln'].downcase.gsub(/.*\.([^\.]*)/, "\\1")
+  newfilepath = File.join(f.release.full_path, "cover.#{extension}")
+  thumbfilepath = File.join(f.release.full_path, "thumb.#{extension}")
+  FileUtils.copy(oldfilepath, newfilepath)
 
-  return 'ok'
-end
-
-post :abyss_extract_cover do
-  protect!
-  folder = Folder.find(params[:folder_id])
-  filename = folder.files[params[:md5]].try(:[], 'fln')
-  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
-
-  filepath = File.join(folder.full_path, filename)
-
-  iter = 0
-  ID3Tag.read(File.open(filepath, "rb")).all_frames_by_id(:APIC).each do |pic|
-    if MIME_EXT.include?(pic.mime_type)
-      type = MIME_EXT[pic.mime_type]
-      cover_filename = "#{DateTime.now.strftime('%Y%m%d_%H%M%S')}_#{iter}.#{type}"
-
-      cover_file = File.open(File.join(folder.full_path, cover_filename), 'w')
-      cover_file.write(pic.content)
-      cover_file.close
-
-      iter += 1
-    end
+  img = MiniMagick::Image.open(newfilepath)
+  if [img.width, img.height].max > 400
+    img.resize("400x400>")
+    img.write(thumbfilepath)
+  else
+    FileUtils.copy(newfilepath, thumbfilepath)
   end
-
-  redirect path_to(:abyss_folder).with(folder.id)
-end
-
-get :abyss_mediainfo do
-  protect!
-  folder = Folder.find(params[:folder_id])
-  filename = folder.files[params[:md5]].try(:[], 'fln')
-  throw StandardError.new("Wrong file MD5: #{params[:md5]}") unless filename
-
-  cmd = "mediainfo %s" % Shellwords.escape(File.join(folder.full_path, filename))
-  return `#{cmd}`
-end
-
-post :download_cover do
-  protect!
-  folder = Folder.find(params[:folder_id])
-
-  if params[:url] =~ /redacted\.ch/
-    params[:url] = URI.decode(params[:url].gsub(/.*i=/, '').gsub(/&.*/, ''))
-  end
-
-  saved_file = Tempfile.new('tulip')
-  open(params[:url]) do |read_file|
-    saved_file.write(read_file.read)
-  end
-  saved_file.close
-
-  img = MiniMagick::Image.open(saved_file.path)
-  extension = MIME_EXT[img.mime_type] || 'jpg'
-  img.destroy!
-
-  newfilepath = File.join(folder.full_path, "#{DateTime.now.strftime('%Y%m%d_%H%M%S')}.#{extension}")
-  FileUtils.copy(saved_file.path, newfilepath)
-  FileUtils.chmod(0644, newfilepath)
-
-  saved_file.unlink
+  img.destroy! # remove temp file
+  f.release.update(cover: extension)
 
   return {result: 'ok'}.to_json
 end
+

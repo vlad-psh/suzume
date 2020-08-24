@@ -26,14 +26,14 @@ Vue.component('vue-abyss-release-form', {
         formData.append('performer_id', this.performer.item.id);
       } else {
         for (i of ['title', 'romaji', 'aliases'])
-          formData.append(`performer_${i}`, this.performer[i]);
+          if (this.performer[i]) formData.append(`performer_${i}`, this.performer[i]);
       }
 
       if (this.release.item) {
         formData.append('release_id', this.release.item.id);
       } else {
         for (i of ['title', 'year', 'romaji', 'format', 'type'])
-          formData.append(`release_${i}`, this.release[i]);
+          if (this.release[i]) formData.append(`release_${i}`, this.release[i]);
       }
 
       fetch(`/abyss/${this.id}/info`, {method: 'POST', body: formData})
@@ -89,7 +89,7 @@ Vue.component('vue-abyss-release-form', {
   <tr v-else>
     <td>NEW</td>
     <td>
-      <v-autocomplete v-if="performer.item":items="release.list" @update-items="releaseSearch" :get-label="i => i.value" @item-selected="release.item = $event" :auto-select-one-item="false" :min-len="1" :keep-open="false" :key="'release' + id"></v-autocomplete>
+      <v-autocomplete v-if="performer.item" :items="release.list" @update-items="releaseSearch" :get-label="i => i.value" @item-selected="release.item = $event" :auto-select-one-item="false" :min-len="1" :keep-open="false" :key="'release' + id"></v-autocomplete>
       <input v-else v-model="release.title">
     </td>
     <td><input v-model="release.romaji"></td>

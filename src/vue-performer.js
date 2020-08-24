@@ -40,6 +40,9 @@ Vue.component('vue-performer', {
     coverOrig(id) {
       return `/download/image/${id}/cover`
     },
+    openAbyss(id) {
+      this.$emit('abyss', id);
+    },
     ...helpers
   },
   created() {
@@ -68,11 +71,14 @@ Vue.component('vue-performer', {
           </span>
           <table class="records-table">
             <tr v-for="record of release.records" class="record-line">
-              <td class="rating"><span class="rating-choose-button">{{ratingEmoji(record.rating + 1)}}</span></td>
+              <td class="rating"><vue-rating-button :track="record"></vue-rating-button></td>
               <td class="trackname" :class="nowPlaying == record.uid ? 'track-now-playing' : null"><a :href="'download/audio/' + record.uid" @click.prevent="playTrack(record.uid)">{{record.title}}</a></td>
               <td class="duration">{{record.dur}}</td>
             </tr>
           </table>
+          <div style="font-size: .8em;opacity:.7">
+            <a v-for="f in release.folders" @click="openAbyss(f)" style="margin-right: .5em">{{f}}</a>
+          </div>
         </div>
       </div>
     </template>

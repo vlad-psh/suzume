@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_14_092105) do
+ActiveRecord::Schema.define(version: 2020_08_22_025839) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,10 @@ ActiveRecord::Schema.define(version: 2020_03_14_092105) do
     t.jsonb "notes"
     t.string "uid"
     t.string "extension"
+    t.bigint "folder_id"
+    t.integer "size"
+    t.string "title"
+    t.index ["folder_id"], name: "index_records_on_folder_id"
     t.index ["release_id"], name: "index_records_on_release_id"
   end
 

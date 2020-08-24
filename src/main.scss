@@ -199,7 +199,6 @@ body {
   .performers-list {
     padding: 0 1em;
     column-width: 15em;
-    column-fill: auto;
   }
 
   .queue-manager {
@@ -403,8 +402,8 @@ body {
       background: #111c;
       padding: .2em .6em;
       border-radius: 4px;
-      width: 8em;
-      z-index: 10;
+      width: 9.7em;
+      z-index: 50;
 
       .rating {
         padding: .3em;
