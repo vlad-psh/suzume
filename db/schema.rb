@@ -10,28 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_22_025839) do
+ActiveRecord::Schema.define(version: 2020_08_24_095743) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "albums_artists", id: :serial, force: :cascade do |t|
-    t.integer "artist_id"
-    t.integer "album_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["album_id"], name: "index_albums_artists_on_album_id"
-    t.index ["artist_id"], name: "index_albums_artists_on_artist_id"
-  end
-
   create_table "folders", force: :cascade do |t|
     t.string "path"
-    t.jsonb "files", default: {}
-    t.boolean "is_processed", default: false
     t.boolean "is_removed", default: false
     t.boolean "is_symlink", default: false
     t.integer "release_id"
-    t.integer "nodes", default: [], array: true
   end
 
   create_table "performers", force: :cascade do |t|
@@ -93,17 +81,6 @@ ActiveRecord::Schema.define(version: 2020_08_22_025839) do
     t.string "format"
     t.string "cover"
     t.index ["performer_id"], name: "index_releases_on_performer_id"
-  end
-
-  create_table "tag_relations", force: :cascade do |t|
-    t.string "linked_object"
-    t.bigint "tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "parent_type"
-    t.integer "parent_id"
-    t.index ["linked_object"], name: "index_tag_relations_on_linked_object"
-    t.index ["tag_id"], name: "index_tag_relations_on_tag_id"
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
