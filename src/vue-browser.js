@@ -93,7 +93,7 @@ Vue.component('vue-browser', {
       </template>
 
       <template v-else-if="mode === 'abyss'">
-        <vue-abyss :id="abyssFolderId" :now-playing="$refs.player.nowPlaying ? $refs.player.nowPlaying.md5 : null" @open="abyssFolderId = $event" @start="startSimplePlaying"></vue-abyss>
+        <vue-abyss :id="abyssFolderId" :now-playing="$refs.player.nowPlaying ? $refs.player.nowPlaying.md5 || $refs.player.nowPlaying.uid : null" @open="abyssFolderId = $event" @start="startSimplePlaying"></vue-abyss>
       </template>
     </div>
 

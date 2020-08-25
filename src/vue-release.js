@@ -36,7 +36,7 @@ Vue.component('vue-release', {
   mounted() {
   },
   template: `
-<div v-if="records.length > 0" class="vue-release release-container">
+<div v-if="records.length > 0" class="vue-release">
   <div class="release-cover">
     <template v-if="cover">
       <a class="cover-link" :href="coverOrig"><div class="thumbnail"><img :src="coverThumb"></div></a>
