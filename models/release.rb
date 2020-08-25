@@ -3,6 +3,8 @@ class Release < ActiveRecord::Base
   has_many :tracks
   has_many :folders
 
+  after_create -> {self.update(directory: File.join(Date.today.strftime("%Y%m"), id.to_s))}
+
   def full_path
     return nil unless self.directory
     return File.join($library_path, self.directory)

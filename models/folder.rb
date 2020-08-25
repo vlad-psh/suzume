@@ -30,14 +30,30 @@ class Folder < ActiveRecord::Base
     files = []
     Dir.children(full_path).map do |c|
       cfp = File.join(full_path, c)
-      crp = File.join(path, c).gsub(/^\//, '')
       if File.directory?(cfp)
-        sub = Folder.find_or_create_by(path: crp)
+        sub = Folder.find_or_create_by(path: File.join(path, c))
         dirs << sub
       else
         files << {t: c, sym: File.symlink?(cfp) ? true : false}
       end
     end
     return {dirs: dirs.sort{|a,b| a.path <=> b.path}, files: files.sort{|a,b| a[:t] <=> b[:t]}}
+  end
+
+  def link_to_release!(release)
+    Dir.children(full_path).map do |f|
+      f_fullpath = File.join(full_path, f)
+      next if File.directory?(f_fullpath)
+      next if f !~ /\.(mp3|m4a)$/
+
+      track = Track.find_by(release_id: release.id, original_filename: f)
+      if !track.present?
+        track = Track.create(release: release, original_filename: f, folder: self)
+        track.update_mediainfo!
+      end
+    end
+
+    self.update(release_id: release.id)
+    FileUtils.touch(File.join(full_path, ".tulip.id.#{id}"))
   end
 end

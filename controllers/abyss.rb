@@ -45,29 +45,9 @@ post :abyss_set_folder_info do
       format: value_or_nil(params[:release_format]),
       release_type: value_or_nil(params[:release_type])
     )
-    release.update_attributes(
-        directory: File.join(Date.today.strftime("%Y%m"), release.id.to_s)
-      )
   end
 
-  folder.update_attribute(:release_id, release.id)
-  folder.files.values.each do |f|
-    next unless f['type'] == 'audio'
-    #throw StandardError.new("file shouldn't have UID") if f['uid']
-    track = Track.find_by(release_id: release.id, original_filename: f['fln'])
-    track = Track.new unless track.present?
-    track.attributes = {
-        release_id: release.id,
-        folder_id: folder.id,
-        original_filename: f['fln'],
-        directory: release.directory,
-        extension: f['fln'].gsub(/.*\./, ''),
-        size: f['size'],
-        rating: f['rating'],
-        mediainfo: {br: f['br'], ch: f['ch'], sr: f['sr'], brm: f['brm'], dur: f['dur']},
-    }
-    track.save
-  end
+  folder.link_to_release!(release)
 
   return {result: 'ok'}.to_json
 end

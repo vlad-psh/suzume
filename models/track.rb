@@ -5,6 +5,7 @@ class Track < ActiveRecord::Base
   has_and_belongs_to_many :playlists
 
   before_create :assign_uid, if: -> {uid.blank?}
+  before_create :auto_properties
   after_create :link_file!, if: -> {rating != nil && rating >= 0 && !stored?}
 
   before_update :on_rating_change, if: :rating_changed?
@@ -29,9 +30,12 @@ class Track < ActiveRecord::Base
   end
 
   def update_mediainfo
+    p = full_path
+    p = File.join(folder.full_path, original_filename) unless File.exist?(p)
     return unless File.exist?(self.full_path)
+
     m = MediaInfoNative::MediaInfo.new()
-    m.open_file(self.full_path)
+    m.open_file(p)
     self.mediainfo = {
       dur: m.audio.duration,
       br:  m.audio.bit_rate,
@@ -83,6 +87,11 @@ class Track < ActiveRecord::Base
   def assign_uid
     while Track.where(uid: (_uid = SecureRandom.hex(4))).present? do end
     self.uid = _uid
+  end
+
+  def auto_properties
+    self.directory = release.directory unless self.directory.present?
+    self.extension = self.original_filename.gsub(/.*\./, '') unless self.extension
   end
 
   def on_rating_change
