@@ -30,7 +30,7 @@ get :api_abyss do
   contents = folder.contents
 
   return folder.serializable_hash.merge({
-    release: folder.release ? [folder.release.id, folder.release.title] : nil,
+    release: folder.release ? folder.release.api_hash : nil,
     performer: folder.release ? [folder.release.performer.id, folder.release.performer.title] : nil,
     files: contents[:files],
     name: (folder.is_symlink ? '🔗' : '') + folder.name,
