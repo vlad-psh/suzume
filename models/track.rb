@@ -1,7 +1,7 @@
-class Record < ActiveRecord::Base
+class Track < ActiveRecord::Base
   belongs_to :release
   belongs_to :folder, optional: true
-  has_one :performer, through: :release
+  has_one :artist, through: :release
   has_and_belongs_to_many :playlists
 
   before_create :assign_uid, if: -> {uid.blank?}
@@ -81,7 +81,7 @@ class Record < ActiveRecord::Base
 
   private
   def assign_uid
-    while Record.where(uid: (_uid = SecureRandom.hex(4))).present? do end
+    while Track.where(uid: (_uid = SecureRandom.hex(4))).present? do end
     self.uid = _uid
   end
 

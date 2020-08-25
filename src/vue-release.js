@@ -7,7 +7,7 @@ Vue.component('vue-release', {
   },
   data() {
     return {
-      id: null, title: null, year: null, records: [], folders: [], cover: null
+      id: null, title: null, year: null, tracks: [], folders: [], cover: null
     }
   },
   computed: {
@@ -36,7 +36,7 @@ Vue.component('vue-release', {
   mounted() {
   },
   template: `
-<div v-if="records.length > 0" class="vue-release">
+<div v-if="tracks.length > 0" class="vue-release">
   <div class="release-cover">
     <template v-if="cover">
       <a class="cover-link" :href="coverOrig"><div class="thumbnail"><img :src="coverThumb"></div></a>
@@ -47,11 +47,11 @@ Vue.component('vue-release', {
     <span class="release-title">{{year}} {{title}}
       <span style="font-size: 0.65em; opacity: 0.4; font-weight: normal;">#{{id}}</span>
     </span>
-    <table class="records-table">
-      <tr v-for="record of records" class="record-line">
-        <td class="rating"><vue-rating-button :track="record"></vue-rating-button></td>
-        <td class="trackname" :class="nowPlaying == record.uid ? 'track-now-playing' : null"><a :href="'download/audio/' + record.uid" @click.prevent="playTrack(record.uid)">{{record.title}}</a></td>
-        <td class="duration">{{record.dur}}</td>
+    <table class="tracks-table">
+      <tr v-for="track of tracks" class="track-line">
+        <td class="rating"><vue-rating-button :track="track"></vue-rating-button></td>
+        <td class="trackname" :class="nowPlaying == track.uid ? 'track-now-playing' : null"><a :href="'download/audio/' + track.uid" @click.prevent="playTrack(track.uid)">{{track.title}}</a></td>
+        <td class="duration">{{track.dur}}</td>
       </tr>
     </table>
     <div style="font-size: .8em;opacity:.7">

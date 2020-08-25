@@ -26,7 +26,7 @@
 
   .release-content {
     width: 100%;
-    .records-table {
+    .tracks-table {
       //border-collapse: collapse;
       border-spacing: 1px;
       width: 100%;
@@ -64,6 +64,6 @@
       td.duration {
         font-size: .8em;
       }
-    } // end of .records-table
+    } // end of .tracks-table
   } // end of .release-content
 } // end of .vue-release

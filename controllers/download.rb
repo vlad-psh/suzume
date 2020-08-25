@@ -3,13 +3,13 @@ paths \
   download_image: '/download/image/:release_id/:cover_type'
 
 get :download_audio do
-  record = Record.find_by(uid: params[:uid])
-  halt 404, "Record not found" if record.blank?
-  headers['X-Accel-Redirect'] = record.stored? \
-    ? File.join("/nginx-download", record.directory, record.filename) \
-    : File.join("/nginx-abyss", record.folder.path, record.original_filename)
-  headers['Content-Disposition'] = "inline; filename=\"#{record.original_filename}\""
-  headers['Content-Type'] = get_mime(record.original_filename)
+  track = Track.find_by(uid: params[:uid])
+  halt 404, "Track not found" if track.blank?
+  headers['X-Accel-Redirect'] = track.stored? \
+    ? File.join("/nginx-download", track.directory, track.filename) \
+    : File.join("/nginx-abyss", track.folder.path, track.original_filename)
+  headers['Content-Disposition'] = "inline; filename=\"#{track.original_filename}\""
+  headers['Content-Type'] = get_mime(track.original_filename)
 end
 
 get :download_image do

@@ -3,7 +3,7 @@ require("jquery-ui/ui/widgets/autocomplete.js");
 
 require('./vue-browser.js');
 require('./vue-player.js');
-require('./vue-performer.js');
+require('./vue-artist.js');
 require('./vue-release.js');
 require('./vue-abyss.js');
 require('./vue-rating-button.js');

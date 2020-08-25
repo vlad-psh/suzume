@@ -1,11 +1,11 @@
-class Performer < ActiveRecord::Base
+class Artist < ActiveRecord::Base
   has_many :releases
-  has_many :records, through: :releases
+  has_many :tracks, through: :releases
   has_and_belongs_to_many :tags
 
-  def sorted_records
+  def sorted_tracks
     result = {}
-    rr = records.includes(:release)
+    rr = tracks.includes(:release)
 
     prev_release = nil
     rr.sort_by {|rec| "#{rec.release.year}#{rec.release.title}"}.each do |r|
@@ -23,7 +23,7 @@ class Performer < ActiveRecord::Base
       aliases: aliases,
       romaji: romaji,
       tags: tags.pluck(:title),
-      releases: releases.includes(:records).order(year: :desc).map{|r| r.api_hash}
+      releases: releases.includes(:tracks).order(year: :desc).map{|r| r.api_hash}
     }
   end
 

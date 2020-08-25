@@ -5,8 +5,8 @@ Vue.component('vue-browser', {
   data() {
     return {
       mode: 'index',
-      performer: {},
-      performers: [],
+      artist: {},
+      artists: [],
       filterValue: '',
       abyssFolderId: 0,
       tracklists: {playlist: [], simple: []},
@@ -16,9 +16,9 @@ Vue.component('vue-browser', {
     reloadCurrent() {
       if (this.mode === 'index') {
         this.reloadIndex();
-      } else if (this.mode === 'performer') {
+      } else if (this.mode === 'artist') {
         this.mode = 'index';
-        this.openPerformer(this.performer.id);
+        this.openArtist(this.artist.id);
       }
     },
     reloadIndex() {
@@ -26,16 +26,16 @@ Vue.component('vue-browser', {
         url: `/api/index`,
         method: 'GET'
       }).done(data => {
-        this.performers = JSON.parse(data);
+        this.artists = JSON.parse(data);
       });
     },
-    openPerformer(id) {
+    openArtist(id) {
       $.ajax({
-        url: `/api/performer/${id}`,
+        url: `/api/artist/${id}`,
         method: 'GET'
       }).done(data => {
-        this.performer = JSON.parse(data);
-        this.mode = 'performer';
+        this.artist = JSON.parse(data);
+        this.mode = 'artist';
       });
     },
     openAbyss(id) {
@@ -52,18 +52,18 @@ Vue.component('vue-browser', {
     },
   }, // end of methods()
   computed: {
-    filteredPerformers() {
+    filteredArtists() {
       if (this.filterValue) {
         var r = new RegExp(this.filterValue, 'i');
-        return this.performers.filter(i => i.title.match(r) || (i.aliases && i.aliases.match(r)));
+        return this.artists.filter(i => i.title.match(r) || (i.aliases && i.aliases.match(r)));
       } else {
-        return this.performers;
+        return this.artists;
       }
     }
   },
   created() {
-    if (this.initData.performer) this.performer = this.initData.performer;
-    if (this.initData.performers) this.performers = this.initData.performers;
+    if (this.initData.artist) this.artist = this.initData.artist;
+    if (this.initData.artists) this.artists = this.initData.artists;
   },
   mounted() {
   },
@@ -83,13 +83,13 @@ Vue.component('vue-browser', {
 
       <template v-if="mode === 'index'">
         <input v-model="filterValue">
-        <div class="performers-list">
-          <div v-for="p in filteredPerformers"><a class="ajax-link" @click="openPerformer(p.id)">{{p.title}}</a></div>
+        <div class="artists-list">
+          <div v-for="a in filteredArtists"><a class="ajax-link" @click="openArtist(a.id)">{{a.title}}</a></div>
         </div>
       </template>
 
-      <template v-else-if="mode === 'performer'">
-        <vue-performer :init-data="performer" :now-playing="$refs.player.nowPlaying ? $refs.player.nowPlaying.uid : null" @add="addTrack" @start="startSimplePlaying" @abyss="openAbyss"></vue-performer>
+      <template v-else-if="mode === 'artist'">
+        <vue-artist :init-data="artist" :now-playing="$refs.player.nowPlaying ? $refs.player.nowPlaying.uid : null" @add="addTrack" @start="startSimplePlaying" @abyss="openAbyss"></vue-artist>
       </template>
 
       <template v-else-if="mode === 'abyss'">
@@ -107,7 +107,7 @@ Vue.component('vue-browser', {
             </template>
             <template v-else>{{track.rating}}</template>
           </td>
-          <td>{{track.title}}<br><span class="performer">{{track.performer}}</span></td>
+          <td>{{track.title}}<br><span class="artist">{{track.artist}}</span></td>
         </tr>
       </table>
     </div>

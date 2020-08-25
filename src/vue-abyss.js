@@ -36,17 +36,17 @@ Vue.component('vue-abyss', {
       this.reloadFolder();
     },
     play(uid) {
-      const records = [].concat(...this.j.release.records.map(i => this.recordObject(i)));
-      const idx = records.findIndex(i => i.uid === uid);
-      this.$emit('start', this.splitArray(records, idx));
+      const tracks = [].concat(...this.j.release.tracks.map(i => this.trackObject(i)));
+      const idx = tracks.findIndex(i => i.uid === uid);
+      this.$emit('start', this.splitArray(tracks, idx));
     },
-    recordObject(record) {
+    trackObject(track) {
       return {
-        uid: record.uid,
-        title: record.title,
-        performer: this.title,
-        rating: record.rating,
-        src: `/download/audio/${record.uid}`
+        uid: track.uid,
+        title: track.title,
+        artist: this.title,
+        rating: track.rating,
+        src: `/download/audio/${track.uid}`
       };
     },
     ...helpers
@@ -68,7 +68,7 @@ Vue.component('vue-abyss', {
   </template>
 
   <template v-if="j.release">
-    <h2>«{{j.release.title}}» by {{j.performer[1]}}</h2>
+    <h2>«{{j.release.title}}» by {{j.artist[1]}}</h2>
     <vue-release :init-data="j.release" :now-playing="nowPlaying" @start="play"></vue-release>
   </template>
   <template v-else-if="hasAudio">

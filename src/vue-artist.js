@@ -1,6 +1,6 @@
 import helpers from './helpers.js';
 
-Vue.component('vue-performer', {
+Vue.component('vue-artist', {
   props: {
     initData: {type: Object, required: false},
     nowPlaying: {type: String, required: false}
@@ -11,27 +11,27 @@ Vue.component('vue-performer', {
     }
   },
   computed: {
-    allRecords() {
-      return [].concat(...this.releases.map(i => i.records)).map(i => this.recordObject(i));
+    allTracks() {
+      return [].concat(...this.releases.map(i => i.tracks)).map(i => this.trackObject(i));
     }
   },
   methods: {
     playTrack2(uid) { // emitted by vue-release
-      const record = this.allRecords.find(i => i.uid === uid);
-      this.$emit('add', record);
+      const track = this.allTracks.find(i => i.uid === uid);
+      this.$emit('add', track);
     },
     playTrack(uid) {
-      const all = this.allRecords;
+      const all = this.allTracks;
       var idx = all.findIndex(i => i.uid === uid);
       this.$emit('start', this.splitArray(all, idx));
     },
-    recordObject(record) {
+    trackObject(track) {
       return {
-        uid: record.uid,
-        title: record.title,
-        performer: this.title,
-        rating: record.rating,
-        src: `/download/audio/${record.uid}`
+        uid: track.uid,
+        title: track.title,
+        artist: this.title,
+        rating: track.rating,
+        src: `/download/audio/${track.uid}`
       };
     },
     openAbyss(id) {
@@ -47,8 +47,8 @@ Vue.component('vue-performer', {
   mounted() {
   },
   template: `
-<div class="vue-performer">
-  <div class="performer-title">{{title}} <span class="performer-aliases">{{romaji}}<template v-if="romaji && aliases">, </template>{{aliases}}</span></div>
+<div class="vue-artist">
+  <div class="artist-title">{{title}} <span class="artist-aliases">{{romaji}}<template v-if="romaji && aliases">, </template>{{aliases}}</span></div>
 
   <div class="releases-grid">
     <vue-release v-for="release of releases" :init-data="release" :now-playing="nowPlaying" @start="playTrack" :key="'release_' + release.id"></vue-release>

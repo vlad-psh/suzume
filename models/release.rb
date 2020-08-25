@@ -1,6 +1,6 @@
 class Release < ActiveRecord::Base
-  belongs_to :performer
-  has_many :records
+  belongs_to :artist
+  has_many :tracks
   has_many :folders
 
   def full_path
@@ -21,7 +21,7 @@ class Release < ActiveRecord::Base
       year: year,
       cover: cover,
       folders: folders.pluck(:id),
-      records: records.map{|r| r.api_hash}
+      tracks: tracks.map{|r| r.api_hash}
     }
   end
 

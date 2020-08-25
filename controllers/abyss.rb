@@ -22,13 +22,13 @@ post :abyss_set_folder_info do
   protect!
   folder = Folder.find(params[:folder_id])
 
-  performer = Performer.find(params[:performer_id]) if params[:performer_id].present?
-  unless performer.present?
-    throw StandardError.new("Performer title cannot be blank") if params[:performer_title].blank?
-    performer = Performer.create(
-        title: params[:performer_title],
-        romaji: value_or_nil(params[:performer_romaji]),
-        aliases: value_or_nil(params[:performer_aliases])
+  artist = Artist.find(params[:artist_id]) if params[:artist_id].present?
+  unless artist.present?
+    throw StandardError.new("Artist title cannot be blank") if params[:artist_title].blank?
+    artist = Artist.create(
+        title: params[:artist_title],
+        romaji: value_or_nil(params[:artist_romaji]),
+        aliases: value_or_nil(params[:artist_aliases])
     )
   end
 
@@ -38,7 +38,7 @@ post :abyss_set_folder_info do
     # TODO: if title is empty, append tracks to 'no album'
 
     release = Release.create(
-      performer: performer,
+      artist: artist,
       title: params[:release_title],
       year: value_or_nil(params[:release_year]),
       romaji: value_or_nil(params[:release_romaji]),
@@ -54,9 +54,9 @@ post :abyss_set_folder_info do
   folder.files.values.each do |f|
     next unless f['type'] == 'audio'
     #throw StandardError.new("file shouldn't have UID") if f['uid']
-    rec = Record.find_by(release_id: release.id, original_filename: f['fln'])
-    rec = Record.new unless rec.present?
-    rec.attributes = {
+    track = Track.find_by(release_id: release.id, original_filename: f['fln'])
+    track = Track.new unless track.present?
+    track.attributes = {
         release_id: release.id,
         folder_id: folder.id,
         original_filename: f['fln'],
@@ -66,7 +66,7 @@ post :abyss_set_folder_info do
         rating: f['rating'],
         mediainfo: {br: f['br'], ch: f['ch'], sr: f['sr'], brm: f['brm'], dur: f['dur']},
     }
-    rec.save
+    track.save
   end
 
   return {result: 'ok'}.to_json

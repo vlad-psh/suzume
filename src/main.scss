@@ -5,7 +5,7 @@ html, body, #container, #vue-app, .vue-browser, .browser-grid-layout {
 $blue: #1c79cb;
 $yellow: #ffffa3;
 
-@import "styles/vue-performer.scss";
+@import "styles/vue-artist.scss";
 @import "styles/vue-release.scss";
 @import "styles/vue-abyss.scss";
 @import "styles/queue.scss";
@@ -115,7 +115,7 @@ body {
     }
   } // end of #fullscreen-cover-container
 
-  .performers-list {
+  .artists-list {
     padding: 0 1em;
     column-width: 15em;
   }
