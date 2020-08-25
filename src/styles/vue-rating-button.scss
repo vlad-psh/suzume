@@ -1,0 +1,18 @@
+.vue-rating-button {
+  position: relative;
+  display: inline-block;
+
+  .popup {
+    position: absolute;
+    background: #111c;
+    padding: .2em .6em;
+    border-radius: 4px;
+    width: 9.7em;
+    z-index: 50;
+
+    .rating {
+      padding: .3em;
+    }
+  }
+}
+

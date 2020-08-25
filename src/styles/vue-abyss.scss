@@ -1,0 +1,41 @@
+.vue-abyss {
+  margin: 0 1em;
+
+  .folder-path {
+    .node {
+      display: inline-block;
+
+      &:after {
+        content: '/';
+      }
+    }
+  }
+  .file {
+    .now-playing {background: $yellow;}
+  }
+  table.release-form {
+    font-size: .8em;
+    font-family: sans-serif;
+
+    tr.reset {
+      cursor: pointer;
+      &:hover {background-color: $yellow;}
+    }
+    th {color: #555;}
+    td {text-align: center;}
+    input {
+      border: none;
+      font-size: 1.1em;
+      border-bottom: 1px solid #ccc;
+
+      &[type='search'] {
+        border-color: #08f;
+      }
+      &[type='button'] {
+        border: 1px solid #ccc;
+        padding: .2em .5em;
+      }
+    }
+  }
+} // end of .vue-abyss
+

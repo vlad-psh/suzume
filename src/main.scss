@@ -4,6 +4,15 @@ html, body, #container, #vue-app, .vue-browser, .browser-grid-layout {
 .rating-set-button {display: inline-block; cursor: pointer;}
 $blue: #1c79cb;
 $yellow: #ffffa3;
+
+@import "styles/vue-performer.scss";
+@import "styles/vue-release.scss";
+@import "styles/vue-abyss.scss";
+@import "styles/queue.scss";
+@import "styles/v-autocomplete.scss";
+@import "styles/vue-player.scss";
+@import "styles/vue-rating-button.scss";
+
 body {
 /*  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;*/
   font-family: myfont, Cambria, serif;
@@ -79,96 +88,6 @@ body {
     }
   }
 
-  .vue-performer {
-    .performer-title {
-      font-size: 2.2rem;
-      font-weight: bold;
-      margin-left: 1rem;
-
-      .performer-aliases {
-        font-size: 1rem;
-        font-weight: normal;
-        opacity: .3;
-      }
-    }
-
-    .releases-grid {
-      display: flex;
-      //justify-content: space-evenly;
-      flex-wrap: wrap;
-
-      .release-container {
-        width: 16em;
-        padding: 1em;
-      }
-
-      .release-cover {
-        text-align: left;
-
-        a.cover-link {
-          display: inline-block;
-
-          .thumbnail {
-            height: 100px;
-            max-width: 100px;
-            display: table-cell;
-            vertical-align: bottom;
-
-            img {
-              display: block;
-              max-width: 100px;
-              max-height: 100px;
-              border-radius: 4px;
-            }
-          }
-        }
-      } // end of .release-cover
-
-      .release-content {
-        width: 100%;
-        .records-table {
-          //border-collapse: collapse;
-          border-spacing: 1px;
-          width: 100%;
-
-          td {
-            vertical-align: middle;
-          }
-          td.trackname {
-            width: 100%;
-            max-width: 11em;
-            position: relative;
-            z-index: 10;
-            cursor: pointer;
-            height: 1.6em;
-
-            span {
-              display: block;
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              color: $blue;
-            }
-            &:hover span {
-              width: inline;
-              display: initial;
-              color: #529fe2;
-              text-shadow: 1px 1px 0 white;
-              background: rgba(255,255,255,.7);
-            }
-            &.track-now-playing,
-            &.track-now-playing span {
-              background: $yellow;
-            }
-          } // end of td.trackname
-          td.duration {
-            font-size: .8em;
-          }
-        } // end of .records-table
-      } // end of .release-content
-    } // end of .releases-grid
-  } // end of .vue-performer
-
   #fullscreen-cover-container {
     display: none;
     position: fixed;
@@ -201,214 +120,10 @@ body {
     column-width: 15em;
   }
 
-  .queue-manager {
-    table {
-      border-collapse: collapse;
-      border-top: 1px solid rgba(0,0,0,0.1);
-      width: 15em;
-
-      tr.queue-track {
-        display: block;
-        border-bottom: 1px solid rgba(0,0,0,0.1);
-        padding: .2em .5em;
-        cursor: pointer;
-
-        &:hover {
-          background-color: rgba(255,255,0,0.2);
-        }
-        .performer {
-          font-size: .8em;
-          opacity: .4;
-        }
-        td {
-          vertical-align: middle;
-
-          &:nth-child(1) { // rating/eq-bar
-            width: 24px;
-          }
-        }
-      }
-
-    } // end of table
-
-
-    .eq-bar {
-      display: inline-block;
-      width: 3px;
-      height: 11px;
-      border-radius: 1px;
-      margin: 0 .5px;
-      background-color: #555; /* 0070c9 */
-
-      animation-name: eq-bar;
-      animation-play-state: running;
-      animation-direction: alternate;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-      transform-origin: center bottom;
-
-      -webkit-animation-name: eq-bar;
-      -webkit-animation-play-state: running;
-      -webkit-animation-direction: alternate;
-      -webkit-animation-timing-function: ease-in-out;
-      -webkit-animation-iteration-count: infinite;
-      -webkit-transform-origin: center bottom;
-
-      &:nth-child(1) {
-        animation-duration: 350ms;
-        animation-delay: -250ms;
-        -webkit-animation-duration: 350ms;
-        -webkit-animation-delay: -250ms;
-      }
-      &:nth-child(2) {
-        animation-duration: 425ms;
-        animation-delay: -275ms;
-        -webkit-animation-duration: 425ms;
-        -webkit-animation-delay: -275ms;
-      }
-      &:nth-child(3) {
-        animation-duration: .5s;
-        animation-delay: -.3s;
-        -webkit-animation-duration: .5s;
-        -webkit-animation-delay: -.3s;
-      }
-      &:nth-child(4) {
-        animation-duration: 275ms;
-        animation-delay: -225ms;
-        -webkit-animation-duration: 275ms;
-        -webkit-animation-delay: -225ms;
-      }
-
-    } // end of .eq-bar
-  } // end of .queue-manager
-
-  .vue-player {
-    position: fixed;
-    top: 30px;
-    width: 400px;
-    display: flex;
-    align-items: center;
-    background: #eee;
-    padding: .2em .8em;
-    border-radius: .6em;
-    z-index: 100;
-
-    div {
-      display: inline-block;
-    }
-
-    .player-button {
-      padding: .2em .4em;
-      margin-right: .4em;
-      width: 1.2em;
-      // default (for init/stopped states)
-      cursor: default;
-      opacity: 0.5;
-    }
-
-    .player-progressbar-wrapper {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      height: 2em;
-
-      .player-progressbar {
-        position: relative;
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: 3px;
-        background: #999;
-
-        .player-progressbar-knob {
-          position: absolute;
-          height: 9px;
-          width: 9px;
-          border-radius: 5px;
-          background-color: #999;
-        }
-      } // end of .player-progressbar
-    } // end of .player-progressbar-wrapper
-
-    &.vue-player-playing,
-    &.vue-player-paused {
-      .player-button {
-        cursor: pointer;
-        &:hover {
-          opacity: .7;
-        }
-      }
-      .player-progressbar-wrapper:hover .player-progressbar-knob,
-      .player-progressbar-wrapper:hover .player-progressbar-knob {
-        background-color: black;
-      }
-    }
-
-  } // end of .vue-player
-
-  .vue-abyss {
-    margin: 0 1em;
-
-    .folder-path {
-      .node {
-        display: inline-block;
-
-        &:after {
-          content: '/';
-        }
-      }
-    }
-    .file {
-      .now-playing {background: $yellow;}
-    }
-    table.release-form {
-      font-size: .8em;
-      font-family: sans-serif;
-
-      tr.reset {
-        cursor: pointer;
-        &:hover {background-color: $yellow;}
-      }
-      th {color: #555;}
-      td {text-align: center;}
-      input {
-        border: none;
-        font-size: 1.1em;
-        border-bottom: 1px solid #ccc;
-
-        &[type='search'] {
-          border-color: #08f;
-        }
-        &[type='button'] {
-          border: 1px solid #ccc;
-          padding: .2em .5em;
-        }
-      }
-    }
-  } // end of .vue-abyss
-
   .emoji {
     display: inline-block;
     cursor: pointer;
     &:hover {opacity: .6;}
-  }
-
-  .vue-rating-button {
-    position: relative;
-    display: inline-block;
-
-    .popup {
-      position: absolute;
-      background: #111c;
-      padding: .2em .6em;
-      border-radius: 4px;
-      width: 9.7em;
-      z-index: 50;
-
-      .rating {
-        padding: .3em;
-      }
-    }
   }
 
   .ui-selectable-helper {
@@ -419,33 +134,3 @@ body {
   }
 }
 
-@keyframes eq-bar {
-  0% {
-    -webkit-transform: scaleY(.27273);
-    transform: scaleY(.27273);
-  }
-  100% {
-    -webkit-transform: none;
-    transform: none;
-  }
-}
-
-.v-autocomplete{
-  position:relative;
-  display: inline-block;
-
-  .v-autocomplete-list{
-    position: absolute;
-    background: white;
-    z-index: 15;
-
-    .v-autocomplete-list-item{
-      cursor: pointer;
-      border: 1px solid #ccc;
-      margin-bottom: -1px;
-      padding: .2em .5em;
-
-      &.v-autocomplete-item-active{background-color: $yellow;}
-    }
-  }
-}

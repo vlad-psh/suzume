@@ -1,0 +1,64 @@
+.vue-player {
+  position: fixed;
+  top: 30px;
+  width: 400px;
+  display: flex;
+  align-items: center;
+  background: #eee;
+  padding: .2em .8em;
+  border-radius: .6em;
+  z-index: 100;
+
+  div {
+    display: inline-block;
+  }
+
+  .player-button {
+    padding: .2em .4em;
+    margin-right: .4em;
+    width: 1.2em;
+    // default (for init/stopped states)
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  .player-progressbar-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    height: 2em;
+
+    .player-progressbar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 3px;
+      background: #999;
+
+      .player-progressbar-knob {
+        position: absolute;
+        height: 9px;
+        width: 9px;
+        border-radius: 5px;
+        background-color: #999;
+      }
+    } // end of .player-progressbar
+  } // end of .player-progressbar-wrapper
+
+  &.vue-player-playing,
+  &.vue-player-paused {
+    .player-button {
+      cursor: pointer;
+      &:hover {
+        opacity: .7;
+      }
+    }
+    .player-progressbar-wrapper:hover .player-progressbar-knob,
+    .player-progressbar-wrapper:hover .player-progressbar-knob {
+      background-color: black;
+    }
+  }
+
+} // end of .vue-player
+
