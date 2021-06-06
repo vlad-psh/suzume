@@ -1,11 +1,9 @@
 <template>
   <div class="vue-artist">
-    <div class="artist-title">
+    <div v-if="title" class="artist-title">
       {{ title }}
-      <span class="artist-aliases"
-        >{{ romaji }}<template v-if="romaji && aliases">, </template
-        >{{ aliases }}</span
-      >
+      <span v-if="romaji" class="alias">{{ romaji }}</span
+      ><span v-if="aliases" class="alias">{{ aliases }}</span>
     </div>
 
     <div class="releases-grid">
@@ -34,10 +32,13 @@ export default {
     font-weight: bold;
     margin-left: 1rem;
 
-    .artist-aliases {
+    .alias {
       font-size: 1rem;
       font-weight: normal;
       opacity: 0.3;
+    }
+    .alias + .alias::before {
+      content: ', ';
     }
   }
 
