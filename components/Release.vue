@@ -2,7 +2,7 @@
   <div v-if="tracks.length > 0" class="vue-release">
     <div class="release-cover">
       <template v-if="cover">
-        <a class="cover-link" :href="coverOrig"
+        <a class="cover-link" :href="coverOrig" @click.prevent="openCover"
           ><div class="thumbnail"><img :src="coverThumb" /></div
         ></a>
       </template>
@@ -49,6 +49,14 @@
         >
       </div>
     </div>
+
+    <div
+      id="fullscreen-cover-container"
+      ref="fullscreenContainer"
+      @click="closeCover"
+    >
+      <div id="fullscreen-cover-flexbox"><img :src="coverOrig" /></div>
+    </div>
   </div>
 </template>
 
@@ -83,6 +91,12 @@ export default {
   methods: {
     playTrack(uid) {
       this.$emit('play', uid)
+    },
+    openCover() {
+      this.$refs.fullscreenContainer.style.display = 'block'
+    },
+    closeCover() {
+      this.$refs.fullscreenContainer.style.display = 'none'
     },
   },
 }
@@ -158,4 +172,32 @@ export default {
     } // end of .tracks-table
   } // end of .release-content
 } // end of .vue-release
+
+#fullscreen-cover-container {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 500;
+  cursor: pointer;
+
+  #fullscreen-cover-flexbox {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      max-height: 100%;
+      max-width: 100%;
+    }
+  }
+} // end of #fullscreen-cover-container
 </style>
