@@ -5,14 +5,6 @@ html, body, #container, #vue-app, .vue-browser, .browser-grid-layout {
 $blue: #1c79cb;
 $yellow: #ffffa3;
 
-@import "styles/vue-artist.scss";
-@import "styles/vue-release.scss";
-@import "styles/vue-abyss.scss";
-@import "styles/queue.scss";
-@import "styles/v-autocomplete.scss";
-@import "styles/vue-player.scss";
-@import "styles/vue-rating-button.scss";
-
 body {
 /*  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, Helvetica;*/
   font-family: myfont, Cambria, serif;
@@ -27,14 +19,7 @@ body {
   h2 {
     font-weight: 400;
   }
-  .flash-notice {
-    background: #80c921;
-    color: #062700;
-  }
-  .flash-error {
-    background: #c92d21;
-    color: #270300;
-  }
+
   a {
     color: $blue;
     &:hover {
@@ -88,37 +73,9 @@ body {
     }
   }
 
-  #fullscreen-cover-container {
-    display: none;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    top: 0;
-    left: 0;
-    background-color: rgba(0,0,0,0.85);
-    z-index: 500;
 
-    #fullscreen-cover-flexbox {
-      display: flex;
-      flex-flow: row wrap;
-      width: 100%;
-      height: 100%;
-      justify-content: center;
-      align-items: center;
 
-      img {
-        max-height: 100%;
-        max-width: 100%;
-      }
-    }
-  } // end of #fullscreen-cover-container
 
-  .artists-list {
-    padding: 0 1em;
-    column-width: 15em;
-  }
 
   .emoji {
     display: inline-block;

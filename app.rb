@@ -2,17 +2,14 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sinatra/activerecord'
 require 'sinatra-snap'
-require 'slim'
 require 'rack/contrib'
 
-require 'rack-flash'
 require 'yaml'
 require 'fileutils'
 require 'id3tag'
 require 'open-uri'
 require 'tempfile'
 require 'securerandom'
-require 'redcloth'
 require 'mini_magick'
 require 'mediainfo-native'
 require 'shellwords'
@@ -32,8 +29,6 @@ also_reload './controllers/*.rb'
 helpers TulipHelpers
 
 configure do
-  puts '---> init <---'
-
   $config = YAML.load(File.open('config/application.yml'))
 
   use Rack::JSONBodyParser
@@ -46,19 +41,9 @@ configure do
 
   $library_path = $config['library_path']
   $abyss_path = $config['abyss_path']
-
-  use Rack::Flash
 end
 
 MIME_EXT = {"JPEG" => "jpg", "image/jpeg" => "jpg", "PNG" => "png", "image/png" => "png"}
-#RATING_EMOJI = %w(&#x274c; &#x1f342; &#x1f331; &#x1f33b; &#x1f337;) # plants sunflower tulip
-RATING_EMOJI = %w(&#x274c; &#x2753; &#x1f3b5; &#x2b50; &#x1f496;) # question note star heart
-
-get :browser do
-  protect!
-
-  slim :browser
-end
 
 get :autocomplete_artist do
   q = "%#{params[:term]}%"
