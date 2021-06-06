@@ -38,8 +38,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 export default {
   data() {
     return {
@@ -58,7 +56,7 @@ export default {
     },
   },
   mounted() {
-    Vue.prototype.$player = this
+    this.$player.mPlayer = this
   },
   methods: {
     addTrack(track) {
