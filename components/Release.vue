@@ -26,10 +26,12 @@
           </td>
           <td
             class="trackname"
-            :class="nowPlaying == track.uid ? 'track-now-playing' : null"
+            :class="
+              $player.nowPlaying.uid == track.uid ? 'track-now-playing' : null
+            "
           >
             <a
-              :href="'download/audio/' + track.uid"
+              :href="'/download/audio/' + track.uid"
               @click.prevent="playTrack(track.uid)"
               >{{ track.title }}</a
             >
@@ -54,7 +56,6 @@
 export default {
   props: {
     payload: { type: Object, required: true },
-    nowPlaying: { type: String, default: null },
   },
   data() {
     return {
@@ -78,6 +79,11 @@ export default {
     for (const key of Object.keys(this.payload)) {
       this[key] = this.payload[key]
     }
+  },
+  methods: {
+    playTrack(uid) {
+      this.$emit('play', uid)
+    },
   },
 }
 </script>

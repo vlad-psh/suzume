@@ -11,6 +11,7 @@
         v-for="release of releases"
         :key="'release-' + release.id"
         :payload="release"
+        @play="playTrack"
       ></Release>
     </div>
   </div>
@@ -21,6 +22,40 @@ export default {
   async asyncData({ $axios, params }) {
     const resp = await $axios.get(`/api/artist/${params.id}`)
     return resp.data
+  },
+  computed: {
+    allTracks() {
+      return []
+        .concat(...this.releases.map((i) => i.tracks))
+        .map((i) => this.trackObject(i))
+    },
+  },
+  methods: {
+    playTrack2(uid) {
+      // add single track to queue and start playing (if player is stopped)
+      const track = this.allTracks.find((i) => i.uid === uid)
+      this.$emit('add', track)
+    },
+    playTrack(uid) {
+      const all = this.allTracks
+      const idx = all.findIndex((i) => i.uid === uid)
+      this.$player.startPlaylist(this.splitArray(all, idx))
+    },
+    trackObject(track) {
+      return {
+        uid: track.uid,
+        title: track.title,
+        artist: this.title,
+        rating: track.rating,
+        src: `/download/audio/${track.uid}`,
+      }
+    },
+    splitArray(arr, idx) {
+      return [].concat(
+        arr.slice(idx, arr.length),
+        idx !== 0 ? arr.slice(0, idx) : []
+      )
+    },
   },
 }
 </script>
