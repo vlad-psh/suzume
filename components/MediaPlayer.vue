@@ -65,7 +65,7 @@ export default {
         this.playerStartPlaying(this.playlist.length - 1)
       }
     },
-    startPlaylist(playlist) {
+    startPlaylist(playlist, uid) {
       this.playlist = playlist
       this.playerStartPlaying(0)
     },

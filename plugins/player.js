@@ -15,8 +15,16 @@ export default (context, inject) => {
       },
     },
     methods: {
-      startPlaylist(playlist) {
-        if (this.mPlayer) this.mPlayer.startPlaylist(playlist)
+      startPlaylist(playlist, uid) {
+        const idx = playlist.findIndex((i) => i.uid === uid)
+        if (this.mPlayer)
+          this.mPlayer.startPlaylist(this.splitArray(playlist, idx), uid)
+      },
+      splitArray(arr, idx) {
+        return [].concat(
+          arr.slice(idx, arr.length),
+          idx !== 0 ? arr.slice(0, idx) : []
+        )
       },
     },
   })

@@ -37,9 +37,7 @@ export default {
       this.$emit('add', track)
     },
     playTrack(uid) {
-      const all = this.allTracks
-      const idx = all.findIndex((i) => i.uid === uid)
-      this.$player.startPlaylist(this.splitArray(all, idx))
+      this.$player.startPlaylist(this.allTracks, uid)
     },
     trackObject(track) {
       return {
@@ -49,12 +47,6 @@ export default {
         rating: track.rating,
         src: `/download/audio/${track.uid}`,
       }
-    },
-    splitArray(arr, idx) {
-      return [].concat(
-        arr.slice(idx, arr.length),
-        idx !== 0 ? arr.slice(0, idx) : []
-      )
     },
   },
 }

@@ -16,37 +16,40 @@
         >
       </span>
       <table class="tracks-table">
-        <tr
-          v-for="track of tracks"
-          :key="'track-' + track.uid"
-          class="track-line"
-        >
-          <td class="rating">
-            <RatingButton :track="track"></RatingButton>
-          </td>
-          <td
-            class="trackname"
-            :class="
-              $player.nowPlaying.uid == track.uid ? 'track-now-playing' : null
-            "
+        <tbody>
+          <tr
+            v-for="track of tracks"
+            :key="'track-' + track.uid"
+            class="track-line"
           >
-            <a
-              :href="'/download/audio/' + track.uid"
-              @click.prevent="playTrack(track.uid)"
-              >{{ track.title }}</a
+            <td class="rating">
+              <RatingButton :track="track"></RatingButton>
+            </td>
+            <td
+              class="trackname"
+              :class="
+                $player.nowPlaying.uid == track.uid ? 'track-now-playing' : null
+              "
             >
-          </td>
-          <td class="duration">{{ track.dur }}</td>
-        </tr>
+              <a
+                :href="'/download/audio/' + track.uid"
+                @click.prevent="playTrack(track.uid)"
+                >{{ track.title }}</a
+              >
+            </td>
+            <td class="duration">{{ track.dur }}</td>
+          </tr>
+        </tbody>
       </table>
       <div style="font-size: 0.8em; opacity: 0.7">
-        <a
+        <NuxtLink
           v-for="f in folders"
           :key="'folder-link-' + f"
+          :to="'/abyss/' + f"
           style="margin-right: 0.5em"
-          @click="openAbyss(f)"
-          >{{ f }}</a
         >
+          {{ f }}
+        </NuxtLink>
       </div>
     </div>
 
