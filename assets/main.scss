@@ -1,0 +1,9 @@
+body {
+  a {
+    color: #008ace;
+    cursor: pointer;
+    &:hover {
+      color: #c00;
+    }
+  }
+}
