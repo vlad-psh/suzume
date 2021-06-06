@@ -1,15 +1,13 @@
 <template>
-  <div class="browser-grid-layout">
-    <div class="browser-content">
-      <template v-if="mode === 'index'">
-        <input v-model="filterValue" />
-        <div class="artists-list">
-          <div v-for="a in filteredArtists" :key="'artist-' + a.id">
-            <NuxtLink :to="'/artist/' + a.id">{{ a.title }}</NuxtLink>
-          </div>
+  <div class="browser-content">
+    <template v-if="mode === 'index'">
+      <input v-model="filterValue" />
+      <div class="artists-list">
+        <div v-for="a in filteredArtists" :key="'artist-' + a.id">
+          <NuxtLink :to="'/artist/' + a.id">{{ a.title }}</NuxtLink>
         </div>
-      </template>
-    </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -45,16 +43,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.browser-grid-layout {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-areas: 'queue content';
-
-  .browser-content {
-    overflow-x: hidden;
-    overflow-y: scroll;
-    grid-area: content;
-  }
+.browser-content {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  grid-area: content;
 
   .artists-list {
     padding: 0 1em;
