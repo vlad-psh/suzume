@@ -1,22 +1,16 @@
 require 'mime-types'
 
 module TulipHelpers
-  def admin?
-    session['role'] == 'admin'
-  end
-
-  def guest?
-    session['role'] == 'guest'
-  end
-
   def protect!
-    return if admin?
+    return if current_user
     halt 401, "Unauthorized"
   end
 
-  def hide!
-    return if admin? || guest?
-    halt 401, "Unauthorized"
+  def current_user
+    return nil unless session['username'].present?
+
+    @current_user ||= {username: session['username']}
+    return @current_user
   end
 
   def get_mime(filename)

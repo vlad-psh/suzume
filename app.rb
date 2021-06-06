@@ -3,6 +3,7 @@ require 'sinatra/reloader'
 require 'sinatra/activerecord'
 require 'sinatra-snap'
 require 'slim'
+require 'rack/contrib'
 
 require 'rack-flash'
 require 'yaml'
@@ -35,6 +36,7 @@ configure do
 
   $config = YAML.load(File.open('config/application.yml'))
 
+  use Rack::JSONBodyParser
   use Rack::Session::Cookie,
 #        key: 'fcs.app',
 #        domain: '172.16.0.11',
