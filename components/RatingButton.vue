@@ -105,12 +105,14 @@ body .popper {
     padding: 0.4em;
     cursor: pointer;
     border-radius: 0.2em;
+    border: 1px solid transparent;
+    margin: 0 0.5px;
 
     &:hover {
-      background: #7773;
+      border: 1px dashed #7779;
     }
     &.current {
-      background: #c1ecf7;
+      background: #7773;
     }
   }
 }
