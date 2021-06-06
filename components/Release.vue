@@ -22,7 +22,7 @@
           class="track-line"
         >
           <td class="rating">
-            <vue-rating-button :track="track"></vue-rating-button>
+            <RatingButton :track="track"></RatingButton>
           </td>
           <td
             class="trackname"
