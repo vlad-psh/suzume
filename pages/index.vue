@@ -5,7 +5,7 @@
         <input v-model="filterValue" />
         <div class="artists-list">
           <div v-for="a in filteredArtists" :key="'artist-' + a.id">
-            <a class="ajax-link" @click="openArtist(a.id)">{{ a.title }}</a>
+            <NuxtLink :to="'/artist/' + a.id">{{ a.title }}</NuxtLink>
           </div>
         </div>
       </template>
