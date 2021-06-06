@@ -1,9 +1,64 @@
 <template>
-  <div class="container">
-    <h1>Index page</h1>
+  <div class="browser-grid-layout">
+    <div class="browser-content">
+      <template v-if="mode === 'index'">
+        <input v-model="filterValue" />
+        <div class="artists-list">
+          <div v-for="a in filteredArtists" :key="'artist-' + a.id">
+            <a class="ajax-link" @click="openArtist(a.id)">{{ a.title }}</a>
+          </div>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  async asyncData({ $axios, params }) {
+    const resp = await $axios.get('/api/index')
+    return { artists: resp.data }
+  },
+  data() {
+    return {
+      mode: 'index',
+      artist: {},
+      artists: [],
+      filterValue: '',
+      abyssFolderId: 0,
+      tracklists: { playlist: [], simple: [] },
+    }
+  }, // end of methods()
+  computed: {
+    filteredArtists() {
+      if (this.filterValue) {
+        const r = new RegExp(this.filterValue, 'i')
+        return this.artists.filter(
+          (i) => i.title.match(r) || (i.aliases && i.aliases.match(r))
+        )
+      } else {
+        return this.artists
+      }
+    },
+  },
+}
 </script>
+
+<style lang="scss" scoped>
+.browser-grid-layout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: 'queue content';
+
+  .browser-content {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    grid-area: content;
+  }
+
+  .artists-list {
+    padding: 0 1em;
+    column-width: 15em;
+  }
+}
+</style>
