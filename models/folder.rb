@@ -29,9 +29,10 @@ class Folder < ActiveRecord::Base
     dirs = []
     files = []
     Dir.children(full_path).map do |c|
-      cfp = File.join(full_path, c)
+      cfp = File.join(full_path, c) # children full path
+      crp = path == '' ? c : File.join(path, c) # children relative path
       if File.directory?(cfp)
-        sub = Folder.find_or_create_by(path: File.join(path, c))
+        sub = Folder.find_or_create_by(path: crp)
         dirs << sub
       else
         files << {t: c, sym: File.symlink?(cfp) ? true : false}

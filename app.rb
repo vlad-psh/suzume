@@ -6,7 +6,6 @@ require 'slim'
 
 require 'rack-flash'
 require 'yaml'
-require 'lastfm'
 require 'fileutils'
 require 'id3tag'
 require 'open-uri'
@@ -45,7 +44,6 @@ configure do
 
   $library_path = $config['library_path']
   $abyss_path = $config['abyss_path']
-  $lastfm = Lastfm.new($config["lastfm_api_key"], $config["lastfm_secret"])
 
   use Rack::Flash
 end

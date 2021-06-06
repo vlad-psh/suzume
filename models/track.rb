@@ -32,7 +32,7 @@ class Track < ActiveRecord::Base
   def update_mediainfo
     p = full_path
     p = File.join(folder.full_path, original_filename) unless File.exist?(p)
-    return unless File.exist?(self.full_path)
+    return unless File.exist?(p)
 
     m = MediaInfoNative::MediaInfo.new()
     m.open_file(p)

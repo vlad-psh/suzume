@@ -15,7 +15,6 @@ gem 'rack-flash3'
 gem 'puma'
 
 #gem 'musicbrainz', '~> 0.8.0'
-gem 'lastfm'
 gem 'id3tag'
 gem 'RedCloth'
 gem 'mini_magick'

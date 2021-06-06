@@ -1,3 +1,5 @@
+require 'mime-types'
+
 module TulipHelpers
   def admin?
     session['role'] == 'admin'
