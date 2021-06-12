@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_25_121527) do
+ActiveRecord::Schema.define(version: 2021_06_12_153829) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 2020_08_25_121527) do
     t.string "path"
     t.boolean "is_removed", default: false
     t.boolean "is_symlink", default: false
-    t.integer "release_id"
+    t.string "release_id"
   end
 
   create_table "playlists", force: :cascade do |t|
@@ -50,10 +50,9 @@ ActiveRecord::Schema.define(version: 2020_08_25_121527) do
     t.index ["track_id"], name: "index_playlists_tracks_on_track_id"
   end
 
-  create_table "releases", force: :cascade do |t|
+  create_table "releases", id: false, force: :cascade do |t|
     t.bigint "artist_id"
     t.string "title"
-    t.string "directory"
     t.jsonb "notes"
     t.integer "year"
     t.string "romaji"
@@ -61,6 +60,7 @@ ActiveRecord::Schema.define(version: 2020_08_25_121527) do
     t.boolean "completed", default: false
     t.string "format"
     t.string "cover"
+    t.string "id"
     t.index ["artist_id"], name: "index_releases_on_artist_id"
   end
 
@@ -72,9 +72,7 @@ ActiveRecord::Schema.define(version: 2020_08_25_121527) do
   end
 
   create_table "tracks", force: :cascade do |t|
-    t.bigint "release_id", null: false
     t.string "original_filename"
-    t.string "directory"
     t.integer "rating"
     t.jsonb "lyrics"
     t.datetime "created_at", null: false
@@ -86,8 +84,8 @@ ActiveRecord::Schema.define(version: 2020_08_25_121527) do
     t.bigint "folder_id"
     t.integer "size"
     t.string "title"
+    t.string "release_id"
     t.index ["folder_id"], name: "index_tracks_on_folder_id"
-    t.index ["release_id"], name: "index_tracks_on_release_id"
   end
 
 end

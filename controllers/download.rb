@@ -13,12 +13,17 @@ get :download_audio do
 end
 
 get :download_image do
-  release = Release.find(params[:release_id])
+  uid = params[:release_id].gsub(/[^a-z0-9]/, '')
+  halt 400 unless uid.length == 8
+  halt 400 unless %w(cover thumb).include?(params[:cover_type])
 
-  halt 404, "Image not found" if release.cover.blank?
-  image_filename = "#{params[:cover_type]}.#{release.cover}"
+  dir = File.join($library_path, uid[0..1], uid[2..])
+  cover = Dir.glob(File.join(dir, params[:cover_type] + '.*')).first
 
-  headers['X-Accel-Redirect'] = File.join("/nginx-download", release.directory, image_filename)
+  halt 404, "Image not found" if cover.blank?
+  image_filename = File.basename(cover)
+
+  headers['X-Accel-Redirect'] = File.join("/nginx-download", uid[0..1], uid[2..], image_filename)
   headers['Content-Disposition'] = "inline; filename=\"#{image_filename}\""
   headers['Content-Type'] = get_mime(image_filename)
 end

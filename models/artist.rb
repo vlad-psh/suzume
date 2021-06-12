@@ -23,7 +23,7 @@ class Artist < ActiveRecord::Base
       aliases: aliases,
       romaji: romaji,
       tags: tags.pluck(:title),
-      releases: releases.includes(:tracks).order(year: :desc).map{|r| r.api_hash}
+      releases: releases.includes(:tracks, :folders).order(year: :desc).map{|r| r.api_hash}
     }
   end
 

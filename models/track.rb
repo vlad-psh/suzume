@@ -16,13 +16,17 @@ class Track < ActiveRecord::Base
     uid + '.' + extension
   end
 
-  def title
-    t = read_attribute(:title)
-    t.present? ? t : stripped_filename
+  def directory
+    File.join(release_id[0..1], release_id[2..])
   end
 
   def full_path
     File.join($library_path, directory, filename)
+  end
+
+  def title
+    t = read_attribute(:title)
+    t.present? ? t : stripped_filename
   end
 
   def stored?
@@ -90,7 +94,6 @@ class Track < ActiveRecord::Base
   end
 
   def auto_properties
-    self.directory = release.directory unless self.directory.present?
     self.extension = self.original_filename.gsub(/.*\./, '') unless self.extension
   end
 
