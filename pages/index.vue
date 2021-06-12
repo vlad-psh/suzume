@@ -64,7 +64,7 @@ export default {
     padding: 0 1em;
     display: flex;
     flex-flow: wrap column;
-    align-content: start;
+    align-content: flex-start;
     max-height: 80vh;
     overflow-x: auto;
 

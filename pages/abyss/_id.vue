@@ -45,9 +45,7 @@ export default {
   },
   computed: {
     allTracks() {
-      return this.release
-        ? this.release.tracks.map((i) => this.trackObject(i))
-        : []
+      return this.release ? this.release.tracks : []
     },
     hasAudio() {
       return !!(
@@ -59,16 +57,6 @@ export default {
   methods: {
     playTrack(uid) {
       this.$player.startPlaylist(this.allTracks, uid)
-    },
-    trackObject(track) {
-      // TODO: remove duplicate (same method in artist/_id.vue)
-      return {
-        uid: track.uid,
-        title: track.title,
-        artist: this.title,
-        rating: track.rating,
-        src: `/download/audio/${track.uid}`,
-      }
     },
     reloadFolder() {},
     releaseUpdated() {

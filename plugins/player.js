@@ -16,6 +16,7 @@ export default (context, inject) => {
     },
     methods: {
       startPlaylist(playlist, uid) {
+        playlist = playlist.map((i) => this.trackObject(i))
         const idx = playlist.findIndex((i) => i.uid === uid)
         if (this.mPlayer)
           this.mPlayer.startPlaylist(this.splitArray(playlist, idx), uid)
@@ -25,6 +26,15 @@ export default (context, inject) => {
           arr.slice(idx, arr.length),
           idx !== 0 ? arr.slice(0, idx) : []
         )
+      },
+      trackObject(track) {
+        return {
+          uid: track.uid,
+          title: track.title,
+          artist: this.title,
+          rating: track.rating,
+          src: `/download/audio/${track.uid}`,
+        }
       },
     },
   })

@@ -25,9 +25,7 @@ export default {
   },
   computed: {
     allTracks() {
-      return []
-        .concat(...this.releases.map((i) => i.tracks))
-        .map((i) => this.trackObject(i))
+      return [].concat(...this.releases.map((i) => i.tracks))
     },
   },
   methods: {
@@ -38,15 +36,6 @@ export default {
     },
     playTrack(uid) {
       this.$player.startPlaylist(this.allTracks, uid)
-    },
-    trackObject(track) {
-      return {
-        uid: track.uid,
-        title: track.title,
-        artist: this.title,
-        rating: track.rating,
-        src: `/download/audio/${track.uid}`,
-      }
     },
   },
 }
