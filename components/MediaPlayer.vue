@@ -8,6 +8,7 @@
       style="display: none"
       @ended="playerStartPlaying()"
       @loadedmetadata="playerLoadedMetadata"
+      @error="playerError()"
     ></audio>
 
     <div
@@ -93,6 +94,9 @@ export default {
         this.stopUpdatingProgress()
         this.startUpdatingProgress()
       }
+    },
+    playerError(e) {
+      this.playerStartPlaying()
     },
     playerStartPlaying(index = null) {
       // if (this.status === 'playing' && this.nowPlayingIndex === index) return;
