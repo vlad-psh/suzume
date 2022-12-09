@@ -24,11 +24,6 @@ class Track < ActiveRecord::Base
     File.join($library_path, directory, filename)
   end
 
-  def title
-    t = read_attribute(:title)
-    t.present? ? t : stripped_filename
-  end
-
   def stored?
     File.exist?(full_path)
   end
@@ -72,7 +67,8 @@ class Track < ActiveRecord::Base
   def api_hash
     return {
       uid: uid,
-      title: stripped_filename,
+      title: title.presence || stripped_filename,
+      filename: original_filename,
       rating: rating,
       dur: duration_string,
       br: "#{mediainfo['br'].to_i/1000}#{mediainfo['brm']}"

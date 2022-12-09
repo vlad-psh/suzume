@@ -1,6 +1,8 @@
 paths \
   api_index: '/api/index',
   api_artist: '/api/artist/:id',
+  api_release: '/api/release/:id',
+  api_tracks: '/api/tracks',
   api_abyss: '/api/abyss/:id',
   api_rating: '/api/rating/:uid',
   api_tags: '/api/tags'
@@ -22,6 +24,25 @@ get :api_artist do
   artist = Artist.find(params[:id])
   halt(404, 'Not found') unless artist.present?
   return artist.api_json
+end
+
+get :api_release do
+  protect!
+  release = Release.find(params[:id])
+  halt(404, 'Not found') unless release.present?
+  return release.api_json
+end
+
+patch :api_tracks do
+  protect!
+
+  halt 403 unless params[:tracks].present? && params[:tracks].is_a?(Hash)
+
+  params[:tracks].each do |k,v|
+    Track.find_by(uid: k)&.update(title: v.strip)
+  end
+
+  halt 200
 end
 
 get :api_abyss do
