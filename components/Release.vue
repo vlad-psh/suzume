@@ -6,7 +6,7 @@
       <span class="release-title"
         >{{ year }} {{ title }}
         <span style="font-size: 0.65em; opacity: 0.4; font-weight: normal"
-          >#{{ id }}</span
+          ><NuxtLink :to="`/release/${id}`">#{{ id }}</NuxtLink></span
         >
       </span>
 
