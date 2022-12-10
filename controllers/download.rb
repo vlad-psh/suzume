@@ -1,6 +1,7 @@
 paths \
   download_audio: '/download/audio/:uid',
   download_image: '/download/image/:release_id/:cover_type',
+  download_abyss: '/download/abyss/:folder_id/:filename',
   download_waveform: '/download/waveform/:uid'
 
 get :download_audio do
@@ -27,6 +28,18 @@ get :download_image do
   headers['X-Accel-Redirect'] = File.join("/nginx-download", uid[0..1], uid[2..], image_filename)
   headers['Content-Disposition'] = "inline; filename=\"#{image_filename}\""
   headers['Content-Type'] = get_mime(image_filename)
+end
+
+get :download_abyss do
+  protect!
+
+  folder = Folder.find_by(id: params[:folder_id])
+  halt 404, "Folder not found" if folder.blank?
+  halt 404, "File not found" unless folder.contains_file?(params[:filename])
+
+  headers['X-Accel-Redirect'] = File.join("/nginx-abyss", folder.path, params[:filename])
+  headers['Content-Disposition'] = "inline; filename=\"#{params[:filename]}\""
+  headers['Content-Type'] = get_mime(File.join(folder.full_path, params[:filename]))
 end
 
 get :download_waveform do

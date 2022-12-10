@@ -57,4 +57,10 @@ class Folder < ActiveRecord::Base
     self.update(release_id: release.id)
     FileUtils.touch(File.join(full_path, ".tulip.id.#{id}"))
   end
+
+  def contains_file?(filename)
+    return false unless contents[:files].any? { |file| file[:t] == filename }
+
+    File.exist?(File.join(full_path, filename))
+  end
 end

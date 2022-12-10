@@ -31,6 +31,44 @@ class Release < ActiveRecord::Base
     return api_hash.to_json
   end
 
+  def abyss_images
+    folders.map do |folder|
+      folder.contents[:files].filter do |file|
+        file[:t] =~ /\.(png|jpg|jpeg)$/
+      end.map do |file|
+        {
+          folder_id: folder.id,
+          filename: file[:t],
+          filesize: "#{ File.size(File.join(folder.full_path, file[:t])) / 1024 } KB",
+        }
+      end
+    end.flatten
+  end
+
+  def set_cover!(src_full_path)
+    
+    # Delete old covers
+    Dir.children(full_path).select{|i| i =~ /(cover|thumb)\./}.each do |imgname|
+      File.delete( File.join(full_path, imgname) )
+    end
+
+    extension = File.extname(src_full_path).gsub(/^\./, '')
+    dst_full_path = File.join(full_path, "cover.#{extension}")
+    dst_thumb_full_path = File.join(full_path, "thumb.#{extension}")
+    FileUtils.copy(src_full_path, dst_full_path)
+
+    img = MiniMagick::Image.open(dst_full_path)
+    if [img.width, img.height].max > 400
+      img.resize("400x400>")
+      img.write(dst_thumb_full_path)
+    else
+      FileUtils.copy(dst_full_path, dst_thumb_full_path)
+    end
+    img.destroy! # remove temp file
+
+    self.update(cover: extension)
+  end
+
   private
   def assign_id
     while Release.where(id: (_id = SecureRandom.hex(4))).present? do end

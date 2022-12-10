@@ -2,10 +2,10 @@ paths \
   api_index: '/api/index',
   api_artist: '/api/artist/:id',
   api_release: '/api/release/:id',
+  api_release_cover: '/api/release/:id/cover',
   api_tracks: '/api/tracks',
   api_abyss: '/api/abyss/:id',
-  api_rating: '/api/rating/:uid',
-  api_tags: '/api/tags'
+  api_rating: '/api/rating/:uid'
 
 get :api_index do
   protect!
@@ -30,7 +30,23 @@ get :api_release do
   protect!
   release = Release.find(params[:id])
   halt(404, 'Not found') unless release.present?
-  return release.api_json
+
+  return {
+    release: release.api_hash,
+    images: release.abyss_images,
+  }.to_json
+end
+
+post :api_release_cover do
+  protect!
+
+  release = Release.find_by(id: params[:id])
+  folder = Folder.find_by(id: params[:folder_id])
+  halt(404, 'Not found') if release.blank? || folder.blank? || !folder.contains_file?(params[:filename])
+
+  release.set_cover!(File.join(folder.full_path, params[:filename]))
+
+  halt 200
 end
 
 patch :api_tracks do
@@ -63,10 +79,6 @@ get :api_abyss do
       ]
     },
   }).to_json
-end
-
-get :api_tags do
-
 end
 
 patch :api_rating do
