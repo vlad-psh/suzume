@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_12_153829) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_12_10_010458) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -39,8 +38,8 @@ ActiveRecord::Schema.define(version: 2021_06_12_153829) do
   create_table "playlists", force: :cascade do |t|
     t.string "title"
     t.string "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "playlists_tracks", force: :cascade do |t|
@@ -66,8 +65,8 @@ ActiveRecord::Schema.define(version: 2021_06_12_153829) do
 
   create_table "tags", id: :serial, force: :cascade do |t|
     t.string "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "parents", default: [], array: true
   end
 
@@ -75,8 +74,8 @@ ActiveRecord::Schema.define(version: 2021_06_12_153829) do
     t.string "original_filename"
     t.integer "rating"
     t.jsonb "lyrics"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.jsonb "mediainfo"
     t.jsonb "notes"
     t.string "uid"
@@ -85,6 +84,7 @@ ActiveRecord::Schema.define(version: 2021_06_12_153829) do
     t.integer "size"
     t.string "title"
     t.string "release_id"
+    t.boolean "purged", default: false
     t.index ["folder_id"], name: "index_tracks_on_folder_id"
   end
 

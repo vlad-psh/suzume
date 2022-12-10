@@ -52,7 +52,7 @@ class Track < ActiveRecord::Base
 
   def delete_from_filesystem
     File.delete(full_path) if File.exist?(full_path)
-    self.delete
+    self.update(purged: true)
   end
 
   def duration_string
@@ -71,7 +71,8 @@ class Track < ActiveRecord::Base
       filename: original_filename,
       rating: rating,
       dur: duration_string,
-      br: "#{mediainfo['br'].to_i/1000}#{mediainfo['brm']}"
+      br: "#{mediainfo['br'].to_i/1000}#{mediainfo['brm']}",
+      purged: purged,
     }
   end
 
