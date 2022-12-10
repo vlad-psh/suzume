@@ -30,7 +30,6 @@ export default (context, inject) => {
           title: track.title,
           artist: this.title,
           rating: track.rating,
-          src: `/download/audio/${track.uid}`,
         }
       },
     },

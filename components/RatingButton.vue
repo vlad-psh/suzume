@@ -68,6 +68,7 @@ export default {
 .vue-rating-button {
   .rating-button {
     cursor: pointer;
+    text-shadow: 0 0 2px white;
   }
 }
 

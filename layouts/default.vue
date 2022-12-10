@@ -12,7 +12,7 @@ export default {}
 <style lang="scss">
 body {
   margin: 0;
-  padding-top: 5em;
+  padding-top: 6.5em;
 
   a {
     color: #008ace;
