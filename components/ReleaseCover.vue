@@ -50,10 +50,11 @@ export default {
     display: inline-block;
 
     .thumbnail {
+      display: flex;
+      justify-content: end;
+      align-items: start;
       height: 100px;
-      max-width: 100px;
-      display: table-cell;
-      vertical-align: bottom;
+      width: 100px;
 
       img {
         display: block;

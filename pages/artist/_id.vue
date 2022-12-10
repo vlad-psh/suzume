@@ -1,19 +1,19 @@
 <template>
-  <div class="vue-artist">
-    <div v-if="title" class="artist-title">
+  <div class="artist-component">
+    <div v-if="title" class="title">
       {{ title }}
       <span v-if="romaji" class="alias">{{ romaji }}</span
       ><span v-if="aliases" class="alias">{{ aliases }}</span>
     </div>
 
-    <div class="releases-grid">
+    <template v-for="release of releases">
       <Release
-        v-for="release of releases"
+        v-if="release.tracks.length > 0"
         :key="'release-' + release.id"
         :payload="release"
         @play="playTrack"
-      ></Release>
-    </div>
+      />
+    </template>
   </div>
 </template>
 
@@ -42,26 +42,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.vue-artist {
-  .artist-title {
-    font-size: 2.2rem;
-    font-weight: bold;
-    margin-left: 1rem;
+.artist-component {
+  margin-left: 1rem;
+}
 
-    .alias {
-      font-size: 1rem;
-      font-weight: normal;
-      opacity: 0.3;
-    }
-    .alias + .alias::before {
-      content: ', ';
-    }
+.title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 0.7em;
+
+  .alias {
+    font-size: 1rem;
+    font-weight: normal;
+    opacity: 0.3;
   }
-
-  .releases-grid {
-    display: flex;
-    //justify-content: space-evenly;
-    flex-wrap: wrap;
+  .alias + .alias::before {
+    content: ', ';
   }
 }
 </style>
