@@ -66,9 +66,20 @@ export default {
 
 <style lang="scss" scoped>
 .vue-rating-button {
+  background: white;
+  border-radius: 50%;
+  width: 1.4em;
+  height: 1.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #eee;
+  }
+
   .rating-button {
     cursor: pointer;
-    text-shadow: 0 0 2px white;
   }
 }
 

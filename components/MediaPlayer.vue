@@ -37,20 +37,22 @@
           <path :d="waveformPath" fill="white" />
           <path d="M0 50 L600 50 Z" stroke="white" />
         </mask>
+        <!-- unfilled waveform -->
         <rect
           :x="playerPosition * 6"
           y="0"
           width="600"
           height="100"
-          fill="#181818"
+          fill="white"
           mask="url(#waveform-mask)"
         />
+        <!-- filled waveform -->
         <rect
           x="0"
           y="0"
-          :width="playerPosition * 6"
+          :width="playerPosition * 6 + 1"
           height="100"
-          fill="white"
+          fill="#ea734e"
           mask="url(#waveform-mask)"
         />
       </svg>
@@ -121,6 +123,7 @@ export default {
     },
     playerStartPlaying(index = null) {
       // if (this.status === 'playing' && this.nowPlayingIndex === index) return;
+      this.waveformPath = ''
 
       if (index === null) {
         if (this.nowPlayingIndex !== null) {
@@ -196,9 +199,14 @@ export default {
 
 <style lang="scss" scoped>
 .vue-player {
+  position: fixed;
+  bottom: 0;
   display: flex;
   align-items: center;
-  padding: 0.2em 0.8em;
+  justify-content: center;
+  padding: 0 0.8em;
+  background: #222;
+  width: 100%;
 
   div {
     display: inline-block;
@@ -219,10 +227,6 @@ export default {
     height: 3em;
     padding: 0.3em 0;
     position: relative;
-
-    &:hover {
-      background: #c53342;
-    }
 
     svg {
       position: absolute;

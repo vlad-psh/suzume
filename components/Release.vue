@@ -46,6 +46,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.release-component {
+  display: block;
+  margin-bottom: 1.5em;
+  font-family: serif;
+}
+.release-container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5em;
+}
 .year {
   color: white;
   font-size: 0.7em;
@@ -66,15 +76,5 @@ a.abyss-link {
   font-size: 0.65em;
   opacity: 0.6;
   font-weight: normal;
-}
-
-.release-component {
-  display: block;
-  margin-bottom: 1.5em;
-}
-.release-container {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.5em;
 }
 </style>
