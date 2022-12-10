@@ -1,7 +1,7 @@
 <template>
   <div class="vue-rating-button">
     <Popper ref="popper" trigger="clickToToggle">
-      <div class="popper">
+      <div v-if="!track.purged" class="popper">
         <div
           v-for="r in [-2, -1, 0, 1, 2, 3]"
           :key="'rating-button-' + r"
@@ -12,6 +12,8 @@
           {{ emoji[r] }}
         </div>
       </div>
+      <div v-else></div>
+
       <span slot="reference" class="rating-button">{{ currentEmoji }}</span>
     </Popper>
   </div>
@@ -30,12 +32,12 @@ export default {
     return {
       // to get \u sequence, use '@'.charAt(0/1) in web console
       emoji: {
-        '-2': '\uD83E\uDDFC',
-        '-1': '\u274C',
-        0: '\uD83C\uDF38',
-        1: '\uD83C\uDFB5',
-        2: '\u2B50',
-        3: '\uD83D\uDC96',
+        '-2': '🧼',
+        '-1': '❌',
+        0: '🌸',
+        1: '🎵',
+        2: '⭐',
+        3: '💖',
       },
       rating: null,
       popupOpened: false,
@@ -46,7 +48,7 @@ export default {
       return this.rating !== null ? this.rating : this.track.rating
     },
     currentEmoji() {
-      return this.emoji[this.currentRating] || '\u2754'
+      return this.emoji[this.currentRating] || (this.track.purged ? '🗑️' : '❔')
     },
   },
   methods: {

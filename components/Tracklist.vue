@@ -4,17 +4,25 @@
       v-for="track of tracks"
       :key="'track-' + track.uid"
       class="track-line"
-      :class="$player.nowPlaying.uid == track.uid ? 'track-now-playing' : null"
+      :class="{
+        'track-now-playing': $player.nowPlaying.uid == track.uid,
+        'track-purged': track.purged,
+      }"
     >
       <div class="rating">
         <RatingButton :track="track"></RatingButton>
       </div>
+
       <a
+        v-if="!track.purged"
         :href="'/download/audio/' + track.uid"
         class="trackname"
+        :title="track.title"
         @click.prevent="$emit('play', track.uid)"
         >{{ track.title }}</a
       >
+      <span v-else class="trackname">{{ track.title }}</span>
+
       <div class="duration">{{ track.dur }}</div>
     </div>
   </div>
@@ -42,6 +50,9 @@ export default {
     &.track-now-playing {
       background: #ffffa3;
     }
+    &.track-purged {
+      opacity: 0.3;
+    }
   }
 
   .trackname {
@@ -50,10 +61,6 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-
-    &:hover {
-      white-space: unset;
-    }
   }
 
   .duration {
