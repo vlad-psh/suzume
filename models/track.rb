@@ -126,19 +126,19 @@ class Track < ActiveRecord::Base
   end
 
   def on_rating_change
-    r1 = changed_attributes['rating']
-    r2 = self.rating
-
-    if (r1 == nil || r1 < 0) && r2 >= 0
-      link_file!
-    elsif r1 != nil && r1 >= 0 && (r2 == nil || r2 < 0)
-      FileUtils.rm(full_path)
+    if rating >= 0
+      link_file! unless exists_in_library?
+    elsif rating < 0
+      unlink_file!
+      self.purged = true if !exists_in_abyss?
     end
   end
 
   def link_file!
+    return unless abyss_full_path
+
     FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
-    FileUtils.cp(File.join(folder.full_path, original_filename), full_path)
+    FileUtils.cp(abyss_full_path, full_path)
     if extension == 'mp3'
       `id3 -2 -rAPIC -rGEOB -s 0 -R '#{full_path}'`
 #    elsif extension == 'm4a'
