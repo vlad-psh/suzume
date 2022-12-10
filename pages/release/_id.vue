@@ -2,6 +2,20 @@
   <div class="release-page">
     <h1>{{ title }} [{{ year }}]</h1>
 
+    <div class="image-list">
+      <div
+        v-for="image of images"
+        :key="image.folder_id + image.filename"
+        class="image-item"
+      >
+        <a :href="`/download/abyss/${image.folder_id}/${image.filename}`"
+          ><img :src="`/download/abyss/${image.folder_id}/${image.filename}`"
+        /></a>
+        {{ image.filesize }}
+        <button @click="setCover(image)">Set</button>
+      </div>
+    </div>
+
     <div class="container">
       <div class="editor">
         <textarea v-model="editorText" class="editable-tracklist" />
@@ -9,7 +23,7 @@
         <div class="replace-form">
           <input v-model="pattern" />
           <input v-model="replacement" />
-          <input type="button" @click="replace" value="Replace" />
+          <input type="button" value="Replace" @click="replace" />
         </div>
 
         <button @click="pattern = '\\.mp3$'">.mp3</button>
@@ -34,20 +48,25 @@ import { sortObjectsArray } from '@/js/helpers.js'
 export default {
   async asyncData({ $axios, params }) {
     const resp = await $axios.get(`/api/release/${params.id}`)
-    const tracks = sortObjectsArray(resp.data.tracks, 'filename')
+    const release = resp.data.release
+    const tracks = sortObjectsArray(release.tracks, 'filename')
 
     return {
-      title: resp.data.title,
-      year: resp.data.year,
+      id: params.id,
+      title: release.title,
+      year: release.year,
       tracks,
+      images: resp.data.images,
       editorText: tracks.map((track) => track.title).join('\n'),
     }
   },
   data() {
     return {
+      id: null,
       title: null,
       year: null,
       tracks: [],
+      images: [],
       editorText: '',
       pattern: '\\.mp3$',
       replacement: '',
@@ -66,19 +85,38 @@ export default {
         reqData[this.tracks[i].uid] = this.editorArray[i]
       }
 
-      const resp = await this.$axios.patch('/api/tracks', { tracks: reqData })
-      console.log(resp)
+      await this.$axios.patch('/api/tracks', { tracks: reqData })
     },
     replace() {
       this.editorText = this.editorArray
         .map((i) => i.replace(new RegExp(this.pattern, 'g'), this.replacement))
         .join('\n')
     },
+    async setCover(image) {
+      await this.$axios.post(`/api/release/${this.id}/cover`, {
+        folder_id: image.folder_id,
+        filename: image.filename,
+      })
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.image-list {
+  display: flex;
+
+  .image-item {
+    display: flex;
+    max-width: 150px;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      width: 100%;
+    }
+  }
+}
 .editable-tracklist {
   width: 100%;
   height: 30em;
