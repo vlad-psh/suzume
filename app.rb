@@ -23,8 +23,10 @@ also_reload './helpers.rb'
 
 Dir.glob('./models/*.rb').each {|f| require_relative f}
 Dir.glob('./controllers/*.rb').each {|f| require_relative f}
+Dir.glob('./services/*.rb').each {|f| require_relative f}
 also_reload './models/*.rb'
 also_reload './controllers/*.rb'
+also_reload './services/*.rb'
 
 helpers TulipHelpers
 
@@ -59,4 +61,3 @@ get :autocomplete_release do
             .order(title: :asc)
   releases.map{|r| {id: r.id, value: r.title, romaji: r.romaji, year: r.year, rtype: r.release_type}}.to_json
 end
-

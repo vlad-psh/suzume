@@ -6,11 +6,14 @@ class Track < ActiveRecord::Base
 
   before_create :assign_uid, if: -> {uid.blank?}
   before_create :auto_properties
-  after_create :link_file!, if: -> {rating != nil && rating >= 0 && !stored?}
 
   before_update :on_rating_change, if: :rating_changed?
 
   before_destroy :unlink_file!
+
+  def <=>(other)
+    original_filename <=> other.original_filename
+  end
 
   def filename
     uid + '.' + extension
@@ -24,8 +27,27 @@ class Track < ActiveRecord::Base
     File.join($library_path, directory, filename)
   end
 
-  def stored?
+  def abyss_full_path
+    return nil unless folder.present?
+
+    File.join(folder.full_path, original_filename)
+  end
+
+  def exists_in_library?
     File.exist?(full_path)
+  end
+
+  def exists_in_abyss?
+    return false unless abyss_full_path.present?
+
+    File.exist?(abyss_full_path)
+  end
+
+  def any_full_path
+    return full_path if exists_in_library?
+    return abyss_full_path if exists_in_abyss?
+
+    nil
   end
 
   def update_mediainfo
@@ -48,6 +70,15 @@ class Track < ActiveRecord::Base
   def update_mediainfo!
     self.update_mediainfo
     self.save
+  end
+
+  def waveform
+    return waveform_points if waveform_points.present?
+
+    file_path = any_full_path
+    return unless file_path
+
+    WaveformService.generate(file_path)
   end
 
   def delete_from_filesystem
@@ -117,6 +148,6 @@ class Track < ActiveRecord::Base
   end
 
   def unlink_file!
-    FileUtils.rm(full_path) if stored?
+    FileUtils.rm(full_path) if exists_in_library?
   end
 end

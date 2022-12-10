@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_10_010458) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_10_061300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -85,6 +85,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_10_010458) do
     t.string "title"
     t.string "release_id"
     t.boolean "purged", default: false
+    t.jsonb "waveform_points"
     t.index ["folder_id"], name: "index_tracks_on_folder_id"
   end
 

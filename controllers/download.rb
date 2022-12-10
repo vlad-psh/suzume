@@ -1,11 +1,12 @@
 paths \
   download_audio: '/download/audio/:uid',
-  download_image: '/download/image/:release_id/:cover_type'
+  download_image: '/download/image/:release_id/:cover_type',
+  download_waveform: '/download/waveform/:uid'
 
 get :download_audio do
   track = Track.find_by(uid: params[:uid])
   halt 404, "Track not found" if track.blank?
-  headers['X-Accel-Redirect'] = track.stored? \
+  headers['X-Accel-Redirect'] = track.exists_in_library? \
     ? File.join("/nginx-download", track.directory, track.filename) \
     : File.join("/nginx-abyss", track.folder.path, track.original_filename)
   headers['Content-Disposition'] = "inline; filename=\"#{track.original_filename}\""
@@ -26,4 +27,10 @@ get :download_image do
   headers['X-Accel-Redirect'] = File.join("/nginx-download", uid[0..1], uid[2..], image_filename)
   headers['Content-Disposition'] = "inline; filename=\"#{image_filename}\""
   headers['Content-Type'] = get_mime(image_filename)
+end
+
+get :download_waveform do
+  protect!
+
+  return Track.find_by(uid: params[:uid])&.waveform.to_json
 end

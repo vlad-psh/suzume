@@ -23,7 +23,7 @@ class Release < ActiveRecord::Base
       year: year,
       cover: cover,
       folders: folders.pluck(:id),
-      tracks: tracks.map{|r| r.api_hash}
+      tracks: tracks.sort.map{|r| r.api_hash}
     }
   end
 

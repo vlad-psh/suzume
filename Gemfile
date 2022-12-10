@@ -12,3 +12,4 @@ gem 'id3tag'
 gem 'mediainfo-native'
 gem 'mime-types'
 gem 'mini_magick'
+gem 'simplify_rb' # Polyline simplification (SVG waveform generation)
