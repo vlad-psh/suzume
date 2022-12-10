@@ -16,16 +16,13 @@ export default (context, inject) => {
     },
     methods: {
       startPlaylist(playlist, uid) {
-        playlist = playlist.map((i) => this.trackObject(i))
-        const idx = playlist.findIndex((i) => i.uid === uid)
-        if (this.mPlayer)
-          this.mPlayer.startPlaylist(this.splitArray(playlist, idx), uid)
-      },
-      splitArray(arr, idx) {
-        return [].concat(
-          arr.slice(idx, arr.length),
-          idx !== 0 ? arr.slice(0, idx) : []
-        )
+        if (!this.mPlayer) return
+
+        playlist = playlist
+          .filter((i) => !i.purged)
+          .map((i) => this.trackObject(i))
+
+        this.mPlayer.startPlaylist(playlist, uid)
       },
       trackObject(track) {
         return {

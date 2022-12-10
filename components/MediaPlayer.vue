@@ -67,8 +67,9 @@ export default {
       }
     },
     startPlaylist(playlist, uid) {
+      const idx = playlist.findIndex((i) => i.uid === uid)
       this.playlist = playlist
-      this.playerStartPlaying(0)
+      this.playerStartPlaying(idx)
     },
     playButtonClick() {
       if (this.status !== 'paused') return
