@@ -16,16 +16,16 @@
       class="player-button"
       @click="playButtonClick"
     >
-      &#x25b6;
+      ▶️
     </div>
     <div
       v-else-if="status === 'playing'"
       class="player-button"
       @click="pauseButtonClick"
     >
-      &#x23f8;
+      ⏸️
     </div>
-    <div v-else class="player-button">&#x25b6;</div>
+    <div v-else class="player-button">⏹️</div>
 
     <div class="player-progressbar-wrapper" @click="progressbarClick">
       <div class="player-progressbar">
@@ -165,9 +165,11 @@ export default {
   width: 400px;
   display: flex;
   align-items: center;
-  background: #eee;
   padding: 0.2em 0.8em;
-  border-radius: 0.6em;
+
+  &:hover {
+    background: #c53342;
+  }
 
   div {
     display: inline-block;
@@ -179,7 +181,6 @@ export default {
     width: 1.2em;
     // default (for init/stopped states)
     cursor: default;
-    opacity: 0.5;
   }
 
   .player-progressbar-wrapper {
@@ -194,14 +195,15 @@ export default {
       align-items: center;
       width: 100%;
       height: 3px;
-      background: #999;
+      background: #fff;
 
       .player-progressbar-knob {
         position: absolute;
         height: 9px;
         width: 9px;
-        border-radius: 5px;
-        background-color: #999;
+        border-radius: 50%;
+        background-color: #fff;
+        box-sizing: border-box;
       }
     } // end of .player-progressbar
   } // end of .player-progressbar-wrapper
@@ -210,13 +212,11 @@ export default {
   &.vue-player-paused {
     .player-button {
       cursor: pointer;
-      &:hover {
-        opacity: 0.7;
-      }
     }
     .player-progressbar-wrapper:hover .player-progressbar-knob,
     .player-progressbar-wrapper:hover .player-progressbar-knob {
-      background-color: black;
+      background-color: #a72734;
+      border: 2px solid white;
     }
   }
 } // end of .vue-player

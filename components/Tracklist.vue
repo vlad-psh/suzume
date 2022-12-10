@@ -45,10 +45,14 @@ export default {
     justify-content: space-around;
     align-items: center;
     gap: 0.5em;
-    min-height: 1.7em;
+    padding: 0 0.4em;
+    border-radius: 0.25em;
 
+    &:hover {
+      background: #e5e5e5;
+    }
     &.track-now-playing {
-      background: #ffffa3;
+      background: #a3f797;
     }
     &.track-purged {
       opacity: 0.3;
@@ -61,6 +65,12 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    padding: 0.25em 0;
+    color: #333;
+
+    &:hover {
+      color: inherit;
+    }
   }
 
   .duration {
