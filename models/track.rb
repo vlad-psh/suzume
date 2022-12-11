@@ -73,12 +73,10 @@ class Track < ActiveRecord::Base
   end
 
   def waveform
-    return waveform_points if waveform_points.present?
+    w = read_attribute(:waveform)
+    update_waveform! if w.blank? || w['version'] < WaveformService::VERSION
 
-    file_path = any_full_path
-    return unless file_path
-
-    WaveformService.generate(file_path)
+    read_attribute(:waveform)['data']
   end
 
   def delete_from_filesystem
@@ -116,6 +114,11 @@ class Track < ActiveRecord::Base
   end
 
   private
+  def update_waveform!
+    file_path = any_full_path
+    self.update(waveform: WaveformService.generate(file_path)) if file_path.present?
+  end
+
   def assign_uid
     while Track.where(uid: (_uid = SecureRandom.hex(4))).present? do end
     self.uid = _uid

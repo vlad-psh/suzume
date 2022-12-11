@@ -1,18 +1,19 @@
 require 'simplify_rb'
 
 class WaveformService
-  def self.generate(filename)
-    new(filename).generate
-  end
-
-  attr_reader :filename
-
+  VERSION = 1
   SAMPLERATE = 2000
   AVERAGING_BATCH = 700
   HEIGHT = 50 # Height for half of the waveform; Total height = x2
   WIDTH = 600
   SIMPLIFY_TOLERANCE = 1.5
   DEFAULT_MAX_VALUE = 8000.0
+
+  attr_reader :filename
+
+  def self.generate(filename)
+    new(filename).generate
+  end
 
   def initialize(filename)
     @filename = filename
@@ -48,13 +49,20 @@ class WaveformService
       points << { x: x, y: y }
     end
     
-    SimplifyRb::Simplifier.new.process(points, SIMPLIFY_TOLERANCE, true).map do |point|
-      [point[:x], point[:y]]
-    end
-    # points.map { |point| [point[:x], point[:y]] }
+    {
+      version: VERSION,
+      data: simplify_points(points),
+    }
   end
 
   private
+
+  def simplify_points(points_array)
+    # SimplifyRB expects an array in following format: [ {x: 0, y: 0}, ...]
+    SimplifyRb::Simplifier.new.process(points_array, SIMPLIFY_TOLERANCE, true).map do |point|
+      [point[:x], point[:y]]
+    end
+  end
 
   def median(ary)
     ary = [0] if ary.empty?

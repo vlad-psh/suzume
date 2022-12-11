@@ -85,7 +85,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_10_061300) do
     t.string "title"
     t.string "release_id"
     t.boolean "purged", default: false
-    t.jsonb "waveform_points"
+    t.jsonb "waveform"
     t.index ["folder_id"], name: "index_tracks_on_folder_id"
   end
 
