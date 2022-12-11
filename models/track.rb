@@ -138,10 +138,10 @@ class Track < ActiveRecord::Base
   end
 
   def link_file!
-    return unless abyss_full_path
+    return unless exists_in_abyss?
 
-    FileUtils.mkdir_p(release.full_path) unless Dir.exist?(release.full_path)
-    FileUtils.cp(abyss_full_path, full_path)
+    release.store_file(abyss_full_path, filename)
+
     if extension == 'mp3'
       `id3 -2 -rAPIC -rGEOB -s 0 -R '#{full_path}'`
 #    elsif extension == 'm4a'

@@ -46,27 +46,29 @@ class Release < ActiveRecord::Base
   end
 
   def set_cover!(src_full_path)
-    
     # Delete old covers
     Dir.children(full_path).select{|i| i =~ /(cover|thumb)\./}.each do |imgname|
       File.delete( File.join(full_path, imgname) )
-    end
+    end if Dir.exist?(full_path)
 
     extension = File.extname(src_full_path).gsub(/^\./, '')
-    dst_full_path = File.join(full_path, "cover.#{extension}")
-    dst_thumb_full_path = File.join(full_path, "thumb.#{extension}")
-    FileUtils.copy(src_full_path, dst_full_path)
+    store_file(src_full_path, "cover.#{extension}")
 
-    img = MiniMagick::Image.open(dst_full_path)
+    img = MiniMagick::Image.open(src_full_path)
     if [img.width, img.height].max > 400
       img.resize("400x400>")
-      img.write(dst_thumb_full_path)
+      img.write(File.join(full_path, "thumb.#{extension}"))
     else
-      FileUtils.copy(dst_full_path, dst_thumb_full_path)
+      store_file(src_full_path, "thumb.#{extension}")
     end
     img.destroy! # remove temp file
 
     self.update(cover: extension)
+  end
+
+  def store_file(src_full_path, dst_file_name)
+    FileUtils.mkdir_p(full_path) unless Dir.exist?(full_path)
+    FileUtils.cp(src_full_path, File.join(full_path, dst_file_name))
   end
 
   private
