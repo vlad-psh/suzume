@@ -1,7 +1,7 @@
 <template>
   <div id="__layout_inner">
     <MainMenu />
-    <Nuxt keep-alive />
+    <Nuxt />
     <MediaPlayer v-if="$store.state.env.user" />
   </div>
 </template>
