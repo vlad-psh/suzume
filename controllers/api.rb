@@ -5,6 +5,7 @@ paths \
   api_release_cover: '/api/release/:id/cover',
   api_tracks: '/api/tracks',
   api_abyss: '/api/abyss/:id',
+  api_autocomplete_artist: '/api/autocomplete/artist',
   api_rating: '/api/rating/:uid'
 
 get :api_index do
@@ -79,6 +80,23 @@ get :api_abyss do
       ]
     },
   }).to_json
+end
+
+get :api_autocomplete_artist do
+  protect!
+
+  q = "%#{params[:query]}%"
+  artists = Artist.where('title ILIKE ? OR romaji ILIKE ? OR aliases ILIKE ?', q, q, q).limit(30)
+
+  artists.map do |a|
+    {
+      id: a.id,
+      title: a.title,
+      romaji: a.romaji,
+      aliases: a.aliases,
+      releases: a.releases.map { |r| { id: r.id, title: r.title, year: r.year, romaji: r.romaji, release_type: r.release_type } }
+    }
+  end.to_json
 end
 
 patch :api_rating do

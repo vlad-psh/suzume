@@ -1,11 +1,7 @@
 paths \
   abyss_file: '/abyss/:folder_id/file/:md5',
   abyss_set_cover: '/abyss/:folder_id/set_cover/:md5',
-  abyss_set_folder_info: '/abyss/:folder_id/info'
-
-def value_or_nil(v)
-  return v.blank? ? nil : v
-end
+  abyss_link_release: '/api/abyss/:folder_id/link'
 
 get :abyss_file do
   folder = Folder.find(params[:folder_id])
@@ -18,38 +14,43 @@ get :abyss_file do
   headers['Content-Type'] = get_mime(filename)
 end
 
-post :abyss_set_folder_info do
+post :abyss_link_release do
   protect!
-  folder = Folder.find(params[:folder_id])
 
-  artist = Artist.find(params[:artist_id]) if params[:artist_id].present?
-  unless artist.present?
-    throw StandardError.new("Artist title cannot be blank") if params[:artist_title].blank?
-    artist = Artist.create(
-        title: params[:artist_title],
-        romaji: value_or_nil(params[:artist_romaji]),
-        aliases: value_or_nil(params[:artist_aliases])
-    )
-  end
-
-  release = Release.find_by(id: params[:release_id]) if params[:release_id].present?
-  unless release.present?
-    throw StandardError.new("Release title cannot be blank") if params[:release_title].blank?
-    # TODO: if title is empty, append tracks to 'no album'
-
-    release = Release.create(
-      artist: artist,
-      title: params[:release_title],
-      year: value_or_nil(params[:release_year]),
-      romaji: value_or_nil(params[:release_romaji]),
-      format: value_or_nil(params[:release_format]),
-      release_type: value_or_nil(params[:release_type])
-    )
-  end
+  folder = Folder.find(params[:folder_id]) || halt(404, 'Folder not found')
+  artist = find_or_create_artist(params[:artist])
+  release = find_or_create_release(params[:release], artist)
 
   folder.link_to_release!(release)
 
-  return {result: 'ok'}.to_json
+  halt 200
+end
+
+def find_or_create_artist(props)
+  return Artist.find(props[:id]) || halt(404, 'Artist not found') if props[:id].present?
+
+  throw StandardError.new("Artist title cannot be blank") if params[:artist][:title].blank?
+
+  Artist.create(
+      title:   props[:title],
+      romaji:  props[:romaji].presence,
+      aliases: props[:aliases].presence,
+  )
+end
+
+def find_or_create_release(props, artist)
+  return Release.find_by(id: props[:id]) || halt(404, 'Release not found') if props[:id].present?
+
+  # TODO: if title is empty, append tracks to 'no album'
+  throw StandardError.new("Release title cannot be blank") if props[:title].blank?
+
+  Release.create(
+    artist:       artist,
+    title:        props[:title],
+    year:         props[:year].presence,
+    romaji:       props[:romaji].presence,
+    release_type: props[:release_type].presence,
+  )
 end
 
 post :abyss_set_cover do
@@ -84,4 +85,3 @@ post :abyss_set_cover do
 
   return {result: 'ok'}.to_json
 end
-

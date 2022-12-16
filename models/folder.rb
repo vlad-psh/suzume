@@ -46,12 +46,10 @@ class Folder < ActiveRecord::Base
       f_fullpath = File.join(full_path, f)
       next if File.directory?(f_fullpath)
       next if f !~ /\.(mp3|m4a)$/
+      next if Track.find_by(release_id: release.id, original_filename: f).present?
 
-      track = Track.find_by(release_id: release.id, original_filename: f)
-      if !track.present?
-        track = Track.create(release: release, original_filename: f, folder: self)
-        track.update_mediainfo!
-      end
+      track = Track.create(release: release, original_filename: f, folder: self)
+      track.update_mediainfo!
     end
 
     self.update(release_id: release.id)
