@@ -17,6 +17,10 @@ body {
   padding-bottom: 4em;
   font-family: Segoe UI, Helvetica Neue, sans-serif;
 
+  --accent-pale-color: #ea734e;
+  --accent-color: #c53342;
+  --accent-deep-color: #b8002b;
+
   a {
     color: #008ace;
     cursor: pointer;

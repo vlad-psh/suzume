@@ -19,8 +19,8 @@
   position: fixed;
   top: 0;
   z-index: 100;
-  background: #ea734e;
-  color: #111;
+  background: var(--accent-deep-color);
+  color: white;
   width: 100%;
   display: flex;
   align-items: baseline;
@@ -29,13 +29,13 @@
   font-family: sans-serif;
 
   a {
-    color: #111;
+    color: white;
     padding: 0.5em 0.7em;
     display: inline-block;
     text-decoration: none;
 
     &:hover {
-      background: #c53342;
+      background: var(--accent-color);
       color: white;
     }
   }

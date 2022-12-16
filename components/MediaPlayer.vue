@@ -37,22 +37,20 @@
           <path :d="waveformPath" fill="white" />
           <path d="M0 50 L600 50 Z" stroke="white" />
         </mask>
-        <!-- unfilled waveform -->
         <rect
+          class="waveform-unfilled"
           :x="playerPosition * 6"
           y="0"
           width="600"
           height="100"
-          fill="white"
           mask="url(#waveform-mask)"
         />
-        <!-- filled waveform -->
         <rect
+          class="waveform-filled"
           x="0"
           y="0"
           :width="playerPosition * 6 + 1"
           height="100"
-          fill="#ea734e"
           mask="url(#waveform-mask)"
         />
       </svg>
@@ -221,17 +219,25 @@ export default {
   }
 
   .player-progressbar-wrapper {
-    width: 40vw;
+    width: clamp(400px, 40vw, 600px);
     display: flex;
     align-items: center;
     height: 3em;
     padding: 0.3em 0;
     position: relative;
+    cursor: text;
 
     svg {
       position: absolute;
       width: 100%;
       height: 3em;
+
+      .waveform-filled {
+        fill: var(--accent-pale-color);
+      }
+      .waveform-unfilled {
+        fill: white;
+      }
     }
   }
 

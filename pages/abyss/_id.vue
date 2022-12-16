@@ -25,14 +25,14 @@
     </template>
     <template v-else-if="hasAudio">
       <h2>Link release</h2>
-      <AbyssForm :id="id" @update="releaseUpdated"></AbyssForm>
+      <AbyssForm :folder-id="id" @update="releaseUpdated"></AbyssForm>
+    </template>
 
-      <template v-if="files && files.length > 0">
-        <h2>&#x1f4c4; Files</h2>
-        <div v-for="f of files" :key="'file-' + f['t']" class="file">
-          <div class="ajax-link">{{ f['t'] }}</div>
-        </div>
-      </template>
+    <template v-if="files && files.length > 0">
+      <h2>&#x1f4c4; Files</h2>
+      <div v-for="f of files" :key="'file-' + f['t']" class="file">
+        <div class="ajax-link">{{ f['t'] }}</div>
+      </div>
     </template>
   </div>
 </template>
