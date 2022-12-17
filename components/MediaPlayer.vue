@@ -12,8 +12,13 @@
     ></audio>
 
     <div class="now-playing-info">
-      <NuxtLink v-if="nowPlaying" :to="`/artist/${nowPlaying.artistId}`">
-        <img :src="nowPlaying.cover" />
+      <NuxtLink
+        v-if="nowPlaying"
+        :to="`/artist/${nowPlaying.artistId}`"
+        class="thumbnail"
+      >
+        <img class="shadow" :src="nowPlaying.cover" />
+        <img class="image" :src="nowPlaying.cover" />
       </NuxtLink>
 
       <div>
@@ -232,14 +237,34 @@ export default {
       opacity: 0.6;
     }
 
-    img {
-      border-radius: 0.3em;
-      max-width: 3em;
-      max-height: 3em;
-      vertical-align: bottom;
+    a.thumbnail {
+      position: relative;
+
+      img {
+        border-radius: 0.3em;
+        max-width: 3em;
+        max-height: 3em;
+        vertical-align: bottom;
+      }
+
+      img.image {
+        position: relative;
+      }
+
+      img.shadow {
+        filter: blur(0.5em);
+        position: absolute;
+        opacity: 0.5;
+      }
 
       &:hover {
-        opacity: 0.7;
+        img.image {
+          transform: scale(102%);
+        }
+        img.shadow {
+          filter: blur(0.7em);
+          opacity: 0.7;
+        }
       }
     }
   }

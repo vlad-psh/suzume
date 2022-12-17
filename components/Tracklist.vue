@@ -81,8 +81,9 @@ export default {
     justify-content: space-around;
     align-items: center;
     gap: 0.5em;
-    padding: 0 0.4em;
+    padding: 0.1em 0.4em;
     border-radius: 0.25em;
+    transition: background 150ms ease-out;
 
     &:hover {
       background: #e5e5e5;

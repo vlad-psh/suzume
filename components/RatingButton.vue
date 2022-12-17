@@ -32,7 +32,7 @@ export default {
     return {
       // to get \u sequence, use '@'.charAt(0/1) in web console
       emoji: {
-        '-2': '🧼',
+        '-2': '🧹',
         '-1': '❌',
         0: '🌸',
         1: '🎵',
