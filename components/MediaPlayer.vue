@@ -11,10 +11,21 @@
       @error="playerError()"
     ></audio>
 
-    <span class="svg-icon player-button">
+    <div class="now-playing-info">
+      <NuxtLink v-if="nowPlaying" :to="`/artist/${nowPlaying.artistId}`">
+        <img :src="nowPlaying.cover" />
+      </NuxtLink>
+
+      <div>
+        <h2>{{ nowPlaying?.title }}</h2>
+        <h3>{{ nowPlaying?.artist }}</h3>
+      </div>
+    </div>
+
+    <div class="svg-icon player-button">
       <PauseIcon v-if="status === 'playing'" @click="pauseButtonClick" />
       <PlayIcon v-else @click="playButtonClick" />
-    </span>
+    </div>
 
     <div
       ref="progressbarWrapper"
@@ -193,17 +204,44 @@ export default {
 
 <style lang="scss" scoped>
 .vue-player {
-  position: fixed;
-  bottom: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 0 0.8em;
   background: #222;
   width: 100%;
 
-  div {
-    display: inline-block;
+  .now-playing-info {
+    display: flex;
+    padding: 0.5em 0;
+    margin-right: 2em;
+    gap: 1em;
+    align-items: center;
+
+    h2,
+    h3 {
+      margin: 0;
+    }
+
+    h2 {
+      margin-top: -0.2em;
+    }
+
+    h3 {
+      font-size: 1em;
+      opacity: 0.6;
+    }
+
+    img {
+      border-radius: 0.3em;
+      max-width: 3em;
+      max-height: 3em;
+      vertical-align: bottom;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
   }
 
   .player-button {
@@ -211,6 +249,7 @@ export default {
   }
 
   .svg-icon {
+    display: inline-block;
     font-size: 2em;
     color: white;
     border-radius: 100%;

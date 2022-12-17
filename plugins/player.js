@@ -15,21 +15,32 @@ export default (context, inject) => {
       },
     },
     methods: {
-      startPlaylist(playlist, uid) {
+      // 'artist' object is expected to contain 'releases' array,
+      // which in turn, should contain 'tracks' array
+      playArtist(artist, uid) {
         if (!this.mPlayer) return
 
-        playlist = playlist
-          .filter((i) => !i.purged)
-          .map((i) => this.trackObject(i))
+        const playlist = []
+
+        for (const release of artist.releases) {
+          playlist.push(
+            ...release.tracks
+              .filter((track) => !track.purged)
+              .map((track) => this.trackObject(track, release, artist))
+          )
+        }
 
         this.mPlayer.startPlaylist(playlist, uid)
       },
-      trackObject(track) {
+      trackObject(track, release, artist) {
         return {
           uid: track.uid,
           title: track.title,
-          artist: this.title,
           rating: track.rating,
+          artist: artist.title,
+          artistId: artist.id,
+          release: release.title,
+          cover: release.cover ? `/download/image/${release.id}/thumb` : null,
         }
       },
     },

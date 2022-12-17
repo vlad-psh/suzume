@@ -23,19 +23,9 @@ export default {
     const resp = await $axios.get(`/api/artist/${params.id}`)
     return resp.data
   },
-  computed: {
-    allTracks() {
-      return [].concat(...this.releases.map((i) => i.tracks))
-    },
-  },
   methods: {
-    playTrack2(uid) {
-      // add single track to queue and start playing (if player is stopped)
-      const track = this.allTracks.find((i) => i.uid === uid)
-      this.$emit('add', track)
-    },
     playTrack(uid) {
-      this.$player.startPlaylist(this.allTracks, uid)
+      this.$player.playArtist(this.$data, uid)
     },
   },
 }
