@@ -11,21 +11,10 @@
       @error="playerError()"
     ></audio>
 
-    <div
-      v-if="status === 'paused'"
-      class="player-button"
-      @click="playButtonClick"
-    >
-      ▶️
-    </div>
-    <div
-      v-else-if="status === 'playing'"
-      class="player-button"
-      @click="pauseButtonClick"
-    >
-      ⏸️
-    </div>
-    <div v-else class="player-button">⏹️</div>
+    <span class="svg-icon player-button">
+      <PauseIcon v-if="status === 'playing'" @click="pauseButtonClick" />
+      <PlayIcon v-else @click="playButtonClick" />
+    </span>
 
     <div
       ref="progressbarWrapper"
@@ -59,7 +48,14 @@
 </template>
 
 <script>
+import PauseIcon from '@/assets/icons/player-pause.svg?inline'
+import PlayIcon from '@/assets/icons/player-play.svg?inline'
+
 export default {
+  components: {
+    PauseIcon,
+    PlayIcon,
+  },
   data() {
     return {
       status: 'init', // init, stopped, paused, playing
@@ -211,11 +207,28 @@ export default {
   }
 
   .player-button {
-    padding: 0.2em 0.4em;
     margin-right: 0.4em;
-    width: 1.2em;
-    // default (for init/stopped states)
-    cursor: default;
+  }
+
+  .svg-icon {
+    font-size: 2em;
+    color: white;
+    border-radius: 100%;
+    border: 2px solid #fff2;
+    line-height: 1em;
+    width: 1em;
+    height: 1em;
+    cursor: pointer;
+
+    &:hover {
+      background: white;
+      color: #111;
+    }
+
+    svg {
+      width: 1em;
+      height: 1em;
+    }
   }
 
   .player-progressbar-wrapper {
