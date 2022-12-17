@@ -50,9 +50,6 @@ export default {
     }
   },
   computed: {
-    allTracks() {
-      return this.release ? this.release.tracks : []
-    },
     hasAudio() {
       return !!(
         this.release ||
@@ -62,7 +59,14 @@ export default {
   },
   methods: {
     playTrack(uid) {
-      this.$player.startPlaylist(this.allTracks, uid)
+      this.$player.playArtist(
+        {
+          id: this.artist[0],
+          title: this.artist[1],
+          releases: [this.release],
+        },
+        uid
+      )
     },
     reload() {},
     async destroy() {
