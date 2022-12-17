@@ -100,8 +100,7 @@ get :api_autocomplete_artist do
 end
 
 patch :api_rating do
-  track = Track.find_by(uid: params[:uid])
-  halt(404, 'Not found') unless track.present?
+  track = Track.find_by(uid: params[:uid]) || halt(404, 'Not found')
   track.update(rating: params[:rating])
   return track.rating.to_s
 end

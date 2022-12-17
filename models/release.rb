@@ -71,6 +71,10 @@ class Release < ActiveRecord::Base
     FileUtils.cp(src_full_path, File.join(full_path, dst_file_name))
   end
 
+  def groom!
+    tracks.each(&:groom!)
+  end
+
   private
   def assign_id
     while Release.where(id: (_id = SecureRandom.hex(4))).present? do end

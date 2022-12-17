@@ -1,6 +1,8 @@
 class Folder < ActiveRecord::Base
   belongs_to :release
 
+  after_destroy :clean_up!
+
   def self.root
     Folder.new(path: '')
   end
@@ -60,5 +62,12 @@ class Folder < ActiveRecord::Base
     return false unless contents[:files].any? { |file| file[:t] == filename }
 
     File.exist?(File.join(full_path, filename))
+  end
+
+  private
+
+  def clean_up!
+    FileUtils.remove_dir(full_path) if File.exist?(full_path)
+    release&.groom!
   end
 end

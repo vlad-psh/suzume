@@ -113,6 +113,13 @@ class Track < ActiveRecord::Base
     return original_filename.gsub(/\.mp3$/i, '').gsub(/\.m4a$/i, '').gsub(/^[0-9\-\.]* (- )?/, '')
   end
 
+  def groom!
+    self.folder = nil unless folder.present?
+    self.waveform = nil unless exists_in_library? || exists_in_abyss?
+    self.purged = !exists_in_library? && !exists_in_abyss?
+    self.save!
+  end
+
   private
   def update_waveform!
     file_path = any_full_path
