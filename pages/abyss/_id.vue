@@ -8,7 +8,8 @@
         :to="'/abyss/' + f[0]"
         class="node"
         >{{ f[1] }}</NuxtLink
-      >{{ name }} <a class="button-link" @click="reloadFolder">⟳</a>
+      >{{ name }} <a class="button-link" @click="reload">⟳</a>
+      <button :disable="!submitting" @click="destroy">🗑️</button>
     </div>
 
     <template v-if="subfolders && subfolders.length > 0">
@@ -25,7 +26,7 @@
     </template>
     <template v-else-if="hasAudio">
       <h2>Link release</h2>
-      <AbyssForm :folder-id="id" @update="releaseUpdated"></AbyssForm>
+      <AbyssForm :folder-id="id" @update="reload"></AbyssForm>
     </template>
 
     <template v-if="files && files.length > 0">
@@ -43,6 +44,11 @@ export default {
     const resp = await $axios.get(`/api/abyss/${params.id}`)
     return resp.data
   },
+  data() {
+    return {
+      submitting: false,
+    }
+  },
   computed: {
     allTracks() {
       return this.release ? this.release.tracks : []
@@ -58,9 +64,15 @@ export default {
     playTrack(uid) {
       this.$player.startPlaylist(this.allTracks, uid)
     },
-    reloadFolder() {},
-    releaseUpdated() {
-      this.reloadFolder()
+    reload() {},
+    async destroy() {
+      if (!confirm('Are you sure you want to delete this folder?')) return
+
+      this.submitting = true
+      await this.$axios.delete(`/api/abyss/${this.id}`)
+
+      const parentId = this.parents[this.parents.length - 1]?.[0] || ''
+      this.$router.push(`/abyss/${parentId}`)
     },
   },
 }
