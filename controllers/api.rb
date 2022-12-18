@@ -10,30 +10,22 @@ paths \
 
 get :api_index do
   protect!
-  return Artist.all.order(title: :asc).map do |a|
-    {
-      id: a.id,
-      title: a.romaji.present? ? "#{a.title} (#{a.romaji})" : a.title,
-      aliases: a.aliases,
-      tags: a.tags.pluck(:title)
-    }
-  end.to_json
+  return ArtistSerializer.render(Artist.all.order(title: :asc), view: :index)
 end
 
 get :api_artist do
   protect!
-  artist = Artist.find(params[:id])
-  halt(404, 'Not found') unless artist.present?
-  return artist.api_json
+  artist = Artist.find(params[:id]) || halt(404, 'Artist not found')
+  return ArtistSerializer.render(artist, view: :extended)
 end
 
 get :api_release do
   protect!
-  release = Release.find(params[:id])
-  halt(404, 'Not found') unless release.present?
+
+  release = Release.find(params[:id]) || halt(404, 'Not found')
 
   return {
-    release: release.api_hash,
+    release: ReleaseSerializer.render_as_hash(release, view: :extended),
     images: release.abyss_images,
   }.to_json
 end
@@ -41,9 +33,9 @@ end
 post :api_release_cover do
   protect!
 
-  release = Release.find_by(id: params[:id])
-  folder = Folder.find_by(id: params[:folder_id])
-  halt(404, 'Not found') if release.blank? || folder.blank? || !folder.contains_file?(params[:filename])
+  release = Release.find_by(id: params[:id]) || halt(404, 'Release not found')
+  folder = Folder.find_by(id: params[:folder_id]) || halt(404, 'Folder not found')
+  halt(404, 'File not found') if !folder.contains_file?(params[:filename])
 
   release.set_cover!(File.join(folder.full_path, params[:filename]))
 
@@ -88,15 +80,7 @@ get :api_autocomplete_artist do
   q = "%#{params[:query]}%"
   artists = Artist.where('title ILIKE ? OR romaji ILIKE ? OR aliases ILIKE ?', q, q, q).limit(30)
 
-  artists.map do |a|
-    {
-      id: a.id,
-      title: a.title,
-      romaji: a.romaji,
-      aliases: a.aliases,
-      releases: a.releases.map { |r| { id: r.id, title: r.title, year: r.year, romaji: r.romaji, release_type: r.release_type } }
-    }
-  end.to_json
+  return ArtistSerializer.render(artists, view: :autocomplete)
 end
 
 patch :api_rating do

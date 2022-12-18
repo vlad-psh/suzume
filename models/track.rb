@@ -93,22 +93,6 @@ class Track < ActiveRecord::Base
     return [h > 0 ? h : nil, h > 0 ? '%02d' % m : m, '%02d' % s].compact.join(':')
   end
 
-  def api_hash
-    return {
-      uid: uid,
-      title: title.presence || stripped_filename,
-      filename: original_filename,
-      rating: rating,
-      dur: duration_string,
-      br: "#{mediainfo['br'].to_i/1000}#{mediainfo['brm']}",
-      purged: purged,
-    }
-  end
-
-  def api_json
-    return api_hash.to_json
-  end
-
   def stripped_filename
     return original_filename.gsub(/\.mp3$/i, '').gsub(/\.m4a$/i, '').gsub(/^[0-9\-\.]* (- )?/, '')
   end

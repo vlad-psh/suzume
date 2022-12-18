@@ -8,6 +8,7 @@ gem 'sinatra-activerecord'
 gem 'sinatra-reloader'
 gem 'sinatra-snap'
 
+gem 'blueprinter'
 gem 'id3tag'
 gem 'mediainfo-native'
 gem 'mime-types'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Artist < ActiveRecord::Base
   has_many :releases
   has_many :tracks, through: :releases
@@ -14,20 +16,5 @@ class Artist < ActiveRecord::Base
     end
 
     return result
-  end
-
-  def api_hash
-    return {
-      id: id,
-      title: title,
-      aliases: aliases,
-      romaji: romaji,
-      tags: tags.pluck(:title),
-      releases: releases.includes(:tracks, :folders).order(year: :desc).map{|r| r.api_hash}
-    }
-  end
-
-  def api_json
-    return api_hash.to_json
   end
 end

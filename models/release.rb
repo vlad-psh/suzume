@@ -16,21 +16,6 @@ class Release < ActiveRecord::Base
     end
   end
 
-  def api_hash
-    return {
-      id: id,
-      title: title,
-      year: year,
-      cover: cover,
-      folders: folders.pluck(:id),
-      tracks: tracks.sort.map{|r| r.api_hash}
-    }
-  end
-
-  def api_json
-    return api_hash.to_json
-  end
-
   def abyss_images
     folders.map do |folder|
       folder.contents[:files].filter do |file|

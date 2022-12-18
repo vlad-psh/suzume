@@ -5,6 +5,7 @@ require 'sinatra-snap'
 require 'rack/contrib'
 
 require 'yaml'
+require 'blueprinter'
 require 'fileutils'
 require 'id3tag'
 require 'open-uri'
@@ -21,12 +22,10 @@ paths browser: '/',
 require_relative './helpers.rb'
 also_reload './helpers.rb'
 
-Dir.glob('./models/*.rb').each {|f| require_relative f}
-Dir.glob('./controllers/*.rb').each {|f| require_relative f}
-Dir.glob('./services/*.rb').each {|f| require_relative f}
-also_reload './models/*.rb'
-also_reload './controllers/*.rb'
-also_reload './services/*.rb'
+%w[models controllers serializers services].each do |dir|
+  Dir.glob("./#{dir}/*.rb").each { |f| require_relative f }
+  also_reload "./#{dir}/*.rb"
+end
 
 helpers TulipHelpers
 
