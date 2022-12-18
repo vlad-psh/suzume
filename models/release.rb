@@ -6,6 +6,8 @@ class Release < ActiveRecord::Base
 
   before_create :assign_id, if: -> {id.blank?}
 
+  before_destroy :clean_up!
+
   def full_path
     return File.join($library_path, id[0..1], id[2..])
   end
@@ -64,5 +66,10 @@ class Release < ActiveRecord::Base
   def assign_id
     while Release.where(id: (_id = SecureRandom.hex(4))).present? do end
     self.id = _id
+  end
+
+  def clean_up!
+    tracks.each(&:destroy!)
+    FileUtils.remove_dir(full_path) if File.exist?(full_path)
   end
 end
