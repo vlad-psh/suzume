@@ -14,14 +14,23 @@
 
     <template v-if="subfolders && subfolders.length > 0">
       <h2>&#x1f4c1; Folders</h2>
-      <div v-for="f of subfolders" :key="'folder-' + f[0]" class="folder">
-        <NuxtLink :to="'/abyss/' + f[0]">{{ f[1] }}</NuxtLink>
-        <template v-if="f[2]"> by {{ f[2][1] }}</template>
+      <div v-for="f of subfolders" :key="'folder-' + f.id">
+        <NuxtLink :to="`/abyss/${f.id}`">{{ f.title }}</NuxtLink>
+        <NuxtLink
+          v-if="f.artist"
+          :to="`/artist/${f.artist.id}`"
+          class="subfolder-artist"
+        >
+          {{ f.artist.title }}
+        </NuxtLink>
       </div>
     </template>
 
     <template v-if="release">
-      <h2>«{{ release.title }}» by {{ artist[1] }}</h2>
+      <h2>
+        «{{ release.title }}» by
+        <NuxtLink :to="`/artist/${artist[0]}`">{{ artist[1] }}</NuxtLink>
+      </h2>
       <Release :payload="release" @play="playTrack"></Release>
     </template>
     <template v-else-if="hasAudio">
@@ -102,6 +111,19 @@ export default {
       background: #ffffa3;
     }
   }
+  .subfolder-artist {
+    font-size: 0.8em;
+    border-radius: 0.3em;
+    text-decoration: none;
+    padding: 0.1em 0.5em;
+    background: #7771;
+    font-weight: bold;
+
+    &:hover {
+      background: #7773;
+    }
+  }
+
   table.release-form {
     font-size: 0.8em;
     font-family: sans-serif;
