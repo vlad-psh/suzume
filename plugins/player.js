@@ -40,7 +40,9 @@ export default (context, inject) => {
           artist: artist.title,
           artistId: artist.id,
           release: release.title,
-          cover: release.cover ? `/download/image/${release.id}/thumb` : null,
+          cover: release.cover
+            ? `/download/image/${release.id}/thumb`
+            : '/cover.jpg',
         }
       },
     },

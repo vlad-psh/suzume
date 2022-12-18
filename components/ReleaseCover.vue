@@ -1,14 +1,15 @@
 <template>
   <div class="release-cover">
-    <template v-if="cover">
-      <a class="cover-link" :href="coverOrig" @click.prevent="openCover">
-        <div class="thumbnail">
-          <img class="shadow" :src="coverThumb" />
-          <img :src="coverThumb" />
-        </div>
-      </a>
-    </template>
-    <template v-else><div class="thumbnail"></div></template>
+    <a
+      class="cover-link"
+      :href="cover ? coverOrig : null"
+      @click.prevent="openCover"
+    >
+      <div class="thumbnail">
+        <img class="shadow" :src="coverThumb" />
+        <img :src="coverThumb" />
+      </div>
+    </a>
 
     <div
       id="fullscreen-cover-container"
@@ -28,7 +29,9 @@ export default {
   },
   computed: {
     coverThumb() {
-      return `/download/image/${this.releaseId}/thumb`
+      return this.cover
+        ? `/download/image/${this.releaseId}/thumb`
+        : '/cover.jpg'
     },
     coverOrig() {
       return `/download/image/${this.releaseId}/cover`
@@ -36,6 +39,7 @@ export default {
   },
   methods: {
     openCover() {
+      if (!this.cover) return
       this.$refs.fullscreenContainer.style.display = 'block'
     },
     closeCover() {
