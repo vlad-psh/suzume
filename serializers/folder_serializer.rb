@@ -12,11 +12,11 @@ class FolderSerializer < Blueprinter::Base
   field(:parents) { |folder| folder.parents.map{|i| [i.id, (folder.is_symlink ? '🔗' : '') + File.basename(i.path)]} }
   field(:subfolders) do |folder|
     folder.contents[:dirs].map do |f|
-      [
-        f.id,
-        (f.is_symlink ? '🔗' : '') + f.path,
-        f.release ? [f.release.artist_id, f.release.artist.title] : nil
-      ]
+      {
+        id: f.id,
+        title: (f.is_symlink ? '🔗' : '') + f.path,
+        artist: f.release ? { id: f.release.artist_id, title: f.release.artist.title } : nil
+      }
     end
   end
 
