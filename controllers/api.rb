@@ -57,21 +57,7 @@ end
 get :api_abyss do
   protect!
   folder = Folder.eager_load(release: :artist).find_by(id: params[:id]) || Folder.root
-  contents = folder.contents
-
-  return folder.serializable_hash.merge({
-    release: folder.release ? folder.release.api_hash : nil,
-    artist: folder.release ? [folder.release.artist.id, folder.release.artist.title] : nil,
-    files: contents[:files],
-    name: (folder.is_symlink ? '🔗' : '') + folder.name,
-    parents: folder.parents.map{|i| [i.id, (folder.is_symlink ? '🔗' : '') + File.basename(i.path)]},
-    subfolders: contents[:dirs].map{|f|
-      [f.id,
-      (f.is_symlink ? '🔗' : '') + f.path,
-       f.release ? [f.release.artist_id, f.release.artist.title] : nil
-      ]
-    },
-  }).to_json
+  return FolderSerializer.render(folder)
 end
 
 get :api_autocomplete_artist do
