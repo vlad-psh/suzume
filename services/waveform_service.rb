@@ -27,8 +27,7 @@ class WaveformService
     negative = []
     points = []
 
-    # TODO: Escape 'filename' properly
-    IO.popen("ffmpeg -i \"#{filename}\" -ac 1 -filter:a aresample=#{SAMPLERATE} -map 0:a -c:a pcm_s16le -f data -") do |stream|
+    IO.popen(%W{ ffmpeg -i #{filename} -ac 1 -filter:a aresample=#{SAMPLERATE} -map 0:a -c:a pcm_s16le -f data - }) do |stream|
       stream.read.unpack('s*').each_slice(AVERAGING_BATCH) do |slice|
         positive << median(slice.filter { |i| i >= 0 })
         negative << median(slice.filter { |i| i <= 0 })
