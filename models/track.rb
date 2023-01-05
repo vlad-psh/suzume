@@ -55,8 +55,7 @@ class Track < ActiveRecord::Base
     p = File.join(folder.full_path, original_filename) unless File.exist?(p)
     return unless File.exist?(p)
 
-    m = MediaInfoNative::MediaInfo.new()
-    m.open_file(p)
+    m = MediaInfo.from(p)
     self.mediainfo = {
       dur: m.audio.duration,
       br:  m.audio.bit_rate,
@@ -64,7 +63,6 @@ class Track < ActiveRecord::Base
       sr:  m.audio.sample_rate,
       ch:  m.audio.channels
     }
-    m.close
   end
 
   def update_mediainfo!

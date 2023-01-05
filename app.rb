@@ -12,7 +12,7 @@ require 'open-uri'
 require 'tempfile'
 require 'securerandom'
 require 'mini_magick'
-require 'mediainfo-native'
+require 'mediainfo'
 require 'shellwords'
 
 paths browser: '/',
