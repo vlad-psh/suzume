@@ -24,9 +24,12 @@
   position: fixed;
   top: 0;
   z-index: 100;
-  background: var(--accent-deep-color);
-  --text-color: white;
+  --text-color: #111;
+  --text-color-inverted: #fff;
   color: var(--text-color);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: saturate(3) blur(1.5em) brightness(0.9);
+  border-bottom: 1px solid #7773;
 
   .navigation {
     display: flex;

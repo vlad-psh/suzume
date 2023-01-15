@@ -213,7 +213,6 @@ export default {
   align-items: center;
   justify-content: flex-start;
   padding: 0 0.8em;
-  background: #222;
   width: 100%;
 
   .now-playing-info {
@@ -276,17 +275,17 @@ export default {
   .svg-icon {
     display: inline-block;
     font-size: 2em;
-    color: white;
+    color: var(--text-color);
     border-radius: 100%;
-    border: 2px solid #fff2;
+    border: 2px solid #333;
     line-height: 1em;
     width: 1em;
     height: 1em;
     cursor: pointer;
 
     &:hover {
-      background: white;
-      color: #111;
+      background: var(--text-color);
+      color: var(--text-color-inverted);
     }
 
     svg {
@@ -310,10 +309,10 @@ export default {
       height: 3em;
 
       .waveform-filled {
-        fill: var(--accent-pale-color);
+        fill: var(--text-color);
       }
       .waveform-unfilled {
-        fill: white;
+        fill: #7775;
       }
     }
   }

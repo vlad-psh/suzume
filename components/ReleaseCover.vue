@@ -58,8 +58,8 @@ export default {
 
     .thumbnail {
       display: flex;
-      justify-content: end;
-      align-items: start;
+      justify-content: flex-end;
+      align-items: flex-start;
       height: 100px;
       width: 100px;
       position: relative;
